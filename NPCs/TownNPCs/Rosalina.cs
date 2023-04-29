@@ -1,4 +1,4 @@
-using Terraria.GameContent.Personalities;
+﻿using Terraria.GameContent.Personalities;
 using Terraria.ModLoader;
 using Terraria.ID;
 using Terraria;
@@ -20,6 +20,9 @@ using CalamityMod.NPCs.Providence;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.Localization;
+using Terraria.Chat;
+using Humanizer;
 
 namespace EverquartzAdventure
 {
@@ -56,9 +59,27 @@ namespace EverquartzAdventure.NPCs.TownNPCs
     public class StarbornPrincess : ModNPC
     {
         //public override string Texture => "CalamityMod/NPCs/TownNPCs/WITCH";
+        public static SoundStyle HitSound => SoundID.FemaleHit;
+        public static SoundStyle DeathSound => SoundID.NPCDeath6;
+
+        public static readonly string DeathMessageKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.StarbornPrincess.DeathMessage";
+        public static readonly string ButtonTextKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.StarbornPrincess.ButtonText";
+        public static readonly string BestiaryTextKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.StarbornPrincess.BestiaryText";
+        public static readonly string HelpListKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.StarbornPrincess.Help";
+
+        public static readonly string ChatHomelessKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.StarbornPrincess.Chat.Homeless";
+        public static readonly string ChatCommonKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.StarbornPrincess.Chat.Common";
+        public static readonly string ChatBloodMoonKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.StarbornPrincess.Chat.BloodMoon";
+        public static readonly string ChatPartyKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.StarbornPrincess.Chat.Party";
+        public static readonly string ChatPostDoGKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.StarbornPrincess.Chat.PostDoG";
+        public static readonly string ChatInHallowKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.StarbornPrincess.Chat.InHallow";
+        public static readonly string ChatCalamitasRefKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.StarbornPrincess.Chat.CalamitasRef";
+        public static readonly string ChatAnglerRefKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.StarbornPrincess.Chat.AnglerRef";
+
         public override void SetStaticDefaults()
         {
             base.DisplayName.SetDefault("Starborn Princess");
+            DisplayName.AddTranslation(7, "星光公主");
             Main.npcFrameCount[base.NPC.type] = 6;
             //NPCID.Sets.ExtraFramesCount[base.NPC.type] = 9;
             //NPCID.Sets.AttackFrameCount[base.NPC.type] = 4;
@@ -86,8 +107,8 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             base.NPC.damage = 1;
             base.NPC.defense = 0;
             base.NPC.lifeMax = 500; //give her more health!!! justice for deimos :(
-            base.NPC.HitSound = SoundID.FemaleHit;
-            base.NPC.DeathSound = SoundID.NPCDeath6;
+            base.NPC.HitSound = HitSound;
+            base.NPC.DeathSound = DeathSound;
             base.NPC.knockBackResist = 0.5f;
             NPC.catchItem = ModContent.ItemType<StarbornPrincessItem>();
             //base.AnimationType = 124;
@@ -108,7 +129,7 @@ namespace EverquartzAdventure.NPCs.TownNPCs
                 BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.TheUnderworld,
             BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.TheHallow,
             
-            new FlavorTextBestiaryInfoElement("WE MUST CONSUME HYPNOS FLESH")
+            new FlavorTextBestiaryInfoElement(BestiaryTextKey)
             });
         }
 
@@ -158,65 +179,63 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             WeightedRandom<string> textSelector = new WeightedRandom<string>(Main.rand);
             if (base.NPC.homeless)
             {
-                textSelector.Add("I've always been homeless, so it's sort of the norm for me.");
-                textSelector.Add("Do you have a house? I'd like to see it!");
-                textSelector.Add("Not to ask for too much but... can I have a house? Is that too much to ask? Sorry...");
+                EverquartzUtils.GetTextListFromKey(ChatHomelessKey).ForEach(st => textSelector.Add(st));
             }
             else
             {
-                textSelector.Add("Did you hear about that one artist? I think they are called something like Everquartz... well- I think they're weird personally.");
-                textSelector.Add("I really like reading books and I like studying on how to warp myself to different timelines. It's an interesting sight to see, seeing yourself from the past or seeing yourself in another reality. I've seen many realities, all come in different shapes and sizes. All have different orders and different ways of running their socities. It's sooooo interesting!");
-                textSelector.Add("I hate both of my parents to be honest, they're both as bad as each other... sort of. I can't remember.");
-                textSelector.Add("What is your opinion on chicken nuggets?");
-                textSelector.Add("*starts doing the cha cha slide* Cha cha real smooth!");
-                textSelector.Add("When I was 'born', I was just a mere essence existing that relied on both my mother and my father. I don't know how I was created... but if you haven't already figured that out, my parents are The Profaned Goddess and that stupid god eating creature. He's stupid, we're all stupid. I think that concludes this conversation.");
-                if (!Main.dayTime)
+                //textSelector.Add("Did you hear about that one artist? I think they are called something like Everquartz... well- I think they're weird personally.");
+                //textSelector.Add("I really like reading books and I like studying on how to warp myself to different timelines. It's an interesting sight to see, seeing yourself from the past or seeing yourself in another reality. I've seen many realities, all come in different shapes and sizes. All have different orders and different ways of running their socities. It's sooooo interesting!");
+                //textSelector.Add("I hate both of my parents to be honest, they're both as bad as each other... sort of. I can't remember.");
+                //textSelector.Add("What is your opinion on chicken nuggets?");
+                //textSelector.Add("*starts doing the cha cha slide* Cha cha real smooth!");
+                //textSelector.Add("When I was 'born', I was just a mere essence existing that relied on both my mother and my father. I don't know how I was created... but if you haven't already figured that out, my parents are The Profaned Goddess and that stupid god eating creature. He's stupid, we're all stupid. I think that concludes this conversation.");
+                EverquartzUtils.GetTextListFromKey(ChatCommonKey).ForEach(st => textSelector.Add(st));
+                if (!Main.dayTime && Main.bloodMoon)
                 {
-                    if (Main.bloodMoon)
-                    {
-                        textSelector.Add("Mortals and sinners like YOU should not be allowed to roam the planet in such a mess. If my mother was around, I would have personally took you to her to get a cleansing. Being cleansed isn't the most pretty sight, so be LUCKY that she is dead... I'm not too happy about that.", 5.15);
-                        textSelector.Add("If the world was cleansed, my mother would be happy. You just so happened to ruin it... I do not have pity for you, sinner.", 5.15);
-                        textSelector.Add("BURN, BURN, BURN! Cleanse the world of its otherworldly sins!", 5.15);
-                        textSelector.Add("I promised my mother that I would continue on my legacy as a such a divine essence, and that includes to try cleanse this world of its disgusting sins. I probably keep going on about it too much, but it's true. I must continue on to cleanse the world. My mother would be so happy to hear that I would try to continue my legacy on but guess who killed her?! See what I mean?!", 5.15);
-                        textSelector.Add("See the horns on my head? They're from goddesses. GODDESSES.", 5.15);
-                    }
+                    EverquartzUtils.GetTextListFromKey(ChatBloodMoonKey).ForEach(st => textSelector.Add(st, 5.15));
+                    //textSelector.Add("Mortals and sinners like YOU should not be allowed to roam the planet in such a mess. If my mother was around, I would have personally took you to her to get a cleansing. Being cleansed isn't the most pretty sight, so be LUCKY that she is dead... I'm not too happy about that.", 5.15);
+                    //    textSelector.Add("If the world was cleansed, my mother would be happy. You just so happened to ruin it... I do not have pity for you, sinner.", 5.15);
+                    //    textSelector.Add("BURN, BURN, BURN! Cleanse the world of its otherworldly sins!", 5.15);
+                    //    textSelector.Add("I promised my mother that I would continue on my legacy as a such a divine essence, and that includes to try cleanse this world of its disgusting sins. I probably keep going on about it too much, but it's true. I must continue on to cleanse the world. My mother would be so happy to hear that I would try to continue my legacy on but guess who killed her?! See what I mean?!", 5.15);
+                    //    textSelector.Add("See the horns on my head? They're from goddesses. GODDESSES.", 5.15);
                 }
                 if (BirthdayParty.PartyIsUp)
                 {
-                    textSelector.Add("Wow! Parties are so much fun. I love hopping around and dancing and all that confetti is so fun! It's so bright and colorful! I love it!", 5.5);
-                    textSelector.Add("My mother would always disapprove of parties... so having to experience one in person now is a little odd for me, but I'm loving it!", 5.5);
+                    EverquartzUtils.GetTextListFromKey(ChatPartyKey).ForEach(st => textSelector.Add(st, 5.5));
+                    //textSelector.Add("Wow! Parties are so much fun. I love hopping around and dancing and all that confetti is so fun! It's so bright and colorful! I love it!", 5.5);
+                    //textSelector.Add("My mother would always disapprove of parties... so having to experience one in person now is a little odd for me, but I'm loving it!", 5.5);
                 }
                 if (ModCompatibility.calamityEnabled)
                 {
                     if (CalamityWeakRef.IsDoGDefeated())
                     {
-                        textSelector.Add("My mother was an interesting character, but I just never felt with her... the idea of burning the world just never stood right with me, but I never really verbally spoke about it because I was afraid my mother would KILL me for it. I wonder what it would've been like if my dad took me instead. I feel like he would've used me as a sentinel or something. Yikes.", (0.8));
-                        textSelector.Add("Considering how weak you originally were, I do wonder if your growth will ever reach a limit. I'm curious!", (0.8));
-                        textSelector.Add("My father? Oh, well he wasn't the best character around... I hadn't really known him for that long considering I always stayed with my mother, but I heard he was just... bad. I don't know how else to describe it, but I don't like him. I would've preferred to stay with my mother, but considering she is dead- I am not too sure who to stay with. I guess that's why I stayed with you, because you have shelter... I'm alone now. I don't have anyone to rely on anymore.", (0.8));
-                        textSelector.Add("It's a bit weird to say this, but thank you for defeating both of my parents. The world is much more great now without those two around. Keeping those two apart was hard work. Let's just say it would've been a universal catastrophe if this was in my earlier stages of my existence. I am glad I don't have to deal with the stress about keeping up my dad's Delicious Meat addiction. Though, I'm a bit sad that I don't have anyone to rely on now.", (0.8));
+                        EverquartzUtils.GetTextListFromKey(ChatPostDoGKey).ForEach(st => textSelector.Add(st));
+                        //textSelector.Add("My mother was an interesting character, but I just never felt with her... the idea of burning the world just never stood right with me, but I never really verbally spoke about it because I was afraid my mother would KILL me for it. I wonder what it would've been like if my dad took me instead. I feel like he would've used me as a sentinel or something. Yikes.", (0.8));
+                        //textSelector.Add("Considering how weak you originally were, I do wonder if your growth will ever reach a limit. I'm curious!", (0.8));
+                        //textSelector.Add("My father? Oh, well he wasn't the best character around... I hadn't really known him for that long considering I always stayed with my mother, but I heard he was just... bad. I don't know how else to describe it, but I don't like him. I would've preferred to stay with my mother, but considering she is dead- I am not too sure who to stay with. I guess that's why I stayed with you, because you have shelter... I'm alone now. I don't have anyone to rely on anymore.", (0.8));
+                        //textSelector.Add("It's a bit weird to say this, but thank you for defeating both of my parents. The world is much more great now without those two around. Keeping those two apart was hard work. Let's just say it would've been a universal catastrophe if this was in my earlier stages of my existence. I am glad I don't have to deal with the stress about keeping up my dad's Delicious Meat addiction. Though, I'm a bit sad that I don't have anyone to rely on now.", (0.8));
                     }
                     if (CalamityWeakRef.IsAnyCalamitas())
                     {
-                        textSelector.Add("That girl, Calamitas I think her name is... she looks very pretty. I'll respect her privacy, though. ");
-                        textSelector.Add("Could you please ask Calamitas something for me? Thank you!");
+                        EverquartzUtils.GetTextListFromKey(ChatCalamitasRefKey).ForEach(st => textSelector.Add(st, (0.8)));
+                        //textSelector.Add("That girl, Calamitas I think her name is... she looks very pretty. I'll respect her privacy, though. ");
+                        //textSelector.Add("Could you please ask Calamitas something for me? Thank you!");
                     }
                 }
                 if (Main.player[Main.myPlayer].ZoneHallow)
                 {
-                    textSelector.Add("I think the Hallow is quite a deceiving place. It's quite unique, actually. I really do like it, but man those unicorns are lethal. Have you not seen them?!");
-                    textSelector.Add("You would think that a biome full of fairies and unicorns would be a little kinder sometimes...");
+                    EverquartzUtils.GetTextListFromKey(ChatInHallowKey).ForEach(st => textSelector.Add(st));
+                    //textSelector.Add("I think the Hallow is quite a deceiving place. It's quite unique, actually. I really do like it, but man those unicorns are lethal. Have you not seen them?!");
+                    //textSelector.Add("You would think that a biome full of fairies and unicorns would be a little kinder sometimes...");
                 }
                 int angler = NPC.FindFirstNPC(NPCID.Angler);
                 if (angler != -1)
                 {
-                    textSelector.Add($"Did you hear about {Main.npc[angler].GivenName}? Yeah, that short kid with the weird hat and stuff? Well I don't like him.");
+                    EverquartzUtils.GetTextListFromKey(ChatAnglerRefKey).ForEach(st => textSelector.Add(st.FormatWith(Main.npc[angler].GivenName), (0.8)));
+                    //textSelector.Add($"Did you hear about {Main.npc[angler].GivenName}? Yeah, that short kid with the weird hat and stuff? Well I don't like him.");
                 }
             }
             string thingToSay = textSelector.Get();
-            if (Main.rand.NextBool(4444))
-            {
-                thingToSay = "WE MUST CONSUME HYPNOS FLESH.";
-            }
             return thingToSay;
         }
 
@@ -230,6 +249,7 @@ namespace EverquartzAdventure.NPCs.TownNPCs
 
         public static void DeathEffectClient(Vector2 position, int width, int height)
         {
+            SoundEngine.PlaySound(DeathSound, position);
             for (int num585 = 0; num585 < 25; num585++)
             {
                 int num586 = Dust.NewDust(position,width, height, 31, 0f, 0f, 100, default(Color), 2f);
@@ -241,17 +261,70 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             }
         }
 
+        public static void ItemDeathEffectClient(Vector2 position, int width, int height, int helptext)
+        {
+            SoundEngine.PlaySound(StarbornPrincess.HitSound, position);
+            CombatText.NewText(new Rectangle((int)Math.Round(position.X), (int)Math.Round(position.Y), width, height), new Color(225, 219, 238
+            ), EverquartzUtils.GetTextListFromKey(HelpListKey).ElementAtOrDefault(helptext) ?? "Error", true);
+            DeathEffectClient(position, width, height);
+        }
+
         public override void OnKill()
         {
+            DeathEffectOnKill(Main.player.Where(player => player.active && player != null).Random());
+        }
+
+        public override bool CheckDead()
+        {
+            base.NPC.active = false;
+            base.NPC.HitEffect();
+            base.NPC.NPCLoot();
+            base.NPC.netUpdate = true;
+            return false;
+        }
+
+        public static void DeathEffectOnKill(Player player)
+        {
+            NetworkText networkText = NetworkText.FromKey(DeathMessageKey);
+
+            if (Main.netMode == NetmodeID.SinglePlayer)
+            {
+                Main.NewText(networkText.ToString(), byte.MaxValue, 25, 25);
+            }
+            else if (Main.netMode == NetmodeID.Server)
+            {
+                ChatHelper.BroadcastChatMessage(networkText, new Color(255, 25, 25));
+            }
+
             if (ModCompatibility.calamityEnabled)
             {
-                CalamityWeakRef.SummonProv(Main.player.Random());
+                CalamityWeakRef.SummonProv(player);
             }
+        }
+
+        public static void ItemDeathEffectServer(Player player, int helptext)
+        {
+
+            if (Main.netMode == NetmodeID.SinglePlayer)
+            {
+
+                ItemDeathEffectClient(player.position, player.width, player.height, helptext);
+            }
+            else if (Main.netMode == NetmodeID.Server)
+            {
+
+                ModPacket packet = ModContent.GetInstance<EverquartzAdventureMod>().GetPacket();
+                packet.Write((byte)EverquartzMessageType.DeimosItemKilled);
+                packet.Write(player.whoAmI);
+                packet.Write(helptext);
+                packet.Send();
+            }
+            DeathEffectOnKill(player);
         }
 
         public override void SetChatButtons(ref string button, ref string button2)
         {
-            button = "Deimo's prime shop";
+            button = Language.GetTextValue(ButtonTextKey);
         }
 
         public override void OnChatButtonClicked(bool firstButton, ref bool shop)

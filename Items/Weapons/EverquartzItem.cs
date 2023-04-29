@@ -34,7 +34,7 @@ namespace EverquartzAdventure.Items.Weapons
 			Item.crit = 10;
 			
 			Item.value = 0;
-			Item.rare = ItemRarityID.Red;
+			Item.rare = ItemRarityID.Purple;
 			Item.shoot = ProjectileID.FairyQueenMagicItemShot; 
 			Item.shootSpeed = 50f; 
 

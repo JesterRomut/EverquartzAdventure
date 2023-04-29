@@ -12,8 +12,9 @@ using EverquartzAdventure.NPCs.TownNPCs;
 using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using EverquartzAdventure.Items.Weapons;
-using IL.Terraria.Audio;
 using Terraria.Audio;
+using CalamityMod.NPCs.Providence;
+using Terraria.Localization;
 
 namespace EverquartzAdventure.Items.Critters
 {
@@ -43,7 +44,7 @@ namespace EverquartzAdventure.Items.Critters
             base.Item.width = 18;
             base.Item.height = 40;
             base.Item.makeNPC = (short)ModContent.NPCType<StarbornPrincess>();
-            base.Item.rare = ItemRarityID.Red;
+            base.Item.rare = ItemRarityID.Purple;
         }
 
         public override bool CanRightClick()
@@ -53,18 +54,23 @@ namespace EverquartzAdventure.Items.Critters
 
         public override void RightClick(Player player)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath6);
-            if (Main.netMode == NetmodeID.MultiplayerClient || Main.netMode == NetmodeID.SinglePlayer)
+            int helptext = Main.rand.Next(EverquartzUtils.GetTextListFromKey(StarbornPrincess.HelpListKey).Count());
+            if (Main.netMode == NetmodeID.SinglePlayer)
             {
-                StarbornPrincess.DeathEffectClient(player.position, player.width, player.height);
+                StarbornPrincess.ItemDeathEffectServer(player, helptext);
             }
-            if (ModCompatibility.calamityEnabled)
+            else
             {
-                CalamityWeakRef.SummonProv(player);
+                ModPacket packet = Mod.GetPacket();
+                packet.Write((byte)EverquartzMessageType.DeimosItemKilled);
+                packet.Write(player.whoAmI);
+                packet.Write(helptext);
+                packet.Send();
             }
+
             
-                
-            
+
+
         }
 
         public override void ModifyItemLoot(ItemLoot itemLoot)
