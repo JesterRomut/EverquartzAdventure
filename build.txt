@@ -1,4 +1,4 @@
 displayName = Everquartz's Adventure
 author = technically a bunch of people
-version = 0.1
+version = 0.1.0.1
 weakReferences = CalamityMod

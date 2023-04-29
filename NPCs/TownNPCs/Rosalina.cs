@@ -19,6 +19,7 @@ using System.Linq;
 using CalamityMod.NPCs.Providence;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
 
 namespace EverquartzAdventure
 {
@@ -116,13 +117,35 @@ namespace EverquartzAdventure.NPCs.TownNPCs
 
             if(ModCompatibility.calamityEnabled && CalamityWeakRef.IsProvDefeated())
             {
-                    return !Main.player.Any(player => player.HasItem(ModContent.ItemType<StarbornPrincessItem>()));
+                
+                return !Main.player.Any(player => player.HasItem(ModContent.ItemType<StarbornPrincessItem>())) &&
+                    !Main.item.Any(item => item.active && item.type == ModContent.ItemType<StarbornPrincessItem>());
             }
             else
             {
                 //Mod.Logger.Info("111");
                 return false;
             }
+        }
+
+        public override void AI()
+        {
+            Func<NPC, bool> pred = (npc => npc.type == ModContent.NPCType<StarbornPrincess>() && npc.whoAmI != NPC.whoAmI);
+            if (Main.npc.Any(pred))
+            {
+                Main.npc.Where(pred).ToList().ForEach(npc => npc.active = false);
+            }
+                
+        }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            base.ModifyNPCLoot(npcLoot);
+        }
+
+        public static void ModifyLoot(ILoot loot)
+        {
+            loot.Add(ItemDropRule.Common(ModContent.ItemType<EverquartzItem>()));
         }
 
         public override List<string> SetNPCNameList()

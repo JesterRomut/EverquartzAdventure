@@ -58,19 +58,18 @@ namespace EverquartzAdventure.Items.Critters
             {
                 StarbornPrincess.DeathEffectClient(player.position, player.width, player.height);
             }
-            if (Main.netMode == NetmodeID.Server || Main.netMode == NetmodeID.SinglePlayer)
+            if (ModCompatibility.calamityEnabled)
             {
-                if (ModCompatibility.calamityEnabled)
-                {
-                    CalamityWeakRef.SummonProv(player);
-                }
-                
+                CalamityWeakRef.SummonProv(player);
             }
+            
+                
+            
         }
 
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EverquartzItem>()));
+            StarbornPrincess.ModifyLoot(itemLoot);
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
