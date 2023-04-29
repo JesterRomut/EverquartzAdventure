@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -16,7 +16,10 @@ namespace EverquartzAdventure.Items.Weapons
         public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("The Ever Quartz");
-			Tooltip.SetDefault("Not a reference to any person, at all, ever.");
+			DisplayName.AddTranslation(7, "永恒石英");
+
+            Tooltip.SetDefault("Not a reference to any person, at all, ever.");
+			Tooltip.AddTranslation(7, "这绝对不是任何人的名字，永远。");
 		}
 		public override void SetDefaults() {
             

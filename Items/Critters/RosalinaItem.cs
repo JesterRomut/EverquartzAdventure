@@ -25,7 +25,9 @@ namespace EverquartzAdventure.Items.Critters
         {
             base.SacrificeTotal = 5;
             base.DisplayName.SetDefault("Deimos the Starborn Princess");
+            DisplayName.AddTranslation(7, "星光公主Deimos");
             base.Tooltip.SetDefault("Right click to murder");
+            Tooltip.AddTranslation(7, "右键谋杀");
             Main.RegisterItemAnimation(base.Item.type, new DrawAnimationVertical(5, 6));
             ItemID.Sets.AnimatesAsSoul[base.Type] = true;
         }
