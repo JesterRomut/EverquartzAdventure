@@ -1,4 +1,7 @@
+using System.Collections.Generic;
 using Terraria.ModLoader;
+using System.Linq;
+using Terraria;
 
 namespace EverquartzAdventure
 {
@@ -20,4 +23,12 @@ namespace EverquartzAdventure
 	{
 
 	}
-}
+
+    internal static class EverquartzExtensions
+    {
+        internal static T Random<T>(this IEnumerable<T> li)
+        {
+            return li.ElementAt(Main.rand.Next(li.Count()));
+        }
+    }
+    }

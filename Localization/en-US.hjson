@@ -1,0 +1,47 @@
+﻿Mods: {
+	EverquartzAdventure: 
+    {
+        TownNPCMood: 
+        {
+            StarbornPrincess: 
+            {
+                Content: i enjoy the hypnos flesh.
+                NoHome: i want a home full with hypnos flesh.
+                LoveSpace: there are no people will disturb my hunt on hypnos flesh.
+                FarFromHome: i'm far from my hypnos flesh feast.
+                DislikeCrowded: there are people will compete with me for hypnos flesh.
+                HateCrowded: there are too many people will compete with me for hypnos flesh.
+                LikeNPC_Princess: 
+                '''
+                i like {NPCName}, this is cute.
+                '''
+                LoveBiome: 
+                '''
+                {BiomeName} has unicorns and hypnos flesh.
+                '''
+                LikeBiome: 
+                '''
+                我很喜欢{BiomeName}银装素裹的美景。
+                '''
+                DislikeBiome: 
+                '''
+                {BiomeName}非常昏暗，我不喜欢这里。
+                '''
+                HateBiome: 
+                '''
+                {BiomeName} is too dry.
+                '''
+                LikeNPC: 
+                '''
+                {NPCName}见多识广，我很崇拜他。
+                '''
+                DislikeNPC: 
+                '''
+                {NPCName}太喜欢恶作剧了，我不想和他当邻居。
+                '''
+                
+            }
+        }
+    }
+
+}
