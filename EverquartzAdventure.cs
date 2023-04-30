@@ -81,7 +81,7 @@ namespace EverquartzAdventure
                 backInterpolant2 = 0;
             }
             Vector2 backPosition = basePosition + new Vector2(2f, 4f);
-            ModContent.GetInstance<EverquartzAdventureMod>().Logger.Info(Main.GlobalTimeWrappedHourly);
+            //ModContent.GetInstance<EverquartzAdventureMod>().Logger.Info(Main.GlobalTimeWrappedHourly);
             Main.spriteBatch.End();
             Main.spriteBatch.Begin((SpriteSortMode)1, BlendState.Additive, (SamplerState)null, (DepthStencilState)null, (RasterizerState)null, (Effect)null, Main.UIScaleMatrix);
             for (int i = 0; i < 2; i++)
