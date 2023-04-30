@@ -15,6 +15,7 @@ using Terraria.GameContent.Events;
 using CalamityMod.NPCs.TownNPCs;
 using EverquartzAdventure.Items.Critters;
 using EverquartzAdventure.Items.Weapons;
+using EverquartzAdventure.Items;
 using System.Linq;
 using CalamityMod.NPCs.Providence;
 using Terraria.Audio;
@@ -23,17 +24,42 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.Localization;
 using Terraria.Chat;
 using Humanizer;
+using CalamityMod.Items.Materials;
+using CalamityMod.Items.Placeables.Furniture.CraftingStations;
+using CalamityMod.Items.Accessories;
+using CalamityMod.Items.SummonItems;
+using CalamityMod.Buffs.DamageOverTime;
 
 namespace EverquartzAdventure
 {
     internal static partial class CalamityWeakRef
     {
-        internal static bool IsProvDefeated() => DownedBossSystem.downedProvidence;
+        internal static bool downedProv => DownedBossSystem.downedProvidence;
         
-        internal static bool IsDoGDefeated() => DownedBossSystem.downedDoG;
+        internal static bool downedDoG => DownedBossSystem.downedDoG;
         
-        internal static bool IsAnyCalamitas() => NPC.AnyNPCs(ModContent.NPCType<WITCH>());
+        internal static int CalamitasNPC => ModContent.NPCType<WITCH>();
+
+        internal static int ProfanedCrucibleItem => ModContent.ItemType<ProfanedCrucible>();
+        internal static int DivineGeode => ModContent.ItemType<DivineGeode>();
+        internal static int NightmareFuel => ModContent.ItemType<NightmareFuel>();
+        internal static int EndothermicEnergy => ModContent.ItemType<EndothermicEnergy>();
+        internal static int DarksunFragment => ModContent.ItemType<DarksunFragment>();
+        internal static int RuneOfKos => ModContent.ItemType<RuneofKos>();
+        internal static int ElysianAegis => ModContent.ItemType<ElysianAegis>();
+        internal static int AsgardianAegis => ModContent.ItemType<AsgardianAegis>();
         
+        internal static void DeimosWouldBeImmune(NPC npc)
+        {
+            npc.buffImmune[ModContent.BuffType<HolyFlames>()] = true;
+            npc.buffImmune[ModContent.BuffType<GodSlayerInferno>()] = true;
+        }
+
+        internal static bool HasElysianAegisBuff(Player player)
+        {
+            return player.Calamity().elysianAegis;
+        }
+
         internal static void SummonProv(Player player)
         {
             SoundEngine.PlaySound(in Providence.SpawnSound, player.Center);
@@ -111,6 +137,10 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             base.NPC.DeathSound = DeathSound;
             base.NPC.knockBackResist = 0.5f;
             NPC.catchItem = ModContent.ItemType<StarbornPrincessItem>();
+            if (ModCompatibility.calamityEnabled)
+            {
+                CalamityWeakRef.DeimosWouldBeImmune(NPC);
+            }
             //base.AnimationType = 124;
         }
 
@@ -136,7 +166,7 @@ namespace EverquartzAdventure.NPCs.TownNPCs
         public override bool CanTownNPCSpawn(int numTownNPCs, int money)
         {
 
-            if(ModCompatibility.calamityEnabled && CalamityWeakRef.IsProvDefeated())
+            if(ModCompatibility.calamityEnabled && CalamityWeakRef.downedProv)
             {
                 
                 return !Main.player.Any(player => player.HasItem(ModContent.ItemType<StarbornPrincessItem>())) &&
@@ -161,12 +191,12 @@ namespace EverquartzAdventure.NPCs.TownNPCs
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            base.ModifyNPCLoot(npcLoot);
+            ModifyLoot(npcLoot);
         }
 
         public static void ModifyLoot(ILoot loot)
         {
-            loot.Add(ItemDropRule.Common(ModContent.ItemType<EverquartzItem>()));
+            loot.Add(ItemDropRule.Common(ModContent.ItemType<SundialNimbus>()));
         }
 
         public override List<string> SetNPCNameList()
@@ -183,56 +213,34 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             }
             else
             {
-                //textSelector.Add("Did you hear about that one artist? I think they are called something like Everquartz... well- I think they're weird personally.");
-                //textSelector.Add("I really like reading books and I like studying on how to warp myself to different timelines. It's an interesting sight to see, seeing yourself from the past or seeing yourself in another reality. I've seen many realities, all come in different shapes and sizes. All have different orders and different ways of running their socities. It's sooooo interesting!");
-                //textSelector.Add("I hate both of my parents to be honest, they're both as bad as each other... sort of. I can't remember.");
-                //textSelector.Add("What is your opinion on chicken nuggets?");
-                //textSelector.Add("*starts doing the cha cha slide* Cha cha real smooth!");
-                //textSelector.Add("When I was 'born', I was just a mere essence existing that relied on both my mother and my father. I don't know how I was created... but if you haven't already figured that out, my parents are The Profaned Goddess and that stupid god eating creature. He's stupid, we're all stupid. I think that concludes this conversation.");
                 EverquartzUtils.GetTextListFromKey(ChatCommonKey).ForEach(st => textSelector.Add(st));
                 if (!Main.dayTime && Main.bloodMoon)
                 {
                     EverquartzUtils.GetTextListFromKey(ChatBloodMoonKey).ForEach(st => textSelector.Add(st, 5.15));
-                    //textSelector.Add("Mortals and sinners like YOU should not be allowed to roam the planet in such a mess. If my mother was around, I would have personally took you to her to get a cleansing. Being cleansed isn't the most pretty sight, so be LUCKY that she is dead... I'm not too happy about that.", 5.15);
-                    //    textSelector.Add("If the world was cleansed, my mother would be happy. You just so happened to ruin it... I do not have pity for you, sinner.", 5.15);
-                    //    textSelector.Add("BURN, BURN, BURN! Cleanse the world of its otherworldly sins!", 5.15);
-                    //    textSelector.Add("I promised my mother that I would continue on my legacy as a such a divine essence, and that includes to try cleanse this world of its disgusting sins. I probably keep going on about it too much, but it's true. I must continue on to cleanse the world. My mother would be so happy to hear that I would try to continue my legacy on but guess who killed her?! See what I mean?!", 5.15);
-                    //    textSelector.Add("See the horns on my head? They're from goddesses. GODDESSES.", 5.15);
                 }
                 if (BirthdayParty.PartyIsUp)
                 {
                     EverquartzUtils.GetTextListFromKey(ChatPartyKey).ForEach(st => textSelector.Add(st, 5.5));
-                    //textSelector.Add("Wow! Parties are so much fun. I love hopping around and dancing and all that confetti is so fun! It's so bright and colorful! I love it!", 5.5);
-                    //textSelector.Add("My mother would always disapprove of parties... so having to experience one in person now is a little odd for me, but I'm loving it!", 5.5);
                 }
                 if (ModCompatibility.calamityEnabled)
                 {
-                    if (CalamityWeakRef.IsDoGDefeated())
+                    if (CalamityWeakRef.downedDoG)
                     {
                         EverquartzUtils.GetTextListFromKey(ChatPostDoGKey).ForEach(st => textSelector.Add(st));
-                        //textSelector.Add("My mother was an interesting character, but I just never felt with her... the idea of burning the world just never stood right with me, but I never really verbally spoke about it because I was afraid my mother would KILL me for it. I wonder what it would've been like if my dad took me instead. I feel like he would've used me as a sentinel or something. Yikes.", (0.8));
-                        //textSelector.Add("Considering how weak you originally were, I do wonder if your growth will ever reach a limit. I'm curious!", (0.8));
-                        //textSelector.Add("My father? Oh, well he wasn't the best character around... I hadn't really known him for that long considering I always stayed with my mother, but I heard he was just... bad. I don't know how else to describe it, but I don't like him. I would've preferred to stay with my mother, but considering she is dead- I am not too sure who to stay with. I guess that's why I stayed with you, because you have shelter... I'm alone now. I don't have anyone to rely on anymore.", (0.8));
-                        //textSelector.Add("It's a bit weird to say this, but thank you for defeating both of my parents. The world is much more great now without those two around. Keeping those two apart was hard work. Let's just say it would've been a universal catastrophe if this was in my earlier stages of my existence. I am glad I don't have to deal with the stress about keeping up my dad's Delicious Meat addiction. Though, I'm a bit sad that I don't have anyone to rely on now.", (0.8));
                     }
-                    if (CalamityWeakRef.IsAnyCalamitas())
+                    if (NPC.AnyNPCs(CalamityWeakRef.CalamitasNPC))
                     {
                         EverquartzUtils.GetTextListFromKey(ChatCalamitasRefKey).ForEach(st => textSelector.Add(st, (0.8)));
-                        //textSelector.Add("That girl, Calamitas I think her name is... she looks very pretty. I'll respect her privacy, though. ");
-                        //textSelector.Add("Could you please ask Calamitas something for me? Thank you!");
                     }
                 }
                 if (Main.player[Main.myPlayer].ZoneHallow)
                 {
                     EverquartzUtils.GetTextListFromKey(ChatInHallowKey).ForEach(st => textSelector.Add(st));
-                    //textSelector.Add("I think the Hallow is quite a deceiving place. It's quite unique, actually. I really do like it, but man those unicorns are lethal. Have you not seen them?!");
-                    //textSelector.Add("You would think that a biome full of fairies and unicorns would be a little kinder sometimes...");
                 }
                 int angler = NPC.FindFirstNPC(NPCID.Angler);
                 if (angler != -1)
                 {
                     EverquartzUtils.GetTextListFromKey(ChatAnglerRefKey).ForEach(st => textSelector.Add(st.FormatWith(Main.npc[angler].GivenName), (0.8)));
-                    //textSelector.Add($"Did you hear about {Main.npc[angler].GivenName}? Yeah, that short kid with the weird hat and stuff? Well I don't like him.");
                 }
             }
             string thingToSay = textSelector.Get();
@@ -334,9 +342,42 @@ namespace EverquartzAdventure.NPCs.TownNPCs
 
         public override void SetupShop(Chest shop, ref int nextSlot)
         {
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<EverquartzItem>());
-            shop.item[nextSlot].shopCustomPrice = Item.buyPrice(gold: 3);
-            nextSlot++;
+            //shop.item[nextSlot].SetDefaults(ModContent.ItemType<EverquartzItem>());
+            //shop.item[nextSlot].shopCustomPrice = Item.buyPrice(gold: 3);
+            //nextSlot++;
+            //shop.item[nextSlot].SetDefaults(ModContent.ItemType<MarsBar>());
+            //shop.item[nextSlot].shopCustomPrice = Item.buyPrice(gold: 1);
+            //nextSlot++;
+            //shop.item[nextSlot].SetDefaults(ModContent.ItemType<DeimosFumo>());
+            //shop.item[nextSlot].shopCustomPrice = Item.buyPrice(gold: 1);
+            //nextSlot++;
+            //shop.item[nextSlot].SetDefaults(ModContent.ItemType<DivineCore>());
+            //shop.item[nextSlot].shopCustomPrice = Item.buyPrice(platinum: 5);
+            //nextSlot++;
+
+            if (ModCompatibility.calamityEnabled)
+            {
+                shop.AddShopItem(ref nextSlot, CalamityWeakRef.ProfanedCrucibleItem, Item.buyPrice(gold: 60));
+                shop.AddShopItem(ref nextSlot, CalamityWeakRef.DivineGeode, Item.buyPrice(gold: 6));
+                if (CalamityWeakRef.downedDoG)
+                {
+                    shop.AddShopItem(ref nextSlot, CalamityWeakRef.NightmareFuel, Item.buyPrice(gold: 12));
+                    shop.AddShopItem(ref nextSlot, CalamityWeakRef.EndothermicEnergy, Item.buyPrice(gold: 12));
+                    shop.AddShopItem(ref nextSlot, CalamityWeakRef.DarksunFragment, Item.buyPrice(gold: 12));
+                }
+
+                Player player = Main.player[Main.myPlayer];
+                if (player.HasItem(CalamityWeakRef.ElysianAegis) || player.HasItem(CalamityWeakRef.AsgardianAegis) || CalamityWeakRef.HasElysianAegisBuff(player))
+                {
+                    shop.AddShopItem(ref nextSlot, CalamityWeakRef.RuneOfKos, Item.buyPrice(platinum: 2));
+                }
+            }
+
+            shop.AddShopItem(ref nextSlot, ModContent.ItemType<DivineCore>(), Item.buyPrice(platinum: 5));
+            shop.AddShopItem(ref nextSlot, ModContent.ItemType<DeimosFumo>(), Item.buyPrice(gold: 1));
+            shop.AddShopItem(ref nextSlot, ModContent.ItemType<SundialNimbus>(), Item.buyPrice(gold: 3));
+            shop.AddShopItem(ref nextSlot, ModContent.ItemType<MarsBar>(), Item.buyPrice(gold: 1));
+
         }
     }
     }

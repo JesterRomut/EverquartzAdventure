@@ -46,7 +46,7 @@ namespace EverquartzAdventure.Items.Critters
             base.Item.width = 18;
             base.Item.height = 40;
             base.Item.makeNPC = (short)ModContent.NPCType<StarbornPrincess>();
-            base.Item.rare = ItemRarityID.Purple;
+            base.Item.rare = ModContent.RarityType<CelestialRarity>();
         }
 
         public override bool CanRightClick()
