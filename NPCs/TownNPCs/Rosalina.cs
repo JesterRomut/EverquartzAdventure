@@ -48,12 +48,9 @@ namespace EverquartzAdventure
         internal static int RuneOfKos => ModContent.ItemType<RuneofKos>();
         internal static int ElysianAegis => ModContent.ItemType<ElysianAegis>();
         internal static int AsgardianAegis => ModContent.ItemType<AsgardianAegis>();
-        
-        internal static void DeimosWouldBeImmune(NPC npc)
-        {
-            npc.buffImmune[ModContent.BuffType<HolyFlames>()] = true;
-            npc.buffImmune[ModContent.BuffType<GodSlayerInferno>()] = true;
-        }
+
+        internal static int HolyFlamesBuff => ModContent.BuffType<HolyFlames>();
+        internal static int GodSlayerInfernoBuff => ModContent.BuffType<GodSlayerInferno>();
 
         internal static bool HasElysianAegisBuff(Player player)
         {
@@ -102,10 +99,13 @@ namespace EverquartzAdventure.NPCs.TownNPCs
         public static readonly string ChatCalamitasRefKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.StarbornPrincess.Chat.CalamitasRef";
         public static readonly string ChatAnglerRefKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.StarbornPrincess.Chat.AnglerRef";
 
+        public static readonly string CensusConditionKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.StarbornPrincess.CensusCondition";
+
         public override void SetStaticDefaults()
         {
             base.DisplayName.SetDefault("Starborn Princess");
             DisplayName.AddTranslation(7, "星光公主");
+            DisplayName.AddTranslation(6, "Принцесса, рождённая в небесах");
             Main.npcFrameCount[base.NPC.type] = 6;
             //NPCID.Sets.ExtraFramesCount[base.NPC.type] = 9;
             //NPCID.Sets.AttackFrameCount[base.NPC.type] = 4;
@@ -139,7 +139,8 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             NPC.catchItem = ModContent.ItemType<StarbornPrincessItem>();
             if (ModCompatibility.calamityEnabled)
             {
-                CalamityWeakRef.DeimosWouldBeImmune(NPC);
+                NPC.buffImmune[CalamityWeakRef.HolyFlamesBuff] = true;
+                NPC.buffImmune[CalamityWeakRef.GodSlayerInfernoBuff] = true;
             }
             //base.AnimationType = 124;
         }

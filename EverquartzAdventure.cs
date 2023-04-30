@@ -14,6 +14,8 @@ using Terraria.Localization;
 using EverquartzAdventure.Items.Weapons;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.UI.Chat;
+using CalamityMod.Items.Potions.Alcohol;
+using CalamityMod.NPCs.TownNPCs;
 
 namespace EverquartzAdventure
 {
@@ -21,7 +23,13 @@ namespace EverquartzAdventure
 	{
         public override void PostSetupContent()
         {
-			ModCompatibility.calamityEnabled = ModLoader.HasMod("CalamityMod");
+            //ModCompatibility.calamityEnabled = ModLoader.HasMod("CalamityMod");
+            //ModLoader.TryGetMod("Census", out Mod censusMod);
+            //if (censusMod != null)
+            //{
+            //    censusMod.Call("TownNPCCondition", ModContent.NPCType<StarbornPrincess>(), "Brutally murder her mom");
+            //}
+            TryDoCensusSupport();
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI)
@@ -44,6 +52,31 @@ namespace EverquartzAdventure
                     }
                         
                     break;
+            }
+        }
+
+        public override void Load()
+        {
+            ModCompatibility.censusMod = null;
+            ModLoader.TryGetMod("Census", out ModCompatibility.censusMod);
+
+            ModCompatibility.calamityEnabled = ModLoader.HasMod("CalamityMod");
+            base.Load();
+        }
+
+        public override void Unload()
+        {
+            ModCompatibility.censusMod = null;
+            ModCompatibility.calamityEnabled = false;
+            base.Unload();
+        }
+
+        private void TryDoCensusSupport()
+        {
+            Mod censusMod = ModCompatibility.censusMod;
+            if (censusMod != null)
+            {
+                censusMod.Call("TownNPCCondition", ModContent.NPCType<StarbornPrincess>(), Language.GetTextValue(StarbornPrincess.CensusConditionKey));
             }
         }
     }
@@ -145,6 +178,7 @@ namespace EverquartzAdventure
 	public static class ModCompatibility
 	{
 		public static bool calamityEnabled = false;
+        public static Mod censusMod;
 	}
 
 	[JITWhenModsEnabled("CalamityMod")]

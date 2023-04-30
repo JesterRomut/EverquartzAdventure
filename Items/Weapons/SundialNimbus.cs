@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics.PackedVector;
 using static Terraria.ModLoader.PlayerDrawLayer;
 using Terraria.Audio;
+using Terraria.Localization;
 
 namespace EverquartzAdventure.Items.Weapons
 {
@@ -19,10 +20,11 @@ namespace EverquartzAdventure.Items.Weapons
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sundial's Nimbus");
-            DisplayName.AddTranslation(7, "日晷之灵光"); // you need to translate these at some point soon
-
-            Tooltip.SetDefault("THEY PUT HER ON A FUCKING STAFF");
+            DisplayName.AddTranslation(7, "日晷之灵光");                                            
+            DisplayName.AddTranslation(6, "Нимб Сандиала");
+            Tooltip.SetDefault("THEY PUT HER ON A FUCKING STAFF"); // is that everquartz who is "they"?
             Tooltip.AddTranslation(7, "他们把她放在一个她妈的法杖上！");
+            Tooltip.AddTranslation(6, "ТЫ ПОМЕСТИЛ ЕЁ НА ЕБУЧИЙ ПОСОХ");
         }
         public override void SetDefaults()
         {
@@ -127,7 +129,8 @@ namespace EverquartzAdventure.Items.Weapons
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            damage *= 1000;
+            //damage *= 1000;
+            damage *= 100;
             crit = true;
         }
 

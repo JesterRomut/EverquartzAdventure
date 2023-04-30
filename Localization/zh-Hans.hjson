@@ -7,6 +7,7 @@ Mods: {
                     DeathMessage: 星光公主Deimos停止了存在...
                     ButtonText: 戴莫斯原初商店
                     BestiaryText: 我们必须享用修普诺斯血肉
+                    CensusCondition: 击败普罗维登斯亵渎之天神
                     Help: {
                         0: 救命！
                         1: 该死的你又来！
@@ -62,8 +63,8 @@ Mods: {
         }
         TownNPCMood: 
         {
-            StarbornPrincess: 
-            {
+            StarbornPrincess: {
+            // i think that quartz gave us perms to change those to something else than hypnos flesh.
                 Content: i enjoy the hypnos flesh.
                 NoHome: i want a home full with hypnos flesh.
                 LoveSpace: there are no people will disturb my hunt on hypnos flesh.
