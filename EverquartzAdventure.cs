@@ -60,48 +60,37 @@ namespace EverquartzAdventure
 
         public static Color ColorSwap()
         { // 0 < colormepurple < 1
-            return EverquartzUtils.ColorSwap(firstColor, secondColor, 3);
+            return EverquartzUtils.ColorSwap(firstColor, secondColor, thirdColor, 3);
         }
         public static void PreDraw(Item item, DrawableTooltipLine line, ref int yOffset)
         {
             Color rarityColor = (Color)((line.OverrideColor) ?? line.Color);
             Vector2 basePosition = new Vector2((float)line.X, (float)line.Y);
 
-            float backInterpolant; 
-            if (Math.Floor(Main.GlobalTimeWrappedHourly) % 2 == 0)
+            float backInterpolant;
+            float backInterpolant2;
+            float changingTime = Main.GlobalTimeWrappedHourly * 1.5f;
+            if (Math.Floor(changingTime) % 2 == 0)
             {
                 backInterpolant = 0;
+                backInterpolant2 = changingTime % 1;
             }
             else
             {
-                backInterpolant = Main.GlobalTimeWrappedHourly % 1;
+                backInterpolant = changingTime % 1;
+                backInterpolant2 = 0;
             }
             Vector2 backPosition = basePosition + new Vector2(2f, 4f);
             ModContent.GetInstance<EverquartzAdventureMod>().Logger.Info(Main.GlobalTimeWrappedHourly);
-            //Vector2 backScale = line.BaseScale * MathHelper.Lerp(1f, 1.2f, backInterpolant);
-            //Color backColor = Color.Lerp(rarityColor, Color.DarkCyan, Math.Min(1, backInterpolant + 0.2f)) * Math.Max(0, (float)Math.Pow(1f - backInterpolant, 0.46f) - 0.1f);
-            //Color backColor2 = Color.Lerp(rarityColor, Color.DarkOrange, Math.Min(1, backInterpolant + 0.2f)) * Math.Max(0, (float)Math.Pow(1f - backInterpolant, 0.46f) - 0.1f);
-            //Vector2 backPosition = basePosition - new Vector2(2f, 0.3f) * backInterpolant * 10f;
-            //Vector2 backPosition2 = basePosition - new Vector2(0f, -0.1f) * backInterpolant * 10f;
-            //Main.spriteBatch.End();
-            //Main.spriteBatch.Begin((SpriteSortMode)1, BlendState.Additive, (SamplerState)null, (DepthStencilState)null, (RasterizerState)null, (Effect)null, Main.UIScaleMatrix);
-            //for (int i = 0; i < 2; i++)
-            //{
-            //    ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, line.Font, line.Text, backPosition, backColor, line.Rotation, line.Origin, backScale, line.MaxWidth, line.Spread);
-            //}
-            //for (int i = 0; i < 2; i++)
-            //{
-            //    ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, line.Font, line.Text, backPosition2, backColor2, line.Rotation, line.Origin, backScale, line.MaxWidth, line.Spread);
-            //}
             Main.spriteBatch.End();
             Main.spriteBatch.Begin((SpriteSortMode)1, BlendState.Additive, (SamplerState)null, (DepthStencilState)null, (RasterizerState)null, (Effect)null, Main.UIScaleMatrix);
             for (int i = 0; i < 2; i++)
             {
-                ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, line.Font, line.Text, backPosition, EverquartzUtils.ColorSwap(Color.Orange, Color.Cyan , 1) * 0.5f, backInterpolant * 2 * (float)Math.PI, line.Origin, line.BaseScale, line.MaxWidth, line.Spread);
+                ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, line.Font, line.Text, backPosition, EverquartzUtils.ColorSwap(new Color(246, 128, 159), Color.Orange , 1) * (Main.rand.Next(3, 7) / 10f), backInterpolant * 2 * (float)Math.PI, line.Origin, line.BaseScale, line.MaxWidth, line.Spread);
             }
             for (int i = 0; i < 2; i++)
             {
-                ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, line.Font, line.Text, backPosition + new Vector2(14f, 4f), EverquartzUtils.ColorSwap(Color.Cyan, Color.Orange, 1) * 0.5f, backInterpolant * -2 * (float)Math.PI, line.Origin, line.BaseScale, line.MaxWidth, line.Spread);
+                ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, line.Font, line.Text, backPosition + new Vector2(14f, 4f), EverquartzUtils.ColorSwap(Color.Cyan, new Color(160, 99, 185), 1) * (Main.rand.Next(3, 7) / 10f), backInterpolant2 * -2 * (float)Math.PI, line.Origin, line.BaseScale, line.MaxWidth, line.Spread);
             }
             Main.spriteBatch.End();
             Main.spriteBatch.Begin((SpriteSortMode)0, BlendState.AlphaBlend, (SamplerState)null, (DepthStencilState)null, (RasterizerState)null, (Effect)null, Main.UIScaleMatrix);
