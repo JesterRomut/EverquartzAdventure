@@ -10,6 +10,7 @@ using Terraria.GameContent;
 using Microsoft.Xna.Framework;
 using CalamityMod.Buffs.Potions;
 using System;
+using Terraria.Audio;
 
 namespace EverquartzAdventure
 {
@@ -62,7 +63,6 @@ namespace EverquartzAdventure.Items.Critters
             base.Item.consumable = true;
             base.Item.useAnimation = 17;
             base.Item.useTime = 17;
-            base.Item.UseSound = SoundID.Item2;
             base.Item.useStyle = ItemUseStyleID.EatFood;
             base.Item.useTurn = true;
             base.Item.buffType = BuffID.WellFed3;
@@ -88,6 +88,8 @@ namespace EverquartzAdventure.Items.Critters
         {
             if (player.altFunctionUse == 2)
             {
+                base.Item.useStyle = ItemUseStyleID.Swing;
+                base.Item.noUseGraphic = true;
                 if (Main.myPlayer == player.whoAmI)
                 {
                     if (Main.netMode == NetmodeID.SinglePlayer)
@@ -105,6 +107,9 @@ namespace EverquartzAdventure.Items.Critters
             }
             else
             {
+                base.Item.useStyle = ItemUseStyleID.EatFood;
+                base.Item.noUseGraphic = false;
+                SoundEngine.PlaySound(SoundID.Item2, player.Center);
                 buffs.ForEach(buff => player.AddBuff(buff, buffDuration));
                 if (ModCompatibility.calamityEnabled)
                 {
