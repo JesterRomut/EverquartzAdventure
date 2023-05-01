@@ -16,6 +16,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria.UI.Chat;
 using CalamityMod.Items.Potions.Alcohol;
 using CalamityMod.NPCs.TownNPCs;
+using EverquartzAdventure.Items.Critters;
 
 namespace EverquartzAdventure
 {
@@ -51,6 +52,10 @@ namespace EverquartzAdventure
                         StarbornPrincess.ItemDeathEffectClient(murderer.position, murderer.width, murderer.height, helptext);
                     }
                         
+                    break;
+                case EverquartzMessageType.ReleaseProvCore:
+                    Player player = Main.player[reader.ReadInt32()];
+                    DivineCore.ReleaseProvCoreServer(player);
                     break;
             }
         }
@@ -172,7 +177,8 @@ namespace EverquartzAdventure
 
     public enum EverquartzMessageType
     {
-        DeimosItemKilled // id, player, helptext
+        DeimosItemKilled, // id, player, helptext
+        ReleaseProvCore // id, player
     }
 
 	public static class ModCompatibility

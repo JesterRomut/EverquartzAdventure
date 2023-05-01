@@ -104,9 +104,9 @@ namespace EverquartzAdventure.Items.Weapons
         {
             Projectile.CloneDefaults(ProjectileID.FairyQueenMagicItemShot);
 
-            Projectile.tileCollide = false;
+            Projectile.tileCollide = false; //keeping collision off is a good thing i think
             Projectile.usesLocalNPCImmunity= true;
-            Projectile.localNPCHitCooldown = 0;
+            Projectile.localNPCHitCooldown = 25;
             Projectile.penetrate = -1;
             AIType = ProjectileID.FairyQueenMagicItemShot;
 
@@ -130,8 +130,8 @@ namespace EverquartzAdventure.Items.Weapons
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             //damage *= 1000;
-            damage *= 100;
-            crit = true;
+            //damage *= 100; this stuff makes it WAY too unbalanced, i changed the stats to a point where it's balanced enough -gat
+            //crit = true;
         }
 
         public override Color? GetAlpha(Color lightColor) => Color.White* Projectile.Opacity;

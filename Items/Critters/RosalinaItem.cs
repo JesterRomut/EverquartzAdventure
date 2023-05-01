@@ -56,19 +56,23 @@ namespace EverquartzAdventure.Items.Critters
 
         public override void RightClick(Player player)
         {
-            int helptext = Main.rand.Next(EverquartzUtils.GetTextListFromKey(StarbornPrincess.HelpListKey).Count());
-            if (Main.netMode == NetmodeID.SinglePlayer)
+            if (Main.myPlayer == player.whoAmI)
             {
-                StarbornPrincess.ItemDeathEffectServer(player, helptext);
+                int helptext = Main.rand.Next(EverquartzUtils.GetTextListFromKey(StarbornPrincess.HelpListKey).Count());
+                if (Main.netMode == NetmodeID.SinglePlayer)
+                {
+                    StarbornPrincess.ItemDeathEffectServer(player, helptext);
+                }
+                else
+                {
+                    ModPacket packet = Mod.GetPacket();
+                    packet.Write((byte)EverquartzMessageType.DeimosItemKilled);
+                    packet.Write(player.whoAmI);
+                    packet.Write(helptext);
+                    packet.Send();
+                }
             }
-            else
-            {
-                ModPacket packet = Mod.GetPacket();
-                packet.Write((byte)EverquartzMessageType.DeimosItemKilled);
-                packet.Write(player.whoAmI);
-                packet.Write(helptext);
-                packet.Send();
-            }
+            
 
             
 
@@ -80,6 +84,10 @@ namespace EverquartzAdventure.Items.Critters
             StarbornPrincess.ModifyLoot(itemLoot);
         }
 
+        public override bool? CanBurnInLava()
+        {
+            return false;
+        }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             //tooltips.ForEach(line => line.Text += tooltips.IndexOf(line));

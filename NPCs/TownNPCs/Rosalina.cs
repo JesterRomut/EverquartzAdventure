@@ -29,6 +29,7 @@ using CalamityMod.Items.Placeables.Furniture.CraftingStations;
 using CalamityMod.Items.Accessories;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.Buffs.Potions;
 
 namespace EverquartzAdventure
 {
@@ -51,6 +52,8 @@ namespace EverquartzAdventure
 
         internal static int HolyFlamesBuff => ModContent.BuffType<HolyFlames>();
         internal static int GodSlayerInfernoBuff => ModContent.BuffType<GodSlayerInferno>();
+
+        
 
         internal static bool HasElysianAegisBuff(Player player)
         {
@@ -120,6 +123,11 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             NPCID.Sets.NPCBestiaryDrawOffset.Add(base.NPC.type, drawModifiers);
             NPCID.Sets.BossBestiaryPriority.Add(base.Type);
             Main.npcCatchable[base.NPC.type] = true;
+        }
+
+        public override bool CanGoToStatue(bool toKingStatue)
+        {
+            return !toKingStatue;
         }
 
         public override void SetDefaults()
