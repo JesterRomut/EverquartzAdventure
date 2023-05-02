@@ -19,13 +19,15 @@ namespace EverquartzAdventure.Items
 			Tooltip.AddTranslation(7, "相信我，它下的真正是雪...雪？\n雪（悲）");
 		}
 		public override void SetDefaults() {
-			Item.width = 20; 
+            Item.SetFoodDefault();
+            Item.width = 20; 
 			Item.height = 26; 
 			Item.maxStack = 9999; 
 			Item.value = Item.buyPrice(gold: 1); 
             Item.rare = ItemRarityID.Expert;
-		}
-		public override void AddRecipes()
+            
+        }
+        public override void AddRecipes()
         {
             Recipe recipe = Recipe.Create(Item.type);
             recipe.AddIngredient<DeimosFumo>(1);

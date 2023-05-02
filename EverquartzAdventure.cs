@@ -220,6 +220,22 @@ namespace EverquartzAdventure
         {
             return new Vector2((float)(here.X + radius * Math.Cos(angle)), (float)(here.Y + radius * Math.Sin(angle)));
         }
+
+        internal static bool IsAltFunctionUse(this Player player)
+        {
+            return player.altFunctionUse == 2;
+        }
+        public static void SetFoodDefault(this Item item, int buffType = BuffID.WellFed3, int buffTime = 72000, SoundStyle? useSound = null)
+        {
+            item.consumable = true;
+            item.useAnimation = 17;
+            item.useTime = 17;
+            item.useStyle = ItemUseStyleID.EatFood;
+            item.useTurn = true;
+            item.buffType = buffType;
+            item.buffTime = buffTime;
+            item.UseSound = useSound ?? SoundID.Item2;
+        }
     }
 
     internal static class EverquartzUtils

@@ -19,11 +19,13 @@ namespace EverquartzAdventure.Items
 			Tooltip.AddTranslation(7, "我希望你不要对它干奇怪的事情...");
 		}
 		public override void SetDefaults() {
-			Item.width = 40; 
+            Item.SetFoodDefault();
+            Item.width = 40; 
 			Item.height = 64; 
 			Item.maxStack = 24; 
 			Item.value = Item.buyPrice(gold: 1); 
             Item.rare = ItemRarityID.Cyan;
-		}
+            
+        }
     }
 }

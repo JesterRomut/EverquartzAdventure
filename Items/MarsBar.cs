@@ -21,11 +21,13 @@ namespace EverquartzAdventure.Items
         }
         public override void SetDefaults()
         {
+            Item.SetFoodDefault();
             Item.width = 360;
             Item.height = 280;
             Item.maxStack = 9999;
             Item.value = Item.buyPrice(gold: 1);
             Item.rare = ItemRarityID.Purple;
+            
         }
         public override void AddRecipes()
         {
