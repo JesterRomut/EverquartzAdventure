@@ -206,6 +206,7 @@ namespace EverquartzAdventure.NPCs.TownNPCs
         public static void ModifyLoot(ILoot loot)
         {
             loot.Add(ItemDropRule.Common(ModContent.ItemType<SundialNimbus>()));
+            loot.Add(ItemDropRule.Common(ModContent.ItemType<StarFlare>()));
         }
 
         public override List<string> SetNPCNameList()

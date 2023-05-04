@@ -7,15 +7,12 @@ using Microsoft.Xna.Framework;
 using Terraria.ID;
 using Terraria.DataStructures;
 using EverquartzAdventure.NPCs.TownNPCs;
-using static Terraria.ModLoader.PlayerDrawLayer;
 using System;
 using Terraria.Audio;
 using Terraria.Localization;
-using EverquartzAdventure.Items.Weapons;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.UI.Chat;
-using CalamityMod.Items.Potions.Alcohol;
-using CalamityMod.NPCs.TownNPCs;
+using Terraria.UI;
 using EverquartzAdventure.Items.Critters;
 
 namespace EverquartzAdventure
@@ -135,6 +132,10 @@ namespace EverquartzAdventure
             ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, line.Font, line.Text, basePosition + new Vector2(Main.rand.Next(-2, 2)), rarityColor, line.Rotation, line.Origin, line.BaseScale, line.MaxWidth, line.Spread);
 
         }
+    }
+
+    public class EverquartzSystem: ModSystem
+    {
     }
 
     public class EverquartzGlobalItem: GlobalItem

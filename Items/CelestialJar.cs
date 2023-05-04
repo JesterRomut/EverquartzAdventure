@@ -27,6 +27,8 @@ namespace EverquartzAdventure.Items
             Item.rare = ItemRarityID.Expert;
             
         }
+
+
         public override void AddRecipes()
         {
             Recipe recipe = Recipe.Create(Item.type);
