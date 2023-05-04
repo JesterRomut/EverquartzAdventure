@@ -1,39 +1,84 @@
+using System;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EverquartzAdventure.Items.Pets
 {
-	public class deimospetprojectile : ModProjectile
-	{
-		public override void SetStaticDefaults() {
-			Main.projFrames[Projectile.type] = 6;
-			Main.projPet[Projectile.type] = true;
-		}
+    public class DeimosPetProjectile : CalValEXWalkingPet
+    {
+        public override string Texture => "EverquartzAdventure/Items/Pets/DeimosPetProjectileFull";
+        public override float BackToFlyingThreshold => 600f;
+        public override int JumpOffset => 10;
+        public override void SetStaticDefaults()
+        {
+            Main.projFrames[Projectile.type] = 8;
+            Main.projPet[Projectile.type] = true;
+        }
 
-		public override void SetDefaults() {
-			Projectile.CloneDefaults(ProjectileID.ZephyrFish); // Copy the stats of the Zephyr Fish
+        public override void SetDefaults()
+        {
+            Projectile.CloneDefaults(ProjectileID.ZephyrFish); // Copy the stats of the Zephyr Fish
 
-			AIType = ProjectileID.ZephyrFish; // Mimic as the Zephyr Fish during AI.
-            Projectile.width = 50; 
-			Projectile.height = 62;
-		}
+            //AIType = ProjectileID.ZephyrFish; // Mimic as the Zephyr Fish during AI.
+            Projectile.tileCollide = true;
+            Projectile.width = 50;
+            Projectile.height = 62;
+            //Projectile.aiStyle = 26;
+        }
 
-		public override bool PreAI() {
-			Player player = Main.player[Projectile.owner];
+        //public override bool PreAI() {
+        //	Player player = Main.player[Projectile.owner];
 
-			player.zephyrfish = false; // Relic from AIType
+        //	player.zephyrfish = false; // Relic from AIType
 
-			return true;
-		}
+        //	return true;
+        //}
 
-		public override void AI() {
-			Player player = Main.player[Projectile.owner];
+        public int realFrame = 0;
 
-			// Keep the projectile from disappearing as long as the player isn't dead and has the pet buff.
-			if (!player.dead && player.HasBuff(ModContent.BuffType<DeimosPetBuff>())) {
-				Projectile.timeLeft = 2;
-			}
-		}
-	}
+        public override void Animation(int state)
+        {
+            switch (state)
+            {
+                case States.Walking:
+                    if (Projectile.velocity.X < 1)
+                    {
+                        Projectile.frame = 0;
+                        realFrame = 0;
+                    }
+                    else
+                    {
+                        if (++Projectile.frameCounter >= 5)
+                        {
+                            Projectile.frameCounter = 0;
+
+                            Projectile.frame = (++realFrame % 4) + 1;
+                        }
+                    }
+                    break;
+                //base.Projectile.velocity.Y += Gravity;
+                case States.Flying:
+                    if (++Projectile.frameCounter >= 5)
+                    {
+                        Projectile.frameCounter = 0;
+
+                        Projectile.frame = (++realFrame % 3) + 5;
+                    }
+                    break;
+            }
+
+        }
+
+        public override void PetFunctionality(Player player)
+        {
+            // Keep the projectile from disappearing as long as the player isn't dead and has the pet buff.
+            if (player.dead || !player.HasBuff(ModContent.BuffType<DeimosPetBuff>()))
+            {
+                Projectile.timeLeft = 0;
+            }
+            Projectile.timeLeft = 2;
+        }
+    }
 }

@@ -17,7 +17,7 @@ namespace EverquartzAdventure.Items.Pets
 		public override void SetDefaults() {
 			Item.CloneDefaults(ItemID.ZephyrFish); 
 
-			Item.shoot = ModContent.ProjectileType<deimospetprojectile>(); 
+			Item.shoot = ModContent.ProjectileType<DeimosPetProjectile>(); 
 			Item.buffType = ModContent.BuffType<DeimosPetBuff>(); 
 		}
 

@@ -5,8 +5,9 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using static Humanizer.In;
 using Microsoft.Xna.Framework.Graphics.PackedVector;
-using static IL.Terraria.WorldBuilding.Searches;
 using Steamworks;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 
 namespace EverquartzAdventure.Items.Weapons
 {
