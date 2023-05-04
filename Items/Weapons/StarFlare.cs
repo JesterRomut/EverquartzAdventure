@@ -18,6 +18,11 @@ namespace EverquartzAdventure.Items.Weapons
             ItemID.Sets.Yoyo[Item.type] = true;
             ItemID.Sets.GamepadExtraRange[Item.type] = 15;
             ItemID.Sets.GamepadSmartQuickReach[Item.type] = true;
+
+            DisplayName.SetDefault("Star Flare");
+            DisplayName.AddTranslation(7, "星耀");
+            Tooltip.SetDefault("'Dead Deimos attack me in the Hallow!'");
+            DisplayName.AddTranslation(7, "'死去的戴莫斯突然开始攻击我！'");
         }
 
         public override void SetDefaults()
