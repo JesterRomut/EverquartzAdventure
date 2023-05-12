@@ -14,7 +14,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria.UI.Chat;
 using Terraria.UI;
 using EverquartzAdventure.Items.Critters;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace EverquartzAdventure
 {
@@ -64,6 +63,7 @@ namespace EverquartzAdventure
             ModLoader.TryGetMod("Census", out ModCompatibility.censusMod);
 
             ModCompatibility.calamityEnabled = ModLoader.HasMod("CalamityMod");
+            ModCompatibility.hypnosEnabled = ModLoader.HasMod("Hypnos");
             base.Load();
         }
 
@@ -71,6 +71,7 @@ namespace EverquartzAdventure
         {
             ModCompatibility.censusMod = null;
             ModCompatibility.calamityEnabled = false;
+            ModCompatibility.hypnosEnabled = false;
             base.Unload();
         }
 
@@ -300,6 +301,7 @@ namespace EverquartzAdventure
 	public static class ModCompatibility
 	{
 		public static bool calamityEnabled = false;
+        public static bool hypnosEnabled = false;
         public static Mod censusMod;
 	}
 
@@ -308,6 +310,12 @@ namespace EverquartzAdventure
 	{
 
 	}
+
+    [JITWhenModsEnabled("Hypnos")]
+    internal static partial class HypnosWeakRef
+    {
+
+    }
 
     internal static class EverquartzExtensions
     {

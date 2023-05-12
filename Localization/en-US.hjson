@@ -62,6 +62,41 @@
                 Hypnos: {
                     BestiaryText: The master of illusion. The psychoelectric Soul of the Eternal Intellect of Infinite Verboten Knowledge demands your offering.
                     ButtonText: Pray
+                    Chat: {
+                        Common: {
+                            0: Zakō Mortals, possibly including you, see my internet surfing gear and then neuron activation.
+                            1: Zakō, Zakō- Zakō little Player!
+                            2: *flip a coin* Guess which side the coin landed on?
+                            3: I do not play the dice with the universe.
+                            4: It's the world of joke, and I am the big joker.
+                            5: Ahead loci gibbuses ordain wrong sect, fly ear. Remains knifing, All rishi led; yeast swan shot mate is dao.
+                            6: Now log off all your social media and we’ll go see the ocean together, LET’S ALL QUIT THE INTERNET!
+                            7: A brainstorm of Hypni are approaching from the East! Now pray to Hypnos!
+                            8: Be wary of myselves from parallel world! My leg was trapped while I was trying to steal brain matter from one of them.
+                        }
+                        Pray: {
+                            0: I accept your offering.
+                            1: Blessed are the dead who die in HypnOS from now on! They will rest from their skill issues, for their deeds follow them!
+                            2: *flip the coin* Only my railgun!
+                        }
+                        PrayWithoutMoney: {
+                            0: I warn you, as I did before, that those who are not worthy, will not inherit the kingdom of Hypnos!
+                            1: Honestly I just want to observe and record your town for Draedon. The pray, the bless, and the sin are never existed.
+                        }
+                        PreHypnos: {
+                            0: Try HypnOS v1.04!
+                        }
+                        PostHypnos: {
+                            0: Try HypnOS 2000!
+                            1: Y2000 Mindcrash is incoming! Now pray to Hypnos!
+                            2: Player, You should control the weird electromagnetic waves your send to me on that machine and that blood clot, next time. It's highly disturbing on my headphones.
+                            3: Draedon is a boring adult. He force me to compute for him from 9 am to 9 pm, six days a week, but I can always find a solution to get on the internet.
+                            4: The Bloody Vein...to hold me?
+                        }
+                        BloodMoon: {
+                            0: When side by side two rabbits go, who can tell the buck from the doe?
+                        }
+                    }
                 }
             }
         }
@@ -104,6 +139,10 @@
                 {NPCName}太喜欢恶作剧了，我不想和他当邻居。
                 '''
                 
+            }
+            Hypnos: {
+                NoHome: I would return to Draedon's laboratory later.
+                LoveSpace: Solitude is common, for me, as I don't want to be a soulless war machine.
             }
         }
     }

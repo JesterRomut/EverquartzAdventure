@@ -11,17 +11,37 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
+using Humanizer;
+using Terraria.Utilities;
+using Terraria.GameContent.Events;
+using Hypnos;
+
+namespace EverquartzAdventure
+{
+    internal static partial class HypnosWeakRef
+    {
+        internal static bool downedHypnos => HypnosWorld.downedHypnos;
+    }
+}
 
 namespace EverquartzAdventure.NPCs.TownNPCs.Mystery
 {
     [AutoloadHead]
-    public class Hypnos: ModNPC
+    public class Hypnos : ModNPC
     {
         public static readonly Asset<Texture2D> eyepatchTex = ModContent.Request<Texture2D>("EverquartzAdventure/NPCs/TownNPCs/Mystery/Eyepatch");
         public static readonly Asset<Texture2D> glowTex = ModContent.Request<Texture2D>("EverquartzAdventure/NPCs/TownNPCs/Mystery/Hypnos_Glow");
 
         public static readonly string ButtonTextKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.ButtonText";
         public static readonly string BestiaryTextKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.BestiaryText";
+
+        public static readonly string ChatCommonKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.Common";
+        public static readonly string ChatBloodMoonKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.BloodMoon";
+        public static readonly string ChatPartyKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.Party";
+        public static readonly string ChatPreHypnosKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.PreHypnos";
+        public static readonly string ChatPostHypnosKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.PostHypnos";
+        public static readonly string ChatPrayKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.Pray";
+        public static readonly string ChatPrayWithoutMoneyKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.PrayWithoutMoney";
 
         public override void SetStaticDefaults()
         {
@@ -63,9 +83,14 @@ namespace EverquartzAdventure.NPCs.TownNPCs.Mystery
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0.5f;
             TownNPCStayingHomeless = true;
+            NPC.trapImmune = true;
+            base.NPC.dontTakeDamageFromHostiles = true;
+            base.NPC.lavaImmune = true;
             //NPC.rarity = 2;//设置稀有度
             //AnimationType = npcID;
         }
+
+
 
         public override void FindFrame(int frameHeight)
         {
@@ -103,29 +128,38 @@ namespace EverquartzAdventure.NPCs.TownNPCs.Mystery
                 new Rectangle(0, 0, texture.Width, texture.Height),
                 drawColor ?? Color.White,
                 NPC.rotation,
-                texture.Size() * 0.5f,
+                NPC.frame.Size() / 2,
                 NPC.scale,
                 NPC.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                 0f
             );
         }
 
-        //public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
-        //{
-        //    if (NPC.direction == 1)
-        //    {
-        //        //Texture2D texture = TextureAssets.Npc[base.NPC.type].Value;
-        //        //Vector2 vector11 = new Vector2((float)(texture.Width / 2), (float)(texture.Height / 2));
-        //        //Vector2 vector12 = base.NPC.Center - screenPos;
-        //        //vector12 -= new Vector2((float)texture.Width, (float)texture.Height) * base.NPC.scale / 2f;
-        //        //vector12 += vector11 * base.NPC.scale + new Vector2(0f, base.NPC.gfxOffY);
-        //        //spriteBatch.Draw(texture, vector12, (Rectangle?)base.NPC.frame, Color.White, base.NPC.rotation, vector11, base.NPC.scale, SpriteEffects.FlipHorizontally, 0f);
-        //    }
-        //    Texture2D texture = TextureAssets.Npc[base.NPC.type].Value;
+        public override string GetChat()
+        {
+            WeightedRandom<string> textSelector = new WeightedRandom<string>(Main.rand);
+            EverquartzUtils.GetTextListFromKey(ChatCommonKey).ForEach(st => textSelector.Add(st));
+            if (!Main.dayTime && Main.bloodMoon)
+            {
+                EverquartzUtils.GetTextListFromKey(ChatBloodMoonKey).ForEach(st => textSelector.Add(st, 5.15));
+            }
+            if (BirthdayParty.PartyIsUp)
+            {
+                EverquartzUtils.GetTextListFromKey(ChatPartyKey).ForEach(st => textSelector.Add(st, 5.5));
+            }
+            if (ModCompatibility.hypnosEnabled && HypnosWeakRef.downedHypnos)
+            {
+                    EverquartzUtils.GetTextListFromKey(ChatPostHypnosKey).ForEach(st => textSelector.Add(st));
 
-        //    Draw(texture, spriteBatch, screenPos);
-        //    //return false;
-        //}
+            }
+            else
+            {
+                EverquartzUtils.GetTextListFromKey(ChatPreHypnosKey).ForEach(st => textSelector.Add(st));
+            }
+
+            string thingToSay = textSelector.Get();
+            return thingToSay;
+        }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
@@ -137,7 +171,7 @@ namespace EverquartzAdventure.NPCs.TownNPCs.Mystery
                 NPC.frame,
                 drawColor,
                 NPC.rotation,
-                NPC.frame.Size() * 0.5f,
+                NPC.frame.Size() / 2,
                 NPC.scale,
                 NPC.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                 0f
@@ -148,7 +182,7 @@ namespace EverquartzAdventure.NPCs.TownNPCs.Mystery
             {
                 Draw(eyepatchTex.Value, spriteBatch, screenPos, position, drawColor);
             }
-            
+
             return false;
         }
 
