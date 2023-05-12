@@ -59,6 +59,10 @@
                         }
                     }
                 }
+                Hypnos: {
+                    BestiaryText: The master of illusion. The psychoelectric Soul of the Eternal Intellect of Infinite Verboten Knowledge demands your offering.
+                    ButtonText: Pray
+                }
             }
         }
         TownNPCMood: 

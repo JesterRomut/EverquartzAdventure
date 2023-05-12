@@ -76,7 +76,7 @@ namespace EverquartzAdventure.Items.Pets
             // Keep the projectile from disappearing as long as the player isn't dead and has the pet buff.
             if (player.dead || !player.HasBuff(ModContent.BuffType<DeimosPetBuff>()))
             {
-                Projectile.timeLeft = 0;
+                Projectile.Kill();
             }
             Projectile.timeLeft = 2;
         }

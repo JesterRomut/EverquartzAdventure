@@ -19,6 +19,7 @@ namespace EverquartzAdventure.Items.Pets
     /// </summary>
     public abstract class CalValEXPet : ModProjectile
     {
+        public static readonly string readThisIfYouAreUsingADecompiler = "this is calvalex's code and can be deleted by calvalex's request, follow calvalex on https://github.com/PotatoPersonThing/CalValEX!";
         /// <summary>
         /// Implement most, if not all, methods in here
         /// </summary>

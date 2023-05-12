@@ -59,6 +59,10 @@ Mods: {
                         }
                     }
                 }
+                Hypnos: {
+                    BestiaryText: 幻觉干扰大师，高精电波无限禁忌知识的永恒智慧之魂正等待你的供奉。
+                    ButtonText: 祈祷
+                }
             }
         }
         TownNPCMood: 

@@ -121,7 +121,6 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             nPCBestiaryDrawModifiers.Velocity = 1f;
             NPCID.Sets.NPCBestiaryDrawModifiers drawModifiers = nPCBestiaryDrawModifiers;
             NPCID.Sets.NPCBestiaryDrawOffset.Add(base.NPC.type, drawModifiers);
-            NPCID.Sets.BossBestiaryPriority.Add(base.Type);
             Main.npcCatchable[base.NPC.type] = true;
         }
 
@@ -207,6 +206,12 @@ namespace EverquartzAdventure.NPCs.TownNPCs
         {
             loot.Add(ItemDropRule.Common(ModContent.ItemType<SundialNimbus>()));
             loot.Add(ItemDropRule.Common(ModContent.ItemType<StarFlare>()));
+            if (ModCompatibility.calamityEnabled)
+            {
+                loot.Add(ItemDropRule.Common(ModContent.ItemType<DeimosBow>()));
+                loot.Add(ItemDropRule.Common(ModContent.ItemType<DeimosStaff>()));
+            }
+            
         }
 
         public override List<string> SetNPCNameList()
