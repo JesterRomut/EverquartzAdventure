@@ -17,6 +17,9 @@ using Terraria.UI;
 using EverquartzAdventure.Items.Critters;
 using static Terraria.Player;
 using Terraria.ModLoader.IO;
+using EverquartzAdventure.NPCs.Hypnos;
+using Terraria.Utilities;
+using System.Collections;
 
 namespace EverquartzAdventure
 {
@@ -56,6 +59,20 @@ namespace EverquartzAdventure
                 case EverquartzMessageType.ReleaseProvCore:
                     Player player = Main.player[reader.ReadInt32()];
                     DivineCore.ReleaseProvCoreServer(player);
+                    break;
+                case EverquartzMessageType.HypnosReward:
+                    Player priest = Main.player[reader.ReadInt32()];
+                    byte[] byteArray = reader.ReadBytes((EverquartzUtils.EnumCount<HypnosReward>() - 1) / 8 + 1);
+                    BitArray bitArray = new BitArray(byteArray);
+                    List<HypnosReward> rewards = new List<HypnosReward>();
+                    for(int i = 0; i < bitArray.Length; i++)
+                    {
+                        if (bitArray.Get(i))
+                        {
+                            rewards.Add((HypnosReward)i);
+                        }
+                    }
+                    NPCs.Hypnos.Hypnos.HandleRewardsServer(priest, rewards);
                     break;
             }
         }
@@ -328,21 +345,57 @@ namespace EverquartzAdventure
             {
                 int num9 = Player.miscCounter % 14 / 7;
                 CompositeArmStretchAmount stretch = CompositeArmStretchAmount.ThreeQuarters;
+                float num2 = 0.3f;
                 if (num9 == 1)
                 {
-                    stretch = CompositeArmStretchAmount.Full;
+                    //stretch = CompositeArmStretchAmount.Full;
+                    num2 = 0.35f;
                 }
-                float num2 = 0.3f;
+                
                 Player.SetCompositeArmBack(enabled: true, stretch, (float)Math.PI * -2f * num2 * (float)Player.direction);
+                Player.SetCompositeArmFront(enabled: true, stretch, (float)Math.PI * -2f * num2 * (float)Player.direction);
+
                 return false;
             }
             return true;
         }
 
-        public void StopPraisingHypnos()
+        public void InterruptPraisingHypnos()
         {
             praisingTimer = 0;
         }
+
+        public void DonePraisingHypnos()
+        {
+            //client side
+            AergiaNeuron.AddElectricDusts(Main.npc[Player.talkNPC]);
+
+            List<HypnosReward> rewards = NPCs.Hypnos.Hypnos.GenerateRewards();
+            
+
+            if (Main.netMode == NetmodeID.SinglePlayer)
+            {
+                NPCs.Hypnos.Hypnos.HandleRewardsServer(Player, rewards);
+            }
+            else
+            {
+                int rewardCount = EverquartzUtils.EnumCount<HypnosReward>();
+                //this.Mod.Logger.Info(rewards);
+                ModPacket packet = base.Mod.GetPacket();
+                packet.Write((byte)EverquartzMessageType.HypnosReward);
+                packet.Write(Player.whoAmI);
+                bool[] rewardBools = new bool[rewardCount] ;
+                rewards.ForEach(reward => rewardBools[(int)reward] = true);
+                BitArray bitArray = new BitArray(rewardBools);
+                packet.Write(bitArray.ToByteArray());
+                
+                packet.Send();
+            }
+
+            InterruptPraisingHypnos();
+        }
+
+        
 
         public void UpdatePraise()
         {
@@ -352,16 +405,20 @@ namespace EverquartzAdventure
             }
             if (Player.talkNPC == -1)
             {
-                StopPraisingHypnos();
+                InterruptPraisingHypnos();
                 return;
             }
             int num = Math.Sign(Main.npc[Player.talkNPC].Center.X - Player.Center.X);
             if (Player.controlLeft || Player.controlRight || Player.controlUp || Player.controlDown || Player.controlJump || Player.pulley || Player.mount.Active || num != Player.direction)
             {
-                StopPraisingHypnos();
+                InterruptPraisingHypnos();
                 return;
             }
             praisingTimer--;
+            if (praisingTimer <= 0)
+            {
+                DonePraisingHypnos();
+            }
         }
 
         public override void PostUpdate()
@@ -386,7 +443,8 @@ namespace EverquartzAdventure
     public enum EverquartzMessageType
     {
         DeimosItemKilled, // id, player, helptext
-        ReleaseProvCore // id, player
+        ReleaseProvCore, // id, player
+        HypnosReward, //id, player, rewards(bytes)
     }
 
     public static class ModCompatibility
@@ -516,7 +574,7 @@ namespace EverquartzAdventure
             NPC target = null;
             float distance = maxDistance;
             
-            bool checkNPCInSight(NPC npc) => npc.CanBeChasedBy() && Vector2.Distance(position, npc.Center) < distance;
+            bool checkNPCInSight(NPC npc) => npc != null && npc.active && npc.CanBeChasedBy() && Vector2.Distance(position, npc.Center) < distance;
 
             bool shouldAttackAllDebuffed = !Main.npc.Where(npc => checkNPCInSight(npc) && !npc.HasAllBuffs(debuffs)).Any();
             bool shouldAttackAnyDebuffed = !Main.npc.Where(npc => checkNPCInSight(npc) && !npc.HasAnyBuff(debuffs)).Any();
@@ -537,6 +595,15 @@ namespace EverquartzAdventure
             }
             return target;
         }
+
+
+        public static byte[] ToByteArray(this BitArray bits)
+        {
+            byte[] ret = new byte[(bits.Length - 1) / 8 + 1];
+            bits.CopyTo(ret, 0);
+            return ret;
+        }
+
 
         internal static EverquartzPlayer Everquartz(this Player player) => player.GetModPlayer<EverquartzPlayer>();
     }
@@ -567,6 +634,11 @@ namespace EverquartzAdventure
                 index++;
             }
             return li;
+        }
+
+        internal static int EnumCount<T> () where T: Enum
+        {
+            return Enum.GetNames(typeof(T)).Length;
         }
 
         public static Color ColorSwap(Color firstColor, Color secondColor, float seconds)

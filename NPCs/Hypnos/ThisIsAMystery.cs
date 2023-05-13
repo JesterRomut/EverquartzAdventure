@@ -19,17 +19,38 @@ using Terraria.Chat;
 using Terraria.Localization;
 using Terraria.Audio;
 using Terraria.GameContent.Personalities;
+using CalamityMod;
+using Terraria.DataStructures;
+using CalamityMod.Items.Materials;
+using static Terraria.ModLoader.PlayerDrawLayer;
+using System.Collections;
 
 namespace EverquartzAdventure
 {
     internal static partial class HypnosWeakRef
     {
         internal static bool downedHypnos => HypnosWorld.downedHypnos;
+
+    }
+
+    internal static partial class CalamityWeakRef
+    {
+        internal static bool downedExoMechs => DownedBossSystem.downedExoMechs;
+        internal static int ExoPrism => ModContent.ItemType<ExoPrism>();
     }
 }
 
 namespace EverquartzAdventure.NPCs.Hypnos
 {
+    public enum HypnosReward
+    {
+        Coins,
+        ExoPrisms,
+        Eucharist,
+        Hypnotize,
+        Euthanasia
+    }
+
     [AutoloadHead]
     public class Hypnos : ModNPC
     {
@@ -62,6 +83,44 @@ namespace EverquartzAdventure.NPCs.Hypnos
             EverquartzGlobalNPC.hypnos = NPC.whoAmI;
             damage = 200;
             knockback = 0;
+        }
+
+        public static void HandleRewardsServer(Player player, List<HypnosReward> rewards)
+        {
+
+            player.PutItemInInventoryFromItemUsage(ModContent.ItemType<Indulgence>(), player.selectedItem);
+            //Item.NewItem(player.GetSource_GiftOrReward(), player.Center, ModContent.ItemType<Indulgence>(), noGrabDelay: true);
+            rewards.ForEach(reward => HandleRewardServer(player, reward));
+        }
+
+        public static void HandleRewardServer(Player player, HypnosReward reward)
+        {
+
+            Vector2 position = Main.npc.ElementAtOrDefault(player.talkNPC)?.Center ?? player.Center;
+            //ModContent.GetInstance<EverquartzAdventureMod>().Logger.Info(reward);
+
+            void SpawnItem(int type, int stack = 1) { Item.NewItem(player.GetSource_GiftOrReward(), position, type, stack); }
+            switch (reward)
+            {
+                case HypnosReward.Coins:
+                    SpawnItem(ItemID.GoldCoin, Main.rand.Next(1, 3));
+                    break;
+                case HypnosReward.ExoPrisms:
+                    if (ModCompatibility.calamityEnabled)
+                    {
+                        SpawnItem(CalamityWeakRef.ExoPrism, Main.rand.Next(3, 7));
+                    }
+                    break;
+                case HypnosReward.Eucharist:
+                    SpawnItem(ItemID.GoldenDelight);
+                    break;
+                case HypnosReward.Hypnotize:
+                    player.AddBuff(BuffID.Webbed, 240);
+                    break;
+                case HypnosReward.Euthanasia:
+                    player.Hurt(PlayerDeathReason.ByOther(10), 200, 0);
+                    break;
+            }
         }
 
         public override void SetStaticDefaults()
@@ -102,8 +161,8 @@ namespace EverquartzAdventure.NPCs.Hypnos
             NPC.aiStyle = NPCAIStyleID.Passive;
             NPC.damage = 200;
             NPC.defense = 90;
-            
-            
+
+
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0.5f;
@@ -179,6 +238,32 @@ namespace EverquartzAdventure.NPCs.Hypnos
         //        ChatHelper.BroadcastChatMessage(networkText, new Color(50, 125, 255));
         //    }
         //}
+
+        public static List<HypnosReward> GenerateRewards()
+        {
+            List<HypnosReward> rewards = new List<HypnosReward>();
+            if (Main.rand.NextBool(3))
+            {
+                rewards.Add(HypnosReward.Coins);
+            }
+            if (Main.rand.NextBool(10) && ((ModCompatibility.calamityEnabled && CalamityWeakRef.downedExoMechs) || (ModCompatibility.hypnosEnabled && HypnosWeakRef.downedHypnos)))
+            {
+                rewards.Add(HypnosReward.ExoPrisms);
+            }
+            if (Main.rand.NextBool(50))
+            {
+                rewards.Add(HypnosReward.Eucharist);
+            }
+            if (Main.rand.NextBool(666))
+            {
+                rewards.Add(HypnosReward.Hypnotize);
+            }
+            if (Main.rand.NextBool(6666))
+            {
+                rewards.Add(HypnosReward.Euthanasia);
+            }
+            return rewards;
+        }
 
         public void Kill()
         {
@@ -261,8 +346,8 @@ namespace EverquartzAdventure.NPCs.Hypnos
                 player.velocity = Vector2.Zero;
                 player.gravDir = 1f;
             }
-            
-            
+
+
 
             Main.npcChatText = GetPrayChat(buyResult);
         }
@@ -304,7 +389,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
             }
             if (ModCompatibility.hypnosEnabled && HypnosWeakRef.downedHypnos)
             {
-                    EverquartzUtils.GetTextListFromKey(ChatPostHypnosKey).ForEach(st => textSelector.Add(st));
+                EverquartzUtils.GetTextListFromKey(ChatPostHypnosKey).ForEach(st => textSelector.Add(st));
 
             }
             else
@@ -346,6 +431,27 @@ namespace EverquartzAdventure.NPCs.Hypnos
         public override List<string> SetNPCNameList()
         {
             return new List<string> { "Hypnos" };
+        }
+    }
+
+    public class Indulgence: ModItem
+    {
+
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Indulgence");
+            DisplayName.AddTranslation(7, "赎罪券");
+
+            Tooltip.SetDefault("You are atoned from your sins");
+            Tooltip.AddTranslation(7, "你已经免除了你的罪");
+        }
+        public override void SetDefaults()
+        {
+            Item.width = 518;
+            Item.height = 324;
+            Item.value = 0;
+            Item.rare = ItemRarityID.Gray;
+            Item.maxStack = 9999;
         }
     }
 }

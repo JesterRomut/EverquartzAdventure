@@ -224,7 +224,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
         }
 
-        public static void AddElectricDusts(Projectile proj, int count = 3)
+        public static void AddElectricDusts(Entity proj, int count = 3)
         {
             for (int i = 0; i < count; i++)
             {
