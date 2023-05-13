@@ -61,14 +61,14 @@
                 }
                 Hypnos: {
                     BestiaryText: The master of illusion. The psychoelectric Soul of the Eternal Intellect of Infinite Verboten Knowledge demands your offering.
-                    ButtonText: Pray
+                    ButtonText: Pray (1 {0})
                     Chat: {
                         Common: {
                             0: Zakō Mortals, possibly including you, see my internet surfing gear and then neuron activation.
                             1: Zakō, Zakō- Zakō little Player!
                             2: *flip a coin* Guess which side the coin landed on?
                             3: I do not play the dice with the universe.
-                            4: It's the world of joke, and I am the big joker.
+                            4: It's the world of joke, and I am the big joker!
                             5: Ahead loci gibbuses ordain wrong sect, fly ear. Remains knifing, All rishi led; yeast swan shot mate is dao.
                             6: Now log off all your social media and we’ll go see the ocean together, LET’S ALL QUIT THE INTERNET!
                             7: A brainstorm of Hypni are approaching from the East! Now pray to Hypnos!
@@ -141,8 +141,10 @@
                 
             }
             Hypnos: {
+                Content: I would return to Draedon's laboratory later.
                 NoHome: I would return to Draedon's laboratory later.
                 LoveSpace: Solitude is common, for me, as I don't want to be a soulless war machine.
+                HateBiome: Such a corrupted place... It reminds me of my ancestors.
             }
         }
     }

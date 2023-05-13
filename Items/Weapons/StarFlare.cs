@@ -23,7 +23,7 @@ namespace EverquartzAdventure.Items.Weapons
             DisplayName.SetDefault("Star Flare");
             DisplayName.AddTranslation(7, "星耀");
             Tooltip.SetDefault("'Dead Deimos attack me in the Hallow!'");
-            DisplayName.AddTranslation(7, "'死去的戴莫斯突然开始攻击我！'");
+            Tooltip.AddTranslation(7, "'死去的戴莫斯突然开始攻击我！'");
         }
 
         public override void SetDefaults()
@@ -177,7 +177,7 @@ namespace EverquartzAdventure.Items.Weapons
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            damage *= 5;
+            damage *= 5000;
             crit = true;
             if (ModCompatibility.calamityEnabled)
             {

@@ -7,6 +7,7 @@ using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent;
+using EverquartzAdventure.NPCs.Hypnos;
 
 namespace EverquartzAdventure.Items
 {
@@ -25,7 +26,6 @@ namespace EverquartzAdventure.Items
 			Item.maxStack = 24; 
 			Item.value = Item.buyPrice(gold: 1); 
             Item.rare = ItemRarityID.Cyan;
-            
         }
     }
 }

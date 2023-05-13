@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Terraria.ID;
 using Terraria.DataStructures;
 using EverquartzAdventure.NPCs.TownNPCs;
+using EverquartzAdventure.NPCs;
 using System;
 using Terraria.Audio;
 using Terraria.Localization;
@@ -14,11 +15,13 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria.UI.Chat;
 using Terraria.UI;
 using EverquartzAdventure.Items.Critters;
+using static Terraria.Player;
+using Terraria.ModLoader.IO;
 
 namespace EverquartzAdventure
 {
-	public class EverquartzAdventureMod : Mod
-	{
+    public class EverquartzAdventureMod : Mod
+    {
         public override void PostSetupContent()
         {
             //ModCompatibility.calamityEnabled = ModLoader.HasMod("CalamityMod");
@@ -45,10 +48,10 @@ namespace EverquartzAdventure
                     }
                     else
                     {
-                        
+
                         StarbornPrincess.ItemDeathEffectClient(murderer.position, murderer.width, murderer.height, helptext);
                     }
-                        
+
                     break;
                 case EverquartzMessageType.ReleaseProvCore:
                     Player player = Main.player[reader.ReadInt32()];
@@ -61,6 +64,8 @@ namespace EverquartzAdventure
         {
             ModCompatibility.censusMod = null;
             ModLoader.TryGetMod("Census", out ModCompatibility.censusMod);
+            ModCompatibility.hypnosMod = null;
+            ModLoader.TryGetMod("Hypnos", out ModCompatibility.hypnosMod);
 
             ModCompatibility.calamityEnabled = ModLoader.HasMod("CalamityMod");
             ModCompatibility.hypnosEnabled = ModLoader.HasMod("Hypnos");
@@ -70,6 +75,8 @@ namespace EverquartzAdventure
         public override void Unload()
         {
             ModCompatibility.censusMod = null;
+            ModCompatibility.hypnosMod = null;
+
             ModCompatibility.calamityEnabled = false;
             ModCompatibility.hypnosEnabled = false;
             base.Unload();
@@ -120,7 +127,7 @@ namespace EverquartzAdventure
     public class CelestialRarity : ModRarity
     {
         // FFD79F F6809F A063B9
-        public class CelestialRarityAdditiveText: RarityAdditiveText
+        public class CelestialRarityAdditiveText : RarityAdditiveText
         {
             public override int Belong => ModContent.RarityType<CelestialRarity>();
 
@@ -141,11 +148,11 @@ namespace EverquartzAdventure
                     if ((int)Math.Floor(changingTime) != lastChangingTime)
                     {
                         lastChangingTime = (int)Math.Floor(changingTime);
-                        
+
                     }
                     rotation += 0.01f;
                 }
-                    
+
                 AdditiveTextUniversalUpdate(this);
             }
         }
@@ -192,7 +199,7 @@ namespace EverquartzAdventure
             float changingTime = Main.GlobalTimeWrappedHourly * 1.5f;
             if (Math.Floor(changingTime) % 2 == 0)
             {
-                EverquartzGlobalItem.rarityAdditiveTexts.Add(new CelestialRarityAdditiveText(basePosition, line.Rotation, EverquartzUtils.ColorSwap(new Color(246, 128, 159), Color.Orange, 1)* (Main.rand.Next(3, 7) / 10f)));
+                EverquartzGlobalItem.rarityAdditiveTexts.Add(new CelestialRarityAdditiveText(basePosition, line.Rotation, EverquartzUtils.ColorSwap(new Color(246, 128, 159), Color.Orange, 1) * (Main.rand.Next(3, 7) / 10f)));
                 EverquartzGlobalItem.rarityAdditiveTexts.Add(new CelestialRarityAdditiveText2(basePosition, line.Rotation, EverquartzUtils.ColorSwap(new Color(246, 128, 159), Color.Orange, 1) * (Main.rand.Next(2, 4) / 10f)));
             }
 
@@ -228,11 +235,32 @@ namespace EverquartzAdventure
         }
     }
 
-    public class EverquartzSystem: ModSystem
+    public class EverquartzSystem : ModSystem
     {
+        public static int hypnoCoins;
+        public override void OnWorldLoad()
+        {
+            hypnoCoins = 0;
+        }
+        public override void LoadWorldData(TagCompound tag)
+        {
+            hypnoCoins = tag.GetInt("hypnoCoins");
+        }
+        public override void SaveWorldData(TagCompound tag)
+        {
+            tag["hypnoCoins"] = hypnoCoins;
+        }
+        public override void NetSend(BinaryWriter writer)
+        {
+            writer.Write(hypnoCoins);
+        }
+        public override void NetReceive(BinaryReader reader)
+        {
+            hypnoCoins = reader.ReadInt32();
+        }
     }
 
-    public class EverquartzGlobalItem: GlobalItem
+    public class EverquartzGlobalItem : GlobalItem
     {
         public static List<RarityAdditiveText> rarityAdditiveTexts = new List<RarityAdditiveText>();
 
@@ -252,7 +280,7 @@ namespace EverquartzAdventure
 
         public void ApplyRarityColor(Item item, TooltipLine nameLine)
         {
-            if(item.rare == ModContent.RarityType<CelestialRarity>())
+            if (item.rare == ModContent.RarityType<CelestialRarity>())
             {
                 nameLine.OverrideColor = CelestialRarity.ColorSwap();
             }
@@ -260,7 +288,7 @@ namespace EverquartzAdventure
 
         public override bool PreDrawTooltipLine(Item item, DrawableTooltipLine line, ref int yOffset)
         {
-            
+
             if (line.Name == "ItemName" && line.Mod == "Terraria")
             {
                 PruneTexts(item);
@@ -278,17 +306,80 @@ namespace EverquartzAdventure
                     CelestialRarity.PreDraw(item, line, ref yOffset);
                     return false;
                 }
-                
+
             }
             return true;
         }
     }
 
-    public class EverquartzPlayer: ModPlayer
+    public class EverquartzPlayer : ModPlayer
     {
+        public int praisingTimer = 0;
+        public bool IsPraisingHypnos => praisingTimer > 0;
+            
         public void HandleDeadDeimos(Player murderer)
         {
             StarbornPrincess.DeathEffectClient(murderer.position, murderer.width, murderer.height);
+        }
+
+        public override bool PreItemCheck()
+        {
+            if (IsPraisingHypnos)
+            {
+                int num9 = Player.miscCounter % 14 / 7;
+                CompositeArmStretchAmount stretch = CompositeArmStretchAmount.ThreeQuarters;
+                if (num9 == 1)
+                {
+                    stretch = CompositeArmStretchAmount.Full;
+                }
+                float num2 = 0.3f;
+                Player.SetCompositeArmBack(enabled: true, stretch, (float)Math.PI * -2f * num2 * (float)Player.direction);
+                return false;
+            }
+            return true;
+        }
+
+        public void StopPraisingHypnos()
+        {
+            praisingTimer = 0;
+        }
+
+        public void UpdatePraise()
+        {
+            if (!IsPraisingHypnos)
+            {
+                return;
+            }
+            if (Player.talkNPC == -1)
+            {
+                StopPraisingHypnos();
+                return;
+            }
+            int num = Math.Sign(Main.npc[Player.talkNPC].Center.X - Player.Center.X);
+            if (Player.controlLeft || Player.controlRight || Player.controlUp || Player.controlDown || Player.controlJump || Player.pulley || Player.mount.Active || num != Player.direction)
+            {
+                StopPraisingHypnos();
+                return;
+            }
+            praisingTimer--;
+        }
+
+        public override void PostUpdate()
+        {
+            UpdatePraise();
+        }
+    }
+
+    public class EverquartzGlobalNPC : GlobalNPC
+    {
+        public static int hypnos = -1;
+        public override void OnKill(NPC npc)
+        {
+            if (npc.boss && ModCompatibility.hypnosEnabled && npc.type == ModCompatibility.HypnosBossType)
+            {
+                int hypNpcType = ModContent.NPCType<NPCs.Hypnos.Hypnos>();
+                Main.npc.Where(npc2 => npc2.active && npc2.type == hypNpcType).ToList().ForEach(hypno => ((NPCs.Hypnos.Hypnos)hypno.ModNPC).KillWithCoins());
+            }
         }
     }
 
@@ -298,18 +389,38 @@ namespace EverquartzAdventure
         ReleaseProvCore // id, player
     }
 
-	public static class ModCompatibility
-	{
-		public static bool calamityEnabled = false;
+    public static class ModCompatibility
+    {
+        public static bool calamityEnabled = false;
         public static bool hypnosEnabled = false;
         public static Mod censusMod;
-	}
+        public static Mod hypnosMod;
+        private static int? hypnosBossType = null;
+        public static int? HypnosBossType
+        {
+            get
+            {
+                if (!hypnosBossType.HasValue)
+                {
+                    ModNPC hyNPC = null;
+                    hypnosMod?.TryFind<ModNPC>("HypnosBoss", out hyNPC);
+                    hypnosBossType = hyNPC?.Type;
 
-	[JITWhenModsEnabled("CalamityMod")]
-	internal static partial class CalamityWeakRef
-	{
+                }
+                return hypnosBossType;
+            }
+            set
+            {
+                hypnosBossType = value;
+            }
+        }
+    }
 
-	}
+    [JITWhenModsEnabled("CalamityMod")]
+    internal static partial class CalamityWeakRef
+    {
+
+    }
 
     [JITWhenModsEnabled("Hypnos")]
     internal static partial class HypnosWeakRef
@@ -360,11 +471,79 @@ namespace EverquartzAdventure
             item.buffTime = buffTime;
             item.UseSound = useSound ?? SoundID.Item2;
         }
+
+        public static Vector2 SafeDirectionTo(this Entity entity, Vector2 destination, Vector2? fallback = null)
+        {
+            return entity.Center.SafeDirectionTo(destination, fallback);
+        }
+
+        public static Vector2 SafeDirectionTo(this Vector2 entityCenter, Vector2 destination, Vector2? fallback = null)
+        {
+            if (!fallback.HasValue)
+            {
+                fallback = Vector2.Zero;
+            }
+            return (destination - entityCenter).SafeNormalize(fallback.Value);
+        }
+
+        public static NPC NearestEnemy(this Vector2 position, float maxDistance, Func<NPC, bool> predicate = null)
+        {
+            NPC target = null;
+            float distance = maxDistance;
+            foreach(NPC npc in Main.npc)
+            {
+                if (npc.CanBeChasedBy() && Vector2.Distance(position, npc.Center) < distance && (predicate == null ? predicate(npc) : true))
+                {
+                    distance = Vector2.Distance(position, npc.Center);
+                    target = npc;
+                }
+            }
+            return target;
+        }
+
+        internal static bool HasAnyBuff(this NPC npc, List<int> debuffs) {
+            return debuffs.Where(npc.HasBuff).Any();
+        }
+
+        internal static bool HasAllBuffs(this NPC npc, List<int> debuffs)
+        {
+            return debuffs.Where(npc.HasBuff).Count() == debuffs.Count();
+        }
+
+        public static NPC NearestEnemyPreferNoDebuff(this Vector2 position, float maxDistance, List<int> debuffs)
+        {
+            
+            NPC target = null;
+            float distance = maxDistance;
+            
+            bool checkNPCInSight(NPC npc) => npc.CanBeChasedBy() && Vector2.Distance(position, npc.Center) < distance;
+
+            bool shouldAttackAllDebuffed = !Main.npc.Where(npc => checkNPCInSight(npc) && !npc.HasAllBuffs(debuffs)).Any();
+            bool shouldAttackAnyDebuffed = !Main.npc.Where(npc => checkNPCInSight(npc) && !npc.HasAnyBuff(debuffs)).Any();
+            foreach (NPC npc in Main.npc)
+            {
+                
+                if (checkNPCInSight(npc))
+                {
+                    bool allDebuffed = npc.HasAllBuffs(debuffs);
+                    bool anyDebuffed = npc.HasAnyBuff(debuffs);
+                    if (anyDebuffed == shouldAttackAnyDebuffed && allDebuffed == shouldAttackAllDebuffed)
+                    {
+                        distance = Vector2.Distance(position, npc.Center);
+                        target = npc;
+                    }
+                    
+                }
+            }
+            return target;
+        }
+
+        internal static EverquartzPlayer Everquartz(this Player player) => player.GetModPlayer<EverquartzPlayer>();
     }
 
     internal static class EverquartzUtils
     {
-        
+
         internal static List<string> GetTextListFromKey(string key)
         {
             int index = 0;
@@ -415,4 +594,4 @@ namespace EverquartzAdventure
 
         }
     }
-    }
+}
