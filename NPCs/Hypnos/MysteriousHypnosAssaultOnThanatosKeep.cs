@@ -60,18 +60,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
         public static readonly int buffDuration = 3000;
 
-        public NPC Hypnos
-        {
-            get
-            {
-                if (EverquartzGlobalNPC.hypnos == -1)
-                {
-                    return null;
-                }
-                NPC hypnos = Main.npc.ElementAtOrDefault(EverquartzGlobalNPC.hypnos);
-                return (hypnos.active && hypnos != null) ? hypnos : null;
-            }
-        }
+        
 
         public static List<Projectile> AllNeurons => Main.projectile.Where(proj => proj != null && proj.active && proj.owner == 0 && proj.type == ModContent.ProjectileType<AergiaNeuron>()).ToList();
 
@@ -106,7 +95,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
             }
         }
 
-        public static int CalcDamage(NPC target) => target.lifeMax / (target.boss ? 20000 : 3);
+        public static int CalcDamage(NPC target) => target.lifeMax / (target.boss ? 40000 : 3);
 
         public int AergiaIndex
         {
@@ -120,6 +109,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
         {
             base.DisplayName.SetDefault("Aergia Neuron");
             DisplayName.AddTranslation(7, "埃吉亚神经元");
+            DisplayName.AddTranslation(7, "Нейрон Агерии");
             Main.projFrames[Projectile.type] = 1;
         }
 
@@ -140,15 +130,17 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
         public override void AI()
         {
-            NPC hypnos = Hypnos;
-            int aergiaIndex = AergiaIndex;
-            int neuronCount = AllNeurons.Count;
-            float offset = Main.GlobalTimeWrappedHourly * 80;
+            NPC hypnos = Hypnos.Instance;
+            
             if (hypnos == null)
             {
                 Projectile.Kill();
                 return;
             }
+
+            int aergiaIndex = AergiaIndex;
+            int neuronCount = AllNeurons.Count;
+            float offset = Main.GlobalTimeWrappedHourly * 80;
 
             double rad6 = (double)((360f / neuronCount) * aergiaIndex + offset) * (Math.PI / 180.0);
             double dist4 = 200.0;
@@ -277,6 +269,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
         {
             base.DisplayName.SetDefault("Blue Exo Pulse Laser");
             DisplayName.AddTranslation(7, "蓝色星流脉冲激光");
+            DisplayName.AddTranslation(6, "Синий Экзо-Пульсовой Лазер");
             Main.projFrames[base.Projectile.type] = 4;
             ProjectileID.Sets.TrailCacheLength[base.Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[base.Projectile.type] = 0;
@@ -349,7 +342,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
         public override void Kill(int timeLeft)
         {
-            AergiaNeuron.AddElectricDusts(Projectile, 6);
+            AergiaNeuron.AddElectricDusts(Projectile, 1);
         }
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)

@@ -24,6 +24,9 @@ using Terraria.DataStructures;
 using CalamityMod.Items.Materials;
 using static Terraria.ModLoader.PlayerDrawLayer;
 using System.Collections;
+using System.IO;
+using Terraria.ModLoader.IO;
+using EverquartzAdventure.NPCs.TownNPCs;
 
 namespace EverquartzAdventure
 {
@@ -68,6 +71,142 @@ namespace EverquartzAdventure.NPCs.Hypnos
         public static readonly string ChatPrayKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.Pray";
         public static readonly string ChatPrayWithoutMoneyKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.PrayWithoutMoney";
 
+        public static readonly double despawnTime = 80400;
+        public static double timePassed = 0;
+        public static double spawnTime = double.MaxValue;
+
+        public static int hypnoCoins = 0;
+
+
+        public static int instance = -1;
+        public static NPC Instance
+        {
+            get
+            {
+                if (instance == -1)
+                {
+                    return null;
+                }
+                NPC hypnos = Main.npc.ElementAtOrDefault(instance);
+                return (hypnos.active && hypnos != null) ? hypnos : null;
+            }
+        }
+
+        public static bool ShouldDespawn => timePassed >= despawnTime;
+
+        public static void UpdateTravelingMerchant()
+        {
+            NPC hypnos = Instance;
+             // Find an Explorer if there's one spawned in the world
+            if (hypnos != null && ShouldDespawn && !IsNpcOnscreen(hypnos.Center)) // If it's past the despawn time and the NPC isn't onscreen
+            {
+                // Here we despawn the NPC and send a message stating that the NPC has despawned
+                string fullName = hypnos.FullName;
+                if (Main.netMode == NetmodeID.SinglePlayer)
+                {
+                    Main.NewText(Language.GetTextValue(Lang.misc[35].Key, fullName), 50, 125);
+                }
+                else if (Main.netMode == NetmodeID.Server)
+                {
+                    ChatHelper.BroadcastChatMessage(NetworkText.FromKey(Lang.misc[35].Key, fullName), new Color(50, 125, 255));
+                }
+                hypnos.active = false;
+                hypnos.netSkip = -1;
+                hypnos.life = 0;
+                hypnos = null;
+                timePassed = 0;
+            }
+
+            if (hypnos != null)
+            {
+                timePassed++;
+            }
+
+            // Main.time is set to 0 each morning, and only for one update. Sundialling will never skip past time 0 so this is the place for 'on new day' code
+            if (Main.dayTime && Main.time == 0)
+            {
+                // insert code here to change the spawn chance based on other conditions (say, npcs which have arrived, or milestones the player has passed)
+                // You can also add a day counter here to prevent the merchant from possibly spawning multiple days in a row.
+
+                // NPC won't spawn today if it stayed all night
+                if (hypnos == null && NPC.downedMoonlord && Main.rand.NextBool(6))
+                { // 4 = 25% Chance
+                  // Here we can make it so the NPC doesnt spawn at the EXACT same time every time it does spawn
+                    spawnTime = GetRandomSpawnTime(5400, 8100); // minTime = 6:00am, maxTime = 7:30am
+                }
+                else
+                {
+                    spawnTime = double.MaxValue; // no spawn today
+                }
+            }
+
+            // Spawn the traveler if the spawn conditions are met (time of day, no events, no sundial)
+            if (hypnos == null && CanSpawnNow())
+            {
+                int newHypnos = NPC.NewNPC(new EntitySource_SpawnNPC(), Main.spawnTileX * 16, Main.spawnTileY * 16, ModContent.NPCType<Hypnos>(), 1); // Spawning at the world spawn
+                hypnos = Main.npc[newHypnos];
+                hypnos.homeless = true;
+                hypnos.direction = Main.spawnTileX >= WorldGen.bestX ? -1 : 1;
+                hypnos.netUpdate = true;
+
+                // Prevents the traveler from spawning again the same day
+                spawnTime = double.MaxValue;
+                timePassed = 0;
+
+                // Annouce that the traveler has spawned in!
+                if (Main.netMode == NetmodeID.SinglePlayer) Main.NewText(Language.GetTextValue("Announcement.HasArrived", hypnos.FullName), 50, 125, 255);
+                else ChatHelper.BroadcastChatMessage(NetworkText.FromKey("Announcement.HasArrived", hypnos.FullName), new Color(50, 125, 255));
+            }
+        }
+
+        private static bool CanSpawnNow()
+        {
+            // can't spawn if any events are running
+
+            // can't spawn if the sundial is active
+            if (Main.fastForwardTime)
+                return false;
+
+            // can spawn if daytime, and between the spawn and despawn times
+            return Main.dayTime && Main.time >= spawnTime;
+        }
+
+        private static bool IsNpcOnscreen(Vector2 center)
+        {
+            int w = NPC.sWidth + NPC.safeRangeX * 2;
+            int h = NPC.sHeight + NPC.safeRangeY * 2;
+            Rectangle npcScreenRect = new Rectangle((int)center.X - w / 2, (int)center.Y - h / 2, w, h);
+            foreach (Player player in Main.player)
+            {
+                // If any player is close enough to the traveling merchant, it will prevent the npc from despawning
+                if (player.active && player.getRect().Intersects(npcScreenRect)) return true;
+            }
+            return false;
+        }
+
+        public static double GetRandomSpawnTime(double minTime, double maxTime)
+        {
+            // A simple formula to get a random time between two chosen times
+            return (maxTime - minTime) * Main.rand.NextDouble() + minTime;
+        }
+
+        public static TagCompound Save()
+        {
+            return new TagCompound ()
+            {
+                ["spawnTime"] = spawnTime,
+                ["timePassed"] = timePassed,
+                ["hypnoCoins"] = hypnoCoins
+            };
+        }
+
+        public static void Load(TagCompound tag)
+        {
+            spawnTime = tag.GetDouble("spawnTime");
+            timePassed = tag.GetDouble("timePassed");
+            hypnoCoins = tag.GetInt("hypnoCoins");
+        }
+
         public override void TownNPCAttackProj(ref int projType, ref int attackDelay)
         {
             if (AergiaNeuron.AllNeurons.Count >= 12)
@@ -76,13 +215,18 @@ namespace EverquartzAdventure.NPCs.Hypnos
             }
             projType = ModContent.ProjectileType<AergiaNeuron>();
             attackDelay = 1;
+            NPC.localAI[3] = 0;
         }
 
         public override void TownNPCAttackStrength(ref int damage, ref float knockback)
         {
-            EverquartzGlobalNPC.hypnos = NPC.whoAmI;
+            
             damage = 200;
             knockback = 0;
+        }
+
+        public static void HandleHypnoCoinAddServer() {
+            hypnoCoins++;
         }
 
         public static void HandleRewardsServer(Player player, List<HypnosReward> rewards)
@@ -96,7 +240,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
         public static void HandleRewardServer(Player player, HypnosReward reward)
         {
 
-            Vector2 position = Main.npc.ElementAtOrDefault(player.talkNPC)?.Center ?? player.Center;
+            Vector2 position = Instance?.Center ?? player.Center;
             //ModContent.GetInstance<EverquartzAdventureMod>().Logger.Info(reward);
 
             void SpawnItem(int type, int stack = 1) { Item.NewItem(player.GetSource_GiftOrReward(), position, type, stack); }
@@ -127,6 +271,8 @@ namespace EverquartzAdventure.NPCs.Hypnos
         {
             DisplayName.SetDefault("Soul of the Eternal Intellect of Infinite Verboten Knowledge");
             DisplayName.AddTranslation(7, "无限禁忌知识的永恒智慧之魂");
+            DisplayName.AddTranslation(6, "Душа Вечного Интелекта Бесконечных Запрещённых Знаний"); // is that a meme item? or from community remix? - blitz
+            //                                                                                          ↑it's from hypnocord
             //NPCID.Sets.ActsLikeTownNPC[Type] = true;
             //NPCID.Sets.SpawnsWithCustomName[Type] = true;
             Main.npcFrameCount[base.NPC.type] = 12;
@@ -141,6 +287,9 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
             NPCID.Sets.AttackType[Type] = 2;
             NPCID.Sets.MagicAuraColor[Type] = Color.Purple;
+            NPCID.Sets.AttackTime[Type] = 200;
+            NPCID.Sets.DangerDetectRange[Type] = 500;
+
         }
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
@@ -162,6 +311,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
             NPC.damage = 200;
             NPC.defense = 90;
 
+            instance = NPC.whoAmI;
 
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath1;
@@ -172,7 +322,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
             //NPC.rarity = 2;//设置稀有度
             //AnimationType = npcID;
 
-            base.NPC.Happiness.SetBiomeAffection<HallowBiome>(AffectionLevel.Like);
+            base.NPC.Happiness.SetBiomeAffection<OceanBiome>(AffectionLevel.Dislike);
 
             NPC.lifeMax = 1320000;
         }
@@ -185,7 +335,14 @@ namespace EverquartzAdventure.NPCs.Hypnos
         public override void AI()
         {
             NPC.homeless = true;
+            Func<NPC, bool> pred = (npc => npc.type == ModContent.NPCType<Hypnos>() && npc.whoAmI != NPC.whoAmI);
+            if (Main.npc.Any(pred))
+            {
+                Main.npc.Where(pred).ToList().ForEach(npc => npc.active = false);
+            }
         }
+
+        
 
         public override void FindFrame(int frameHeight)
         {
@@ -273,14 +430,19 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
         public void DropCoins()
         {
-            Item.NewItem(NPC.GetSource_Death(), NPC.Center, ItemID.GoldCoin, EverquartzSystem.hypnoCoins);
-            EverquartzSystem.hypnoCoins = 0;
+            Item.NewItem(NPC.GetSource_Death(), NPC.Center, ItemID.GoldCoin, hypnoCoins);
+            hypnoCoins = 0;
         }
 
         public void KillWithCoins()
         {
             DropCoins();
             Kill();
+        }
+
+        public override void OnKill()
+        {
+            instance = -1;
         }
 
         public override void SetChatButtons(ref string button, ref string button2)
@@ -306,10 +468,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
         public override void OnChatButtonClicked(bool firstButton, ref bool shop)
         {
             Player player = Main.player[Main.myPlayer];
-            if (player.Everquartz().IsPraisingHypnos)
-            {
-                return;
-            }
+            
             Pray(player);
         }
 
@@ -323,6 +482,10 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
         public void Pray(Player player)
         {
+            if (player.Everquartz().IsPraisingHypnos)
+            {
+                return;
+            }
             GetPrayInfo(player, out int targetDirection, out Vector2 playerPositionWhenPetting);
             Vector2 offset = playerPositionWhenPetting - player.Bottom;
             if (!player.CanSnapToPosition(offset) || !WorldGen.SolidTileAllowBottomSlope((int)playerPositionWhenPetting.X / 16, (int)playerPositionWhenPetting.Y / 16))
@@ -333,7 +496,15 @@ namespace EverquartzAdventure.NPCs.Hypnos
             bool buyResult = player.BuyItem(Item.buyPrice(gold: 1));
             if (buyResult)
             {
-                EverquartzSystem.hypnoCoins++;
+                if (Main.netMode == NetmodeID.SinglePlayer)
+                {
+                    HandleHypnoCoinAddServer();
+                }else if(Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    ModPacket packet = Mod.GetPacket();
+                    packet.Write((byte)EverquartzMessageType.HypnoCoinAdd);
+                    packet.Send();
+                }
                 player.StopVanityActions();
                 player.RemoveAllGrapplingHooks();
                 if (player.mount.Active)
@@ -356,6 +527,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
         {
             if (NPC.life <= 0)
             {
+                instance = -1;
                 SoundEngine.PlaySound(NPC.DeathSound, NPC.position);
                 for (int num585 = 0; num585 < 25; num585++)
                 {
@@ -441,9 +613,11 @@ namespace EverquartzAdventure.NPCs.Hypnos
         {
             DisplayName.SetDefault("Indulgence");
             DisplayName.AddTranslation(7, "赎罪券");
+            DisplayName.AddTranslation(6, "Снисхождение");
 
             Tooltip.SetDefault("You are atoned from your sins");
             Tooltip.AddTranslation(7, "你已经免除了你的罪");
+            Tooltip.AddTranslation(6, "Вы искуплены от своих грехов");
         }
         public override void SetDefaults()
         {

@@ -60,7 +60,7 @@
                     }
                 }
                 Hypnos: {
-                    BestiaryText: The master of illusion. The psychoelectric Soul of the Eternal Intellect of Infinite Verboten Knowledge demands your offering.
+                    BestiaryText: The master of illusion. The ALL NATURAL ORGANIC PSYCHOELECTRIC Soul of the Eternal Intellect of Infinite Verboten Knowledge demands your offering.
                     ButtonText: Pray (1 {0})
                     Chat: {
                         Common: {
@@ -95,6 +95,9 @@
                         }
                         BloodMoon: {
                             0: When side by side two rabbits go, who can tell the buck from the doe?
+                        }
+                        Party: {
+                            0: You cannot come to the orgy!
                         }
                     }
                 }
@@ -144,6 +147,7 @@
                 Content: I would return to Draedon's laboratory later.
                 NoHome: I would return to Draedon's laboratory later.
                 LoveSpace: Solitude is common, for me, as I don't want to be a soulless war machine.
+                DislikeBiome: By the way I'm not interested in real life surfing, my inorganic components are not waterproof.
                 HateBiome: Such a corrupted place... It reminds me of my ancestors.
             }
         }

@@ -22,8 +22,10 @@ namespace EverquartzAdventure.Items.Weapons
 
             DisplayName.SetDefault("Star Flare");
             DisplayName.AddTranslation(7, "星耀");
+            DisplayName.AddTranslation(6, "Звёздная Вспышка");
             Tooltip.SetDefault("'Dead Deimos attack me in the Hallow!'");
             Tooltip.AddTranslation(7, "'死去的戴莫斯突然开始攻击我！'");
+            Tooltip.AddTranslation(6, "'Мёртвая Деймос атакует меня в Освещении！'"); // it sounds funky at russian
         }
 
         public override void SetDefaults()

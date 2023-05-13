@@ -74,6 +74,9 @@ namespace EverquartzAdventure
                     }
                     NPCs.Hypnos.Hypnos.HandleRewardsServer(priest, rewards);
                     break;
+                case EverquartzMessageType.HypnoCoinAdd:
+                    NPCs.Hypnos.Hypnos.HandleHypnoCoinAddServer();
+                    break;
             }
         }
 
@@ -254,26 +257,25 @@ namespace EverquartzAdventure
 
     public class EverquartzSystem : ModSystem
     {
-        public static int hypnoCoins;
         public override void OnWorldLoad()
         {
-            hypnoCoins = 0;
+            NPCs.Hypnos.Hypnos.hypnoCoins = 0;
+            NPCs.Hypnos.Hypnos.timePassed = 0;
+            NPCs.Hypnos.Hypnos.spawnTime = Double.MaxValue;
         }
         public override void LoadWorldData(TagCompound tag)
         {
-            hypnoCoins = tag.GetInt("hypnoCoins");
+            NPCs.Hypnos.Hypnos.Load(tag.GetCompound("hypnos"));
         }
         public override void SaveWorldData(TagCompound tag)
         {
-            tag["hypnoCoins"] = hypnoCoins;
+
+            tag.Add("hypnos", NPCs.Hypnos.Hypnos.Save());
         }
-        public override void NetSend(BinaryWriter writer)
+
+        public override void PreUpdateWorld()
         {
-            writer.Write(hypnoCoins);
-        }
-        public override void NetReceive(BinaryReader reader)
-        {
-            hypnoCoins = reader.ReadInt32();
+            NPCs.Hypnos.Hypnos.UpdateTravelingMerchant();
         }
     }
 
@@ -429,7 +431,7 @@ namespace EverquartzAdventure
 
     public class EverquartzGlobalNPC : GlobalNPC
     {
-        public static int hypnos = -1;
+        
         public override void OnKill(NPC npc)
         {
             if (npc.boss && ModCompatibility.hypnosEnabled && npc.type == ModCompatibility.HypnosBossType)
@@ -444,7 +446,8 @@ namespace EverquartzAdventure
     {
         DeimosItemKilled, // id, player, helptext
         ReleaseProvCore, // id, player
-        HypnosReward, //id, player, rewards(bytes)
+        HypnosReward, // id, player, rewards(bytes)
+        HypnoCoinAdd // id
     }
 
     public static class ModCompatibility
@@ -574,13 +577,13 @@ namespace EverquartzAdventure
             NPC target = null;
             float distance = maxDistance;
             
-            bool checkNPCInSight(NPC npc) => npc != null && npc.active && npc.CanBeChasedBy() && Vector2.Distance(position, npc.Center) < distance;
+            bool checkNPCInSight(NPC npc) => npc != null && npc.active && npc.CanBeChasedBy() && Vector2.Distance(position, npc.Center) < distance + ((float)(npc.width / 2) + (float)(npc.height / 2));
 
             bool shouldAttackAllDebuffed = !Main.npc.Where(npc => checkNPCInSight(npc) && !npc.HasAllBuffs(debuffs)).Any();
             bool shouldAttackAnyDebuffed = !Main.npc.Where(npc => checkNPCInSight(npc) && !npc.HasAnyBuff(debuffs)).Any();
             foreach (NPC npc in Main.npc)
             {
-                
+
                 if (checkNPCInSight(npc))
                 {
                     bool allDebuffed = npc.HasAllBuffs(debuffs);
