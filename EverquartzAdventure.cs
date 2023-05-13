@@ -77,6 +77,13 @@ namespace EverquartzAdventure
                 case EverquartzMessageType.HypnoCoinAdd:
                     NPCs.Hypnos.Hypnos.HandleHypnoCoinAddServer();
                     break;
+                case EverquartzMessageType.HypnosDeparted:
+                    NPC hypnos = NPCs.Hypnos.Hypnos.Instance;
+                    if (hypnos != null)
+                    {
+                        NPCs.Hypnos.Hypnos.HandleDepartHypnosUniversal(hypnos);
+                    }
+                    break;
             }
         }
 
@@ -370,7 +377,8 @@ namespace EverquartzAdventure
         public void DonePraisingHypnos()
         {
             //client side
-            AergiaNeuron.AddElectricDusts(Main.npc[Player.talkNPC]);
+            NPC hypnos = NPCs.Hypnos.Hypnos.Instance;
+            AergiaNeuron.AddElectricDusts(hypnos != null ? hypnos : Player);
 
             List<HypnosReward> rewards = NPCs.Hypnos.Hypnos.GenerateRewards();
             
@@ -447,7 +455,8 @@ namespace EverquartzAdventure
         DeimosItemKilled, // id, player, helptext
         ReleaseProvCore, // id, player
         HypnosReward, // id, player, rewards(bytes)
-        HypnoCoinAdd // id
+        HypnoCoinAdd, // id
+        HypnosDeparted // id
     }
 
     public static class ModCompatibility

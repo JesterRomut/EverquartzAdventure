@@ -31,18 +31,23 @@ namespace EverquartzAdventure.NPCs.Hypnos
 {
     public class AergiaNeuron : ModProjectile
     {
+        #region ExtraAssets
         public static readonly SoundStyle IPutTheSoundFileInLocalBecauseICouldntKnowCalamitysPathOfThis = new SoundStyle("EverquartzAdventure/Sounds/ExoMechs/ExoLaserShoot");
 
         public static string readThisIfYouAreUsingADecompiler => "The aergia neuron and blue exo laser's sprites can both be found on fandom - absolutely bread fangirl";
         public static readonly Asset<Texture2D> glowTex = ModContent.Request<Texture2D>("EverquartzAdventure/NPCs/Hypnos/AergiaNeuron_Glow");
         public static readonly Asset<Texture2D> glowRedTex = ModContent.Request<Texture2D>("EverquartzAdventure/NPCs/Hypnos/AergiaNeuron_GlowRed");
         public static readonly Asset<Texture2D> tubeTex = ModContent.Request<Texture2D>("EverquartzAdventure/NPCs/Hypnos/HypnosPlugCable");
+        #endregion
 
+        #region Consts
         public static readonly int laserTimer = 60;
         public static readonly int refreshTimeLeft = 200;
         public static readonly int alphaChange = 10;
         public static readonly int laserSpeed = 20;
+        #endregion
 
+        #region BuffInfo
         public static List<int> debuffs => new List<int>()
         {
             BuffID.Ichor,
@@ -60,10 +65,9 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
         public static readonly int buffDuration = 3000;
 
-        
+        #endregion
 
-        public static List<Projectile> AllNeurons => Main.projectile.Where(proj => proj != null && proj.active && proj.owner == 0 && proj.type == ModContent.ProjectileType<AergiaNeuron>()).ToList();
-
+        #region Fields
         public bool Landed
         {
             get
@@ -94,17 +98,31 @@ namespace EverquartzAdventure.NPCs.Hypnos
                 Projectile.ai[1] = value;
             }
         }
+        public int AergiaIndex => AllNeurons.IndexOf(Projectile);
+
+
+        #endregion
+
+        #region Utils
+        public static List<Projectile> AllNeurons => Main.projectile.Where(proj => proj != null && proj.active && proj.owner == 0 && proj.type == ModContent.ProjectileType<AergiaNeuron>()).ToList();
 
         public static int CalcDamage(NPC target) => target.lifeMax / (target.boss ? 40000 : 3);
-
-        public int AergiaIndex
+        public static void AddElectricDusts(Entity proj, int count = 3) // hey hypons or whatever your name u coded quite a lot maybe it is time to stop that is not healthy for you, i can tell by myself
         {
-            get
+            for (int i = 0; i < count; i++)
             {
-                return AllNeurons.IndexOf(Projectile);
+                Dust.NewDust(proj.position, proj.width, proj.height, DustID.Electric);
             }
         }
 
+        public void AddElectricDusts()
+        {
+            AddElectricDusts(Projectile);
+        }
+        #endregion
+
+
+        #region Overrides
         public override void SetStaticDefaults()
         {
             base.DisplayName.SetDefault("Aergia Neuron");
@@ -131,7 +149,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
         public override void AI()
         {
             NPC hypnos = Hypnos.Instance;
-            
+
             if (hypnos == null)
             {
                 Projectile.Kill();
@@ -215,20 +233,6 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
 
         }
-
-        public static void AddElectricDusts(Entity proj, int count = 3)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                Dust.NewDust(proj.position, proj.width, proj.height, DustID.Electric);
-            }
-        }
-
-        public void AddElectricDusts()
-        {
-            AddElectricDusts(Projectile);
-        }
-
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             damage = CalcDamage(target);
@@ -248,11 +252,18 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
             Main.EntitySpriteDraw(sprite, Projectile.position - Main.screenPosition + new Vector2(originOffsetX + DrawOffsetX, Projectile.height / 2 + Projectile.gfxOffY), (Rectangle?)frame, Color.White, Projectile.rotation, origin, Projectile.scale, default(SpriteEffects), 0);
         }
+        #endregion
+
+
+
+        
+
+        
     }
 
     public class BlueExoPulseLaser : ModProjectile
     {
-
+        #region Fields
         public NPC Target
         {
             get
@@ -265,6 +276,9 @@ namespace EverquartzAdventure.NPCs.Hypnos
                 return null;
             }
         }
+        #endregion
+
+        #region Overrides
         public override void SetStaticDefaults()
         {
             base.DisplayName.SetDefault("Blue Exo Pulse Laser");
@@ -294,7 +308,6 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
         public override void AI()
         {
-            //IL_0074: Unknown result type (might be due to invalid IL or missing references)
             base.Projectile.frameCounter++;
             if (base.Projectile.frameCounter > 6)
             {
@@ -359,5 +372,6 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
             }
         }
+        #endregion
     }
 }

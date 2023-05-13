@@ -57,9 +57,13 @@ namespace EverquartzAdventure.NPCs.Hypnos
     [AutoloadHead]
     public class Hypnos : ModNPC
     {
+        #region ExtraAssets
         public static readonly Asset<Texture2D> eyepatchTex = ModContent.Request<Texture2D>("EverquartzAdventure/NPCs/Hypnos/Eyepatch");
         public static readonly Asset<Texture2D> glowTex = ModContent.Request<Texture2D>("EverquartzAdventure/NPCs/Hypnos/Hypnos_Glow");
 
+        #endregion
+
+        #region LanguageKeys
         public static readonly string ButtonTextKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.ButtonText";
         public static readonly string BestiaryTextKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.BestiaryText";
 
@@ -71,13 +75,19 @@ namespace EverquartzAdventure.NPCs.Hypnos
         public static readonly string ChatPrayKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.Pray";
         public static readonly string ChatPrayWithoutMoneyKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.PrayWithoutMoney";
 
-        public static readonly double despawnTime = 80400;
+        #endregion LanguageKeys
+
+        #region Consts
+        public static readonly double despawnTime = 2000;
+        #endregion
+
+        #region ServerSideVariables
         public static double timePassed = 0;
         public static double spawnTime = double.MaxValue;
-
         public static int hypnoCoins = 0;
+        #endregion ServerSideVariables
 
-
+        #region InstanceManagement
         public static int instance = -1;
         public static NPC Instance
         {
@@ -88,12 +98,291 @@ namespace EverquartzAdventure.NPCs.Hypnos
                     return null;
                 }
                 NPC hypnos = Main.npc.ElementAtOrDefault(instance);
-                return (hypnos.active && hypnos != null) ? hypnos : null;
+                if (hypnos == default || !hypnos.active)
+                {
+                    instance = -1;
+                    return null;
+                }
+                return hypnos;
+            }
+        }
+        #endregion InstanceManagement
+        
+        #region HandleInternet
+        public static void HandleDepartHypnosUniversal(NPC hypnos)
+        {
+            hypnos.active = false;
+            hypnos.netSkip = -1;
+            hypnos.life = 0;
+            hypnos = null;
+        }
+        public static void HandleHypnoCoinAddServer()
+        {
+            hypnoCoins++;
+        }
+
+        public static void HandleRewardsServer(Player player, List<HypnosReward> rewards)
+        {
+
+            player.PutItemInInventoryFromItemUsage(ModContent.ItemType<Indulgence>(), player.selectedItem);
+            //Item.NewItem(player.GetSource_GiftOrReward(), player.Center, ModContent.ItemType<Indulgence>(), noGrabDelay: true);
+            rewards.ForEach(reward => HandleRewardServer(player, reward));
+        }
+
+        public static void HandleRewardServer(Player player, HypnosReward reward)
+        {
+
+            Vector2 position = Instance == null ? Instance.Center : player.Center;
+            //ModContent.GetInstance<EverquartzAdventureMod>().Logger.Info(reward);
+
+            void SpawnItem(int type, int stack = 1) { Item.NewItem(player.GetSource_GiftOrReward(), position, type, stack); }
+            switch (reward)
+            {
+                case HypnosReward.Coins:
+                    SpawnItem(ItemID.GoldCoin, Main.rand.Next(1, 3));
+                    break;
+                case HypnosReward.ExoPrisms:
+                    if (ModCompatibility.calamityEnabled)
+                    {
+                        SpawnItem(CalamityWeakRef.ExoPrism, Main.rand.Next(3, 7));
+                    }
+                    break;
+                case HypnosReward.Eucharist:
+                    SpawnItem(ItemID.GoldenDelight);
+                    break;
+                case HypnosReward.Hypnotize:
+                    player.AddBuff(BuffID.Webbed, 240);
+                    break;
+                case HypnosReward.Euthanasia:
+                    player.Hurt(PlayerDeathReason.ByOther(10), 200, 0);
+                    break;
+            }
+        }
+        #endregion
+
+        #region Overrides
+        public override void TownNPCAttackProj(ref int projType, ref int attackDelay)
+        {
+            if (AergiaNeuron.AllNeurons.Count >= 12)
+            {
+                return;
+            }
+            projType = ModContent.ProjectileType<AergiaNeuron>();
+            attackDelay = 1;
+            NPC.localAI[3] = 0;
+        }
+
+        public override void TownNPCAttackStrength(ref int damage, ref float knockback)
+        {
+
+            damage = 200;
+            knockback = 0;
+        }
+
+
+
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Soul of the Eternal Intellect of Infinite Verboten Knowledge");
+            DisplayName.AddTranslation(7, "无限禁忌知识的永恒智慧之魂");
+            DisplayName.AddTranslation(6, "Душа Вечного Интелекта Бесконечных Запрещённых Знаний"); // is that a meme item? or from community remix? - blitz
+            //                                                                                          ↑it's from hypnocord
+            //NPCID.Sets.ActsLikeTownNPC[Type] = true;
+            //NPCID.Sets.SpawnsWithCustomName[Type] = true;
+            Main.npcFrameCount[base.NPC.type] = 12;
+
+            NPCID.Sets.TownNPCBestiaryPriority.Add(Type);
+            NPCID.Sets.NPCBestiaryDrawModifiers drawModifiers = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
+            {
+                Velocity = 0f,
+            };
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, drawModifiers);
+            NPCID.Sets.BossBestiaryPriority.Add(base.Type);
+
+            NPCID.Sets.AttackType[Type] = 2;
+            NPCID.Sets.MagicAuraColor[Type] = Color.Purple;
+            NPCID.Sets.AttackTime[Type] = 200;
+            NPCID.Sets.DangerDetectRange[Type] = 500;
+
+        }
+
+        public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
+        {
+            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[2]
+            {
+                BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.TheHallow,
+            new FlavorTextBestiaryInfoElement(BestiaryTextKey)
+            });
+        }
+
+        public override void SetDefaults()
+        {
+            NPC.friendly = true;
+            NPC.townNPC = true;
+            NPC.width = 15;
+            NPC.height = 22;
+            NPC.aiStyle = NPCAIStyleID.Passive;
+            NPC.damage = 200;
+            NPC.defense = 90;
+
+            NPC.HitSound = SoundID.NPCHit4;
+            NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.knockBackResist = 0.5f;
+            TownNPCStayingHomeless = true;
+            NPC.trapImmune = true;
+            base.NPC.lavaImmune = true;
+            //NPC.rarity = 2;//设置稀有度
+            //AnimationType = npcID;
+
+            base.NPC.Happiness.SetBiomeAffection<OceanBiome>(AffectionLevel.Dislike);
+
+            NPC.lifeMax = 1320000;
+        }
+
+        public override bool CanTownNPCSpawn(int numTownNPCs, int money)
+        {
+            return false;
+        }
+
+        public override void AI()
+        {
+            instance = NPC.whoAmI;
+            CombatText.NewText(NPC.Hitbox, Color.White, timePassed.ToString());
+            NPC.homeless = true;
+            Func<NPC, bool> pred = (npc => npc.type == ModContent.NPCType<Hypnos>() && npc.whoAmI != NPC.whoAmI);
+            if (Main.npc.Any(pred))
+            {
+                Main.npc.Where(pred).ToList().ForEach(npc => npc.active = false);
             }
         }
 
-        public static bool ShouldDespawn => timePassed >= despawnTime;
 
+
+        public override void FindFrame(int frameHeight)
+        {
+            if (NPC.velocity.X == 0)
+            {
+                NPC.frame.Y = 0;
+                base.NPC.frameCounter = 0;
+            }
+            else
+            {
+                base.NPC.frameCounter += 0.3;
+                base.NPC.frameCounter %= Main.npcFrameCount[base.NPC.type] - 1;
+                int frame = (int)base.NPC.frameCounter;
+                base.NPC.frame.Y = (frame + 1) * frameHeight;
+            }
+            NPC.spriteDirection = NPC.direction;
+        }
+
+        public override bool CanGoToStatue(bool toKingStatue)
+        {
+            return false;
+        }
+
+        public override bool CanChat()
+        {
+            return true;
+        }
+        public override void OnKill()
+        {
+            instance = -1;
+        }
+
+        public override void SetChatButtons(ref string button, ref string button2)
+        {
+            button = Language.GetTextValue(ButtonTextKey, Lang.inter[16].Value);
+        }
+        public override void OnChatButtonClicked(bool firstButton, ref bool shop)
+        {
+            Player player = Main.player[Main.myPlayer];
+
+            Pray(player);
+        }
+        public override void HitEffect(int hitDirection, double damage)
+        {
+            if (NPC.life <= 0)
+            {
+                instance = -1;
+                SoundEngine.PlaySound(NPC.DeathSound, NPC.position);
+                for (int num585 = 0; num585 < 25; num585++)
+                {
+                    int num586 = Dust.NewDust(NPC.position, NPC.width, NPC.height, 31, 0f, 0f, 100, default(Color), 2f);
+                    Dust dust30 = Main.dust[num586];
+                    Dust dust187 = dust30;
+                    dust187.velocity *= 1.4f;
+                    Main.dust[num586].noLight = true;
+                    Main.dust[num586].noGravity = true;
+                }
+            }
+        }
+        public override bool CheckDead()
+        {
+            NPC.active = false;
+            return true;
+        }
+
+        public override string GetChat()
+        {
+            WeightedRandom<string> textSelector = new WeightedRandom<string>(Main.rand);
+            EverquartzUtils.GetTextListFromKey(ChatCommonKey).ForEach(st => textSelector.Add(st));
+            if (!Main.dayTime && Main.bloodMoon)
+            {
+                EverquartzUtils.GetTextListFromKey(ChatBloodMoonKey).ForEach(st => textSelector.Add(st, 5.15));
+            }
+            if (BirthdayParty.PartyIsUp)
+            {
+                EverquartzUtils.GetTextListFromKey(ChatPartyKey).ForEach(st => textSelector.Add(st, 5.5));
+            }
+            if (ModCompatibility.hypnosEnabled && HypnosWeakRef.downedHypnos)
+            {
+                EverquartzUtils.GetTextListFromKey(ChatPostHypnosKey).ForEach(st => textSelector.Add(st));
+
+            }
+            else
+            {
+                EverquartzUtils.GetTextListFromKey(ChatPreHypnosKey).ForEach(st => textSelector.Add(st));
+            }
+
+            string thingToSay = textSelector.Get();
+            return thingToSay;
+        }
+
+
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            Vector2 position = NPC.Center - screenPos - new Vector2(0, 9f);
+            spriteBatch.Draw
+            (
+                TextureAssets.Npc[base.NPC.type].Value,
+                position,
+                NPC.frame,
+                drawColor,
+                NPC.rotation,
+                NPC.frame.Size() / 2,
+                NPC.scale,
+                NPC.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                0f
+            );
+
+            Draw(glowTex.Value, spriteBatch, screenPos, position, Color.White);
+            if (NPC.spriteDirection == 1)
+            {
+                Draw(eyepatchTex.Value, spriteBatch, screenPos, position, drawColor);
+            }
+
+            return false;
+        }
+
+        public override List<string> SetNPCNameList()
+        {
+            return new List<string> { "Hypnos" };
+        }
+        #endregion
+
+        #region Traveling
+        public static bool ShouldDespawn => timePassed >= despawnTime;
         public static void UpdateTravelingMerchant()
         {
             NPC hypnos = Instance;
@@ -102,24 +391,31 @@ namespace EverquartzAdventure.NPCs.Hypnos
             {
                 // Here we despawn the NPC and send a message stating that the NPC has despawned
                 string fullName = hypnos.FullName;
+
+                HandleDepartHypnosUniversal(hypnos);
                 if (Main.netMode == NetmodeID.SinglePlayer)
                 {
                     Main.NewText(Language.GetTextValue(Lang.misc[35].Key, fullName), 50, 125);
                 }
                 else if (Main.netMode == NetmodeID.Server)
                 {
+                    ModPacket packet = ModContent.GetInstance<EverquartzAdventureMod>().GetPacket();
+                    packet.Write((byte)EverquartzMessageType.HypnosDeparted);
+                    packet.Send();
                     ChatHelper.BroadcastChatMessage(NetworkText.FromKey(Lang.misc[35].Key, fullName), new Color(50, 125, 255));
                 }
-                hypnos.active = false;
-                hypnos.netSkip = -1;
-                hypnos.life = 0;
-                hypnos = null;
+                
+                
                 timePassed = 0;
             }
 
             if (hypnos != null)
             {
                 timePassed++;
+            }
+            else
+            {
+                timePassed = 0;
             }
 
             // Main.time is set to 0 each morning, and only for one update. Sundialling will never skip past time 0 so this is the place for 'on new day' code
@@ -189,6 +485,9 @@ namespace EverquartzAdventure.NPCs.Hypnos
             // A simple formula to get a random time between two chosen times
             return (maxTime - minTime) * Main.rand.NextDouble() + minTime;
         }
+        #endregion
+
+        #region SaveLoad
 
         public static TagCompound Save()
         {
@@ -206,171 +505,9 @@ namespace EverquartzAdventure.NPCs.Hypnos
             timePassed = tag.GetDouble("timePassed");
             hypnoCoins = tag.GetInt("hypnoCoins");
         }
+        #endregion
 
-        public override void TownNPCAttackProj(ref int projType, ref int attackDelay)
-        {
-            if (AergiaNeuron.AllNeurons.Count >= 12)
-            {
-                return;
-            }
-            projType = ModContent.ProjectileType<AergiaNeuron>();
-            attackDelay = 1;
-            NPC.localAI[3] = 0;
-        }
-
-        public override void TownNPCAttackStrength(ref int damage, ref float knockback)
-        {
-            
-            damage = 200;
-            knockback = 0;
-        }
-
-        public static void HandleHypnoCoinAddServer() {
-            hypnoCoins++;
-        }
-
-        public static void HandleRewardsServer(Player player, List<HypnosReward> rewards)
-        {
-
-            player.PutItemInInventoryFromItemUsage(ModContent.ItemType<Indulgence>(), player.selectedItem);
-            //Item.NewItem(player.GetSource_GiftOrReward(), player.Center, ModContent.ItemType<Indulgence>(), noGrabDelay: true);
-            rewards.ForEach(reward => HandleRewardServer(player, reward));
-        }
-
-        public static void HandleRewardServer(Player player, HypnosReward reward)
-        {
-
-            Vector2 position = Instance?.Center ?? player.Center;
-            //ModContent.GetInstance<EverquartzAdventureMod>().Logger.Info(reward);
-
-            void SpawnItem(int type, int stack = 1) { Item.NewItem(player.GetSource_GiftOrReward(), position, type, stack); }
-            switch (reward)
-            {
-                case HypnosReward.Coins:
-                    SpawnItem(ItemID.GoldCoin, Main.rand.Next(1, 3));
-                    break;
-                case HypnosReward.ExoPrisms:
-                    if (ModCompatibility.calamityEnabled)
-                    {
-                        SpawnItem(CalamityWeakRef.ExoPrism, Main.rand.Next(3, 7));
-                    }
-                    break;
-                case HypnosReward.Eucharist:
-                    SpawnItem(ItemID.GoldenDelight);
-                    break;
-                case HypnosReward.Hypnotize:
-                    player.AddBuff(BuffID.Webbed, 240);
-                    break;
-                case HypnosReward.Euthanasia:
-                    player.Hurt(PlayerDeathReason.ByOther(10), 200, 0);
-                    break;
-            }
-        }
-
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Soul of the Eternal Intellect of Infinite Verboten Knowledge");
-            DisplayName.AddTranslation(7, "无限禁忌知识的永恒智慧之魂");
-            DisplayName.AddTranslation(6, "Душа Вечного Интелекта Бесконечных Запрещённых Знаний"); // is that a meme item? or from community remix? - blitz
-            //                                                                                          ↑it's from hypnocord
-            //NPCID.Sets.ActsLikeTownNPC[Type] = true;
-            //NPCID.Sets.SpawnsWithCustomName[Type] = true;
-            Main.npcFrameCount[base.NPC.type] = 12;
-
-            NPCID.Sets.TownNPCBestiaryPriority.Add(Type);
-            NPCID.Sets.NPCBestiaryDrawModifiers drawModifiers = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
-            {
-                Velocity = 0f,
-            };
-            NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, drawModifiers);
-            NPCID.Sets.BossBestiaryPriority.Add(base.Type);
-
-            NPCID.Sets.AttackType[Type] = 2;
-            NPCID.Sets.MagicAuraColor[Type] = Color.Purple;
-            NPCID.Sets.AttackTime[Type] = 200;
-            NPCID.Sets.DangerDetectRange[Type] = 500;
-
-        }
-
-        public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
-        {
-            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[2]
-            {
-                BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.TheHallow,
-            new FlavorTextBestiaryInfoElement(BestiaryTextKey)
-            });
-        }
-
-        public override void SetDefaults()
-        {
-            NPC.friendly = true;
-            NPC.townNPC = true;
-            NPC.width = 15;
-            NPC.height = 22;
-            NPC.aiStyle = NPCAIStyleID.Passive;
-            NPC.damage = 200;
-            NPC.defense = 90;
-
-            instance = NPC.whoAmI;
-
-            NPC.HitSound = SoundID.NPCHit4;
-            NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.knockBackResist = 0.5f;
-            TownNPCStayingHomeless = true;
-            NPC.trapImmune = true;
-            base.NPC.lavaImmune = true;
-            //NPC.rarity = 2;//设置稀有度
-            //AnimationType = npcID;
-
-            base.NPC.Happiness.SetBiomeAffection<OceanBiome>(AffectionLevel.Dislike);
-
-            NPC.lifeMax = 1320000;
-        }
-
-        public override bool CanTownNPCSpawn(int numTownNPCs, int money)
-        {
-            return false;
-        }
-
-        public override void AI()
-        {
-            NPC.homeless = true;
-            Func<NPC, bool> pred = (npc => npc.type == ModContent.NPCType<Hypnos>() && npc.whoAmI != NPC.whoAmI);
-            if (Main.npc.Any(pred))
-            {
-                Main.npc.Where(pred).ToList().ForEach(npc => npc.active = false);
-            }
-        }
-
-        
-
-        public override void FindFrame(int frameHeight)
-        {
-            if (NPC.velocity.X == 0)
-            {
-                NPC.frame.Y = 0;
-                base.NPC.frameCounter = 0;
-            }
-            else
-            {
-                base.NPC.frameCounter += 0.3;
-                base.NPC.frameCounter %= Main.npcFrameCount[base.NPC.type] - 1;
-                int frame = (int)base.NPC.frameCounter;
-                base.NPC.frame.Y = (frame + 1) * frameHeight;
-            }
-            NPC.spriteDirection = NPC.direction;
-        }
-
-        public override bool CanGoToStatue(bool toKingStatue)
-        {
-            return false;
-        }
-
-        public override bool CanChat()
-        {
-            return true;
-        }
-
+        #region Utils
         private void Draw(Texture2D texture, SpriteBatch spriteBatch, Vector2 screenPos, Vector2? position = null, Color? drawColor = null)
         {
             spriteBatch.Draw
@@ -386,16 +523,30 @@ namespace EverquartzAdventure.NPCs.Hypnos
                 0f
             );
         }
+        public void Kill()
+        {
+            NPC.life = 0;
+            NPC.checkDead();
+        }
 
-        //public override void OnKill()
-        //{
-        //    NetworkText networkText = NetworkText.FromKey("Announcement.HasArrived", NPC.GetFullNetName());
-        //    if (NPC.ai[3] == 1)
-        //    {
-        //        ChatHelper.BroadcastChatMessage(networkText, new Color(50, 125, 255));
-        //    }
-        //}
+        public void DropCoins()
+        {
+            Item.NewItem(NPC.GetSource_Death(), NPC.Center, ItemID.GoldCoin, hypnoCoins);
+            hypnoCoins = 0;
+        }
 
+        public void KillWithCoins()
+        {
+            DropCoins();
+            Kill();
+        }
+
+
+
+
+        #endregion
+
+        #region Pray
         public static List<HypnosReward> GenerateRewards()
         {
             List<HypnosReward> rewards = new List<HypnosReward>();
@@ -421,35 +572,6 @@ namespace EverquartzAdventure.NPCs.Hypnos
             }
             return rewards;
         }
-
-        public void Kill()
-        {
-            NPC.life = 0;
-            NPC.checkDead();
-        }
-
-        public void DropCoins()
-        {
-            Item.NewItem(NPC.GetSource_Death(), NPC.Center, ItemID.GoldCoin, hypnoCoins);
-            hypnoCoins = 0;
-        }
-
-        public void KillWithCoins()
-        {
-            DropCoins();
-            Kill();
-        }
-
-        public override void OnKill()
-        {
-            instance = -1;
-        }
-
-        public override void SetChatButtons(ref string button, ref string button2)
-        {
-            button = Language.GetTextValue(ButtonTextKey, Lang.inter[16].Value);
-        }
-
         public string GetPrayChat(bool hasEnoughMoney)
         {
             WeightedRandom<string> textSelector = new WeightedRandom<string>(Main.rand);
@@ -465,12 +587,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
             return thingToSay;
         }
 
-        public override void OnChatButtonClicked(bool firstButton, ref bool shop)
-        {
-            Player player = Main.player[Main.myPlayer];
-            
-            Pray(player);
-        }
+
 
         public void GetPrayInfo(Player player, out int targetDirection, out Vector2 playerPositionWhenPetting)
         {
@@ -479,7 +596,6 @@ namespace EverquartzAdventure.NPCs.Hypnos
             playerPositionWhenPetting = NPC.Bottom + new Vector2((float)(-targetDirection * num), 0f);
             playerPositionWhenPetting = playerPositionWhenPetting.Floor();
         }
-
         public void Pray(Player player)
         {
             if (player.Everquartz().IsPraisingHypnos)
@@ -499,7 +615,8 @@ namespace EverquartzAdventure.NPCs.Hypnos
                 if (Main.netMode == NetmodeID.SinglePlayer)
                 {
                     HandleHypnoCoinAddServer();
-                }else if(Main.netMode == NetmodeID.MultiplayerClient)
+                }
+                else if (Main.netMode == NetmodeID.MultiplayerClient)
                 {
                     ModPacket packet = Mod.GetPacket();
                     packet.Write((byte)EverquartzMessageType.HypnoCoinAdd);
@@ -522,88 +639,8 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
             Main.npcChatText = GetPrayChat(buyResult);
         }
+        #endregion
 
-        public override void HitEffect(int hitDirection, double damage)
-        {
-            if (NPC.life <= 0)
-            {
-                instance = -1;
-                SoundEngine.PlaySound(NPC.DeathSound, NPC.position);
-                for (int num585 = 0; num585 < 25; num585++)
-                {
-                    int num586 = Dust.NewDust(NPC.position, NPC.width, NPC.height, 31, 0f, 0f, 100, default(Color), 2f);
-                    Dust dust30 = Main.dust[num586];
-                    Dust dust187 = dust30;
-                    dust187.velocity *= 1.4f;
-                    Main.dust[num586].noLight = true;
-                    Main.dust[num586].noGravity = true;
-                }
-            }
-        }
-
-        public override bool CheckDead()
-        {
-            NPC.active = false;
-            return true;
-        }
-
-        public override string GetChat()
-        {
-            WeightedRandom<string> textSelector = new WeightedRandom<string>(Main.rand);
-            EverquartzUtils.GetTextListFromKey(ChatCommonKey).ForEach(st => textSelector.Add(st));
-            if (!Main.dayTime && Main.bloodMoon)
-            {
-                EverquartzUtils.GetTextListFromKey(ChatBloodMoonKey).ForEach(st => textSelector.Add(st, 5.15));
-            }
-            if (BirthdayParty.PartyIsUp)
-            {
-                EverquartzUtils.GetTextListFromKey(ChatPartyKey).ForEach(st => textSelector.Add(st, 5.5));
-            }
-            if (ModCompatibility.hypnosEnabled && HypnosWeakRef.downedHypnos)
-            {
-                EverquartzUtils.GetTextListFromKey(ChatPostHypnosKey).ForEach(st => textSelector.Add(st));
-
-            }
-            else
-            {
-                EverquartzUtils.GetTextListFromKey(ChatPreHypnosKey).ForEach(st => textSelector.Add(st));
-            }
-
-            string thingToSay = textSelector.Get();
-            return thingToSay;
-        }
-
-
-
-        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
-        {
-            Vector2 position = NPC.Center - screenPos - new Vector2(0, 9f);
-            spriteBatch.Draw
-            (
-                TextureAssets.Npc[base.NPC.type].Value,
-                position,
-                NPC.frame,
-                drawColor,
-                NPC.rotation,
-                NPC.frame.Size() / 2,
-                NPC.scale,
-                NPC.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                0f
-            );
-
-            Draw(glowTex.Value, spriteBatch, screenPos, position, Color.White);
-            if (NPC.spriteDirection == 1)
-            {
-                Draw(eyepatchTex.Value, spriteBatch, screenPos, position, drawColor);
-            }
-
-            return false;
-        }
-
-        public override List<string> SetNPCNameList()
-        {
-            return new List<string> { "Hypnos" };
-        }
     }
 
     public class Indulgence: ModItem
