@@ -180,7 +180,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
             }
 
             int aergiaIndex = AergiaIndex;
-            int neuronCount = AllNeurons.Count;
+            int neuronCount = 12;
             float offset = Main.GlobalTimeWrappedHourly * 80;
 
             double rad6 = (double)((360f / neuronCount) * aergiaIndex + offset) * (Math.PI / 180.0);
@@ -203,8 +203,8 @@ namespace EverquartzAdventure.NPCs.Hypnos
             float idealy8;
             if (!Landed)
             {
-                idealx8 = MathHelper.Lerp(Projectile.position.X, hyposx4, 0.15f);
-                idealy8 = MathHelper.Lerp(Projectile.position.Y, hyposy4, 0.15f);
+                idealx8 = MathHelper.Lerp(Projectile.position.X, hyposx4, 0.4f);
+                idealy8 = MathHelper.Lerp(Projectile.position.Y, hyposy4, 0.4f);
             }
             else
             {
