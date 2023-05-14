@@ -25,6 +25,7 @@ namespace EverquartzAdventure
 {
     public class EverquartzAdventureMod : Mod
     {
+        public static EverquartzAdventureMod Instance; 
         public override void PostSetupContent()
         {
             //ModCompatibility.calamityEnabled = ModLoader.HasMod("CalamityMod");
@@ -84,6 +85,11 @@ namespace EverquartzAdventure
                         NPCs.Hypnos.Hypnos.HandleDepartHypnosUniversal(hypnos);
                     }
                     break;
+                case EverquartzMessageType.EverquartzSyncPlayer:
+                    byte playernumber = reader.ReadByte();
+                    EverquartzPlayer ePlayer = Main.player[playernumber].GetModPlayer<EverquartzPlayer>();
+                    ePlayer.lastSleepingSpot = reader.ReadVector2().ToPoint();
+                    break;
             }
         }
 
@@ -96,6 +102,8 @@ namespace EverquartzAdventure
 
             ModCompatibility.calamityEnabled = ModLoader.HasMod("CalamityMod");
             ModCompatibility.hypnosEnabled = ModLoader.HasMod("Hypnos");
+
+            Instance = this;
             base.Load();
         }
 
@@ -106,6 +114,8 @@ namespace EverquartzAdventure
 
             ModCompatibility.calamityEnabled = false;
             ModCompatibility.hypnosEnabled = false;
+
+            Instance = null;
             base.Unload();
         }
 
@@ -264,6 +274,8 @@ namespace EverquartzAdventure
 
     public class EverquartzSystem : ModSystem
     {
+        
+
         public override void OnWorldLoad()
         {
             NPCs.Hypnos.Hypnos.hypnoCoins = 0;
@@ -276,13 +288,29 @@ namespace EverquartzAdventure
         }
         public override void SaveWorldData(TagCompound tag)
         {
-
             tag.Add("hypnos", NPCs.Hypnos.Hypnos.Save());
         }
 
         public override void PreUpdateWorld()
         {
             NPCs.Hypnos.Hypnos.UpdateTravelingMerchant();
+        }
+
+        public override void PreUpdateNPCs()
+        {
+            EverquartzGlobalNPC.UniqueNPCs.ForEach(type => AntiDupe(type));
+        }
+
+        
+
+        public static void AntiDupe(int type)
+        {
+            IEnumerable<NPC> possiblyMultipleDeimi = Main.npc.Where(npc => npc != null && npc.active && npc.type == type);
+            if (possiblyMultipleDeimi.Count() > 1)
+            {
+                possiblyMultipleDeimi.ToList().ForEach(npc => npc.netUpdate = true);
+                possiblyMultipleDeimi.SkipLast(1).ToList().ForEach(npc => npc.active = false);
+            }
         }
     }
 
@@ -342,10 +370,35 @@ namespace EverquartzAdventure
     {
         public int praisingTimer = 0;
         public bool IsPraisingHypnos => praisingTimer > 0;
-            
-        public void HandleDeadDeimos(Player murderer)
+
+        public Point lastSleepingSpot;
+
+        public override void SaveData(TagCompound tag)
         {
-            StarbornPrincess.DeathEffectClient(murderer.position, murderer.width, murderer.height);
+            tag["lastSleepingSpot"] = lastSleepingSpot.ToVector2();
+        }
+
+        public override void LoadData(TagCompound tag)
+        {
+            lastSleepingSpot = tag.Get<Vector2>("lastSleepingSpot").ToPoint();
+        }
+
+        public override void PostUpdate()
+        {
+            if (Player.sleeping.isSleeping)
+            {
+                lastSleepingSpot = (Player.Bottom + new Vector2(0f, -2f)).ToTileCoordinates();
+            }
+            UpdatePraisingHypnos();
+        }
+
+        public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
+        {
+            ModPacket packet = Mod.GetPacket();
+            packet.Write((byte)EverquartzMessageType.EverquartzSyncPlayer);
+            packet.Write((byte)Player.whoAmI);
+            packet.WriteVector2(lastSleepingSpot.ToVector2());
+            packet.Send(toWho, fromWho);
         }
 
         public override bool PreItemCheck()
@@ -360,7 +413,7 @@ namespace EverquartzAdventure
                     //stretch = CompositeArmStretchAmount.Full;
                     num2 = 0.35f;
                 }
-                
+
                 Player.SetCompositeArmBack(enabled: true, stretch, (float)Math.PI * -2f * num2 * (float)Player.direction);
                 Player.SetCompositeArmFront(enabled: true, stretch, (float)Math.PI * -2f * num2 * (float)Player.direction);
 
@@ -369,6 +422,16 @@ namespace EverquartzAdventure
             return true;
         }
 
+        #region Deimos
+
+        public void HandleDeadDeimos(Player murderer)
+        {
+            StarbornPrincess.DeathEffectClient(murderer.position, murderer.width, murderer.height);
+        }
+
+        #endregion
+        
+        #region Hypnos
         public void InterruptPraisingHypnos()
         {
             praisingTimer = 0;
@@ -407,7 +470,7 @@ namespace EverquartzAdventure
 
         
 
-        public void UpdatePraise()
+        public void UpdatePraisingHypnos()
         {
             if (!IsPraisingHypnos)
             {
@@ -431,15 +494,16 @@ namespace EverquartzAdventure
             }
         }
 
-        public override void PostUpdate()
-        {
-            UpdatePraise();
-        }
+        #endregion
+        
     }
 
     public class EverquartzGlobalNPC : GlobalNPC
     {
-        
+        public static List<int> UniqueNPCs => new List<int>() {
+            ModContent.NPCType<StarbornPrincess>(),
+            ModContent.NPCType<NPCs.Hypnos.Hypnos>(),
+        };
         public override void OnKill(NPC npc)
         {
             if (npc.boss && ModCompatibility.hypnosEnabled && npc.type == ModCompatibility.HypnosBossType)
@@ -452,11 +516,12 @@ namespace EverquartzAdventure
 
     public enum EverquartzMessageType
     {
-        DeimosItemKilled, // id, player, helptext
-        ReleaseProvCore, // id, player
-        HypnosReward, // id, player, rewards(bytes)
+        DeimosItemKilled, // id, player.whoAmI, helptext
+        ReleaseProvCore, // id, player.whoAmI
+        HypnosReward, // id, player.whoAmI, rewards(bytes)
         HypnoCoinAdd, // id
-        HypnosDeparted // id
+        HypnosDeparted, // id
+        EverquartzSyncPlayer // id, player.whoAmI (see EverquartzPlayer.SyncPlayer)
     }
 
     public static class ModCompatibility
@@ -556,13 +621,14 @@ namespace EverquartzAdventure
             return (destination - entityCenter).SafeNormalize(fallback.Value);
         }
 
-        public static NPC NearestEnemy(this Vector2 position, float maxDistance, Func<NPC, bool> predicate = null)
+        public static NPC NearestNPC(this Vector2 position, float maxDistance, Func<NPC, bool> predicate = null)
         {
             NPC target = null;
             float distance = maxDistance;
-            foreach(NPC npc in Main.npc)
+            bool checkNPCInSight(NPC npc) => npc != null && npc.active && Vector2.Distance(position, npc.Center) < distance + ((float)(npc.width / 2) + (float)(npc.height / 2));
+            foreach (NPC npc in Main.npc)
             {
-                if (npc.CanBeChasedBy() && Vector2.Distance(position, npc.Center) < distance && (predicate == null ? predicate(npc) : true))
+                if (checkNPCInSight(npc) && (predicate == null ? predicate(npc) : true))
                 {
                     distance = Vector2.Distance(position, npc.Center);
                     target = npc;
@@ -579,6 +645,9 @@ namespace EverquartzAdventure
         {
             return debuffs.Where(npc.HasBuff).Count() == debuffs.Count();
         }
+
+        internal static bool Solid(this Tile tile) => tile.HasUnactuatedTile && Main.tileSolid[tile.TileType];
+        internal static bool HasLiquid(this Tile tile) => tile.LiquidAmount > 0;
 
         public static NPC NearestEnemyPreferNoDebuff(this Vector2 position, float maxDistance, List<int> debuffs)
         {

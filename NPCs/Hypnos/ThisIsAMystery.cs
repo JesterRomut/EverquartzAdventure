@@ -21,7 +21,6 @@ using Terraria.Audio;
 using Terraria.GameContent.Personalities;
 using CalamityMod;
 using Terraria.DataStructures;
-using CalamityMod.Items.Materials;
 using static Terraria.ModLoader.PlayerDrawLayer;
 using System.Collections;
 using System.IO;
@@ -39,7 +38,7 @@ namespace EverquartzAdventure
     internal static partial class CalamityWeakRef
     {
         internal static bool downedExoMechs => DownedBossSystem.downedExoMechs;
-        internal static int ExoPrism => ModContent.ItemType<ExoPrism>();
+
     }
 }
 
@@ -58,6 +57,13 @@ namespace EverquartzAdventure.NPCs.Hypnos
     public class Hypnos : ModNPC
     {
         #region ExtraAssets
+        public static readonly SoundStyle IPutTheSoundFileInLocalBecauseICouldntKnowCalamitysPathOfThis = new SoundStyle("EverquartzAdventure/Sounds/ExoMechs/ExoLaserShoot");
+        public static readonly SoundStyle ICannotFindThisEither = new SoundStyle("EverquartzAdventure/Sounds/ExoMechs/ExoHit", 4)
+        {
+            Volume = 0.4f
+        };
+
+
         public static readonly Asset<Texture2D> eyepatchTex = ModContent.Request<Texture2D>("EverquartzAdventure/NPCs/Hypnos/Eyepatch");
         public static readonly Asset<Texture2D> glowTex = ModContent.Request<Texture2D>("EverquartzAdventure/NPCs/Hypnos/Hypnos_Glow");
 
@@ -78,14 +84,19 @@ namespace EverquartzAdventure.NPCs.Hypnos
         #endregion LanguageKeys
 
         #region Consts
-        public static readonly double despawnTime = 2000;
+        public static readonly double despawnTime = 28000;
         #endregion
 
         #region ServerSideVariables
         public static double timePassed = 0;
         public static double spawnTime = double.MaxValue;
         public static int hypnoCoins = 0;
+
         #endregion ServerSideVariables
+
+        #region UniversalVariables
+        //public bool observingSleepingPlayer = false;
+        #endregion
 
         #region InstanceManagement
         public static int instance = -1;
@@ -107,7 +118,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
             }
         }
         #endregion InstanceManagement
-        
+
         #region HandleInternet
         public static void HandleDepartHypnosUniversal(NPC hypnos)
         {
@@ -144,7 +155,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
                 case HypnosReward.ExoPrisms:
                     if (ModCompatibility.calamityEnabled)
                     {
-                        SpawnItem(CalamityWeakRef.ExoPrism, Main.rand.Next(3, 7));
+                        SpawnItem(CalamityWeakRef.ItemType.ExoPrism, Main.rand.Next(3, 7));
                     }
                     break;
                 case HypnosReward.Eucharist:
@@ -179,6 +190,17 @@ namespace EverquartzAdventure.NPCs.Hypnos
             knockback = 0;
         }
 
+        //public override void SendExtraAI(BinaryWriter writer)
+        //{
+        //    writer.Write(observingSleepingPlayer);
+
+        //}
+
+        //public override void ReceiveExtraAI(BinaryReader reader)
+        //{
+        //    observingSleepingPlayer = reader.ReadBoolean();
+        //}
+
 
 
         public override void SetStaticDefaults()
@@ -203,6 +225,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
             NPCID.Sets.MagicAuraColor[Type] = Color.Purple;
             NPCID.Sets.AttackTime[Type] = 200;
             NPCID.Sets.DangerDetectRange[Type] = 500;
+            NPCID.Sets.ActsLikeTownNPC[Type] = true;
 
         }
 
@@ -225,8 +248,8 @@ namespace EverquartzAdventure.NPCs.Hypnos
             NPC.damage = 200;
             NPC.defense = 90;
 
-            NPC.HitSound = SoundID.NPCHit4;
-            NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.HitSound = ICannotFindThisEither;
+            NPC.DeathSound = SoundID.Item14;
             NPC.knockBackResist = 0.5f;
             TownNPCStayingHomeless = true;
             NPC.trapImmune = true;
@@ -243,20 +266,6 @@ namespace EverquartzAdventure.NPCs.Hypnos
         {
             return false;
         }
-
-        public override void AI()
-        {
-            instance = NPC.whoAmI;
-            CombatText.NewText(NPC.Hitbox, Color.White, timePassed.ToString());
-            NPC.homeless = true;
-            Func<NPC, bool> pred = (npc => npc.type == ModContent.NPCType<Hypnos>() && npc.whoAmI != NPC.whoAmI);
-            if (Main.npc.Any(pred))
-            {
-                Main.npc.Where(pred).ToList().ForEach(npc => npc.active = false);
-            }
-        }
-
-
 
         public override void FindFrame(int frameHeight)
         {
@@ -287,6 +296,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
         public override void OnKill()
         {
             instance = -1;
+            DropCoins();
         }
 
         public override void SetChatButtons(ref string button, ref string button2)
@@ -296,6 +306,8 @@ namespace EverquartzAdventure.NPCs.Hypnos
         public override void OnChatButtonClicked(bool firstButton, ref bool shop)
         {
             Player player = Main.player[Main.myPlayer];
+
+            
 
             Pray(player);
         }
@@ -352,7 +364,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            Vector2 position = NPC.Center - screenPos - new Vector2(0, 9f);
+            Vector2 position = NPC.Center - screenPos + new Vector2(3 + (NPC.spriteDirection == 1 ? -7 : 0), -9f);
             spriteBatch.Draw
             (
                 TextureAssets.Npc[base.NPC.type].Value,
@@ -381,12 +393,60 @@ namespace EverquartzAdventure.NPCs.Hypnos
         }
         #endregion
 
+        #region AI
+        public override void AI()
+        {
+            instance = NPC.whoAmI;
+            //CombatText.NewText(NPC.Hitbox, Color.White, timePassed.ToString());
+            NPC.homeless = true;
+            // massive linq
+            //if (Main.rand.NextBool(3))
+            //{
+            //    //IEnumerable<Player> sleepingPlayers = Main.player.Where(p => p != null && p.active && p.sleeping.isSleeping);
+            //    //if (sleepingPlayers.Any())
+            //    //{
+            //    //    if (!observingSleepingPlayer)
+            //    //    {
+            //    //        observingSleepingPlayer = true;
+
+            //    //        FindBestPraisingTileWhilePlayerSleeping(sleepingPlayers.Random(), out NPC.homeTileX, out NPC.homeTileY);
+            //    //        NPC.netUpdate = true;
+            //    //    }
+
+            //    //}
+            //    //else
+            //    //{
+            //    //    if (observingSleepingPlayer)
+            //    //    {
+            //    //        observingSleepingPlayer = false;
+
+            //    //        FindBestPraisingTileFromNearestTownNPC(ref NPC.homeTileX, ref NPC.homeTileY);
+            //    //        NPC.netUpdate = true;
+            //    //    }
+            //    //}
+
+            //    NPC.homeless = true;
+            //    Func<NPC, bool> pred = (npc => npc.type == ModContent.NPCType<Hypnos>() && npc.whoAmI != NPC.whoAmI);
+            //    if (Main.npc.Any(pred))
+            //    {
+            //        Main.npc.Where(pred).ToList().ForEach(npc => npc.active = false);
+            //    }
+            //}
+
+
+        }
+
+
+
+
+        #endregion
+
         #region Traveling
         public static bool ShouldDespawn => timePassed >= despawnTime;
         public static void UpdateTravelingMerchant()
         {
             NPC hypnos = Instance;
-             // Find an Explorer if there's one spawned in the world
+            // Find an Explorer if there's one spawned in the world
             if (hypnos != null && ShouldDespawn && !IsNpcOnscreen(hypnos.Center)) // If it's past the despawn time and the NPC isn't onscreen
             {
                 // Here we despawn the NPC and send a message stating that the NPC has despawned
@@ -399,13 +459,13 @@ namespace EverquartzAdventure.NPCs.Hypnos
                 }
                 else if (Main.netMode == NetmodeID.Server)
                 {
-                    ModPacket packet = ModContent.GetInstance<EverquartzAdventureMod>().GetPacket();
+                    ModPacket packet = EverquartzAdventureMod.Instance.GetPacket();
                     packet.Write((byte)EverquartzMessageType.HypnosDeparted);
                     packet.Send();
                     ChatHelper.BroadcastChatMessage(NetworkText.FromKey(Lang.misc[35].Key, fullName), new Color(50, 125, 255));
                 }
-                
-                
+
+
                 timePassed = 0;
             }
 
@@ -418,6 +478,8 @@ namespace EverquartzAdventure.NPCs.Hypnos
                 timePassed = 0;
             }
 
+
+
             // Main.time is set to 0 each morning, and only for one update. Sundialling will never skip past time 0 so this is the place for 'on new day' code
             if (Main.dayTime && Main.time == 0)
             {
@@ -425,10 +487,14 @@ namespace EverquartzAdventure.NPCs.Hypnos
                 // You can also add a day counter here to prevent the merchant from possibly spawning multiple days in a row.
 
                 // NPC won't spawn today if it stayed all night
-                if (hypnos == null && NPC.downedMoonlord && Main.rand.NextBool(6))
+                if (hypnos == null && NPC.downedMoonlord && Main.rand.NextBool(5))
                 { // 4 = 25% Chance
                   // Here we can make it so the NPC doesnt spawn at the EXACT same time every time it does spawn
                     spawnTime = GetRandomSpawnTime(5400, 8100); // minTime = 6:00am, maxTime = 7:30am
+                    //if (Main.netMode == NetmodeID.Server)
+                    //{
+                    //    ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral($"debug: spawntime = {spawnTime}"), Color.Purple);
+                    //}
                 }
                 else
                 {
@@ -439,11 +505,16 @@ namespace EverquartzAdventure.NPCs.Hypnos
             // Spawn the traveler if the spawn conditions are met (time of day, no events, no sundial)
             if (hypnos == null && CanSpawnNow())
             {
-                int newHypnos = NPC.NewNPC(new EntitySource_SpawnNPC(), Main.spawnTileX * 16, Main.spawnTileY * 16, ModContent.NPCType<Hypnos>(), 1); // Spawning at the world spawn
-                hypnos = Main.npc[newHypnos];
+                FindHomeTile(out int homeX, out int homeY);
+                FindSpawnPoint(new Point(homeX, homeY), out int bestX, out int bestY);
+
+                hypnos = NPC.NewNPCDirect(Terraria.Entity.GetSource_TownSpawn(), bestX /16, bestY /16, ModContent.NPCType<Hypnos>(), 1); // Spawning at the world spawn
+                
                 hypnos.homeless = true;
-                hypnos.direction = Main.spawnTileX >= WorldGen.bestX ? -1 : 1;
+                hypnos.direction = bestX >= homeX ? -1 : 1;
                 hypnos.netUpdate = true;
+                hypnos.homeTileX = homeX;
+                hypnos.homeTileY = homeY;
 
                 // Prevents the traveler from spawning again the same day
                 spawnTime = double.MaxValue;
@@ -467,6 +538,160 @@ namespace EverquartzAdventure.NPCs.Hypnos
             return Main.dayTime && Main.time >= spawnTime;
         }
 
+        private static void FindHomeTile(out int homeTileX, out int homeTileY)
+        {
+            IEnumerable<Player> players = Main.player.Where(p => p != null && p.active && p.Everquartz().lastSleepingSpot != default);
+            if (players.Any())
+            {
+                Point spot = players.Random().Everquartz().lastSleepingSpot;
+                homeTileX = spot.X;
+                homeTileY = spot.Y;
+                return;
+            }
+            IEnumerable<NPC> npcs = Main.npc.Where(npc => npc.active && npc.townNPC && npc.type != NPCID.OldMan && !npc.homeless);
+            if (npcs.Any())
+            {
+                NPC randomNPC = npcs.Random();
+                homeTileX = randomNPC.homeTileX;
+                homeTileY = randomNPC.homeTileY;
+                return;
+            }
+            homeTileX = Main.spawnTileX;
+            homeTileY = Main.spawnTileY;
+        }
+
+        public static bool CheckSpwanTile(int tileX, int tileY)
+        {
+            //EverquartzAdventureMod.Instance.Logger.Info($"({tileX},{tileY})");
+
+            if (tileX < 0 || tileY < 0 || tileX > Main.maxTilesX || tileY > Main.maxTilesY)
+            {
+                return false;
+            }
+
+            //Dust.NewDustPerfect(new Vector2(tileX * 16, tileY * 16), DustID.Water, Vector2.Zero);
+
+            if (!Main.tile[tileX, tileY + 4].Solid() && !Main.tile[tileX + 1, tileY + 4].Solid())
+            {
+                return false;
+            }
+            if (Main.tile[tileX, tileY].HasLiquid() || Main.tile[tileX, tileY+1].HasLiquid() || Main.tile[tileX, tileY+2].HasLiquid() || Collision.SolidTiles(tileX, tileX + 1, tileY, tileY + 3))
+            {
+                return false;
+            }
+
+
+            return !IsNpcOnscreen(new Point(tileX, tileY - 1).ToWorldCoordinates());
+        }
+
+        public static void FindSpawnPoint(Point pos, out int bestX, out int bestY)
+        {
+            FindSpawnPoint(pos, pos, out bestX, out bestY);
+        }
+
+        private static void FindSpawnPoint(Point start, Point end, out int bestX, out int bestY, bool clockwise = true)
+        {
+            int direction = clockwise.ToDirectionInt();
+            //distance
+            if (start.X == end.X && start.Y == end.Y)
+            {
+                FindSpawnPoint(new Point(start.X, start.Y - 1), new Point(start.X + direction, start.Y - 1), out bestX, out bestY);
+                return;
+            }
+
+            if (start.X < end.X)
+            {
+                int level = end.X - start.X;
+                if (level > Main.maxTilesX)
+                {
+                    bestX = -1;
+                    bestY = -1;
+                    return;
+                }
+                for (int x = start.X; x < end.X; x++)
+                {
+                    if (CheckSpwanTile(x, start.Y))
+                    {
+                        bestX = x;
+                        bestY = start.Y;
+                        return;
+                    }
+                }
+                FindSpawnPoint(new Point(end.X, end.Y + direction), new Point(end.X, end.Y + (level + 1) * direction), out bestX, out bestY);
+                return;
+            }
+            else if (start.X > end.X)
+            {
+                int level = start.X - end.X;
+                if (level > Main.maxTilesX)
+                {
+                    bestX = -1;
+                    bestY = -1;
+                    return;
+                }
+                for (int x = start.X; x >= end.X; x--)
+                {
+                    if (CheckSpwanTile(x, start.Y))
+                    {
+                        bestX = x;
+                        bestY = start.Y;
+                        return;
+                    }
+                }
+                FindSpawnPoint(new Point(end.X, end.Y - direction), new Point(end.X, end.Y - (level + 1) * direction), out bestX, out bestY);
+                return;
+            }
+            else if (start.Y < end.Y)
+            {
+                int level = end.Y - start.Y;
+                if (level > Main.maxTilesX)
+                {
+                    bestX = -1;
+                    bestY = -1;
+                    return;
+                }
+                for (int y = start.Y; y < end.Y; y++)
+                {
+                    if (CheckSpwanTile(start.X, y))
+                    {
+                        bestX = start.X;
+                        bestY = y;
+                        return;
+                    }
+                }
+                FindSpawnPoint(new Point(end.X - direction, end.Y), new Point(end.X - (level + 1) * direction, end.Y), out bestX, out bestY);
+                return;
+            }
+            else if (start.Y > end.Y)
+            {
+                int level = start.Y - end.Y;
+                if (level > Main.maxTilesX)
+                {
+                    bestX = -1;
+                    bestY = -1;
+                    return;
+                }
+                for (int y = start.Y; y >= end.Y; y--)
+                {
+                    if (CheckSpwanTile(start.X, y))
+                    {
+                        bestX = start.X;
+                        bestY = y;
+                        return;
+                    }
+                }
+                FindSpawnPoint(new Point(end.X, end.Y - 1), new Point(end.X + (level + 2)*direction, end.Y - 1), out bestX, out bestY);
+                return;
+            }
+            else
+            {
+                bestX = -1;
+                bestY = -1;
+                return;
+            }
+
+        }
+
         private static bool IsNpcOnscreen(Vector2 center)
         {
             int w = NPC.sWidth + NPC.safeRangeX * 2;
@@ -475,7 +700,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
             foreach (Player player in Main.player)
             {
                 // If any player is close enough to the traveling merchant, it will prevent the npc from despawning
-                if (player.active && player.getRect().Intersects(npcScreenRect)) return true;
+                if (player != null && player.active && player.getRect().Intersects(npcScreenRect)) return true;
             }
             return false;
         }
@@ -491,7 +716,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
         public static TagCompound Save()
         {
-            return new TagCompound ()
+            return new TagCompound()
             {
                 ["spawnTime"] = spawnTime,
                 ["timePassed"] = timePassed,
@@ -507,7 +732,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
         }
         #endregion
 
-        #region Utils
+        #region MiscUtils
         private void Draw(Texture2D texture, SpriteBatch spriteBatch, Vector2 screenPos, Vector2? position = null, Color? drawColor = null)
         {
             spriteBatch.Draw
@@ -523,6 +748,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
                 0f
             );
         }
+
         public void Kill()
         {
             NPC.life = 0;
@@ -574,6 +800,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
         }
         public string GetPrayChat(bool hasEnoughMoney)
         {
+            
             WeightedRandom<string> textSelector = new WeightedRandom<string>(Main.rand);
             if (hasEnoughMoney)
             {
@@ -643,7 +870,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
     }
 
-    public class Indulgence: ModItem
+    public class Indulgence : ModItem
     {
 
         public override void SetStaticDefaults()

@@ -32,7 +32,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
     public class AergiaNeuron : ModProjectile
     {
         #region ExtraAssets
-        public static readonly SoundStyle IPutTheSoundFileInLocalBecauseICouldntKnowCalamitysPathOfThis = new SoundStyle("EverquartzAdventure/Sounds/ExoMechs/ExoLaserShoot");
+        
 
         public static string readThisIfYouAreUsingADecompiler => "The aergia neuron and blue exo laser's sprites can both be found on fandom - absolutely bread fangirl";
         public static readonly Asset<Texture2D> glowTex = ModContent.Request<Texture2D>("EverquartzAdventure/NPCs/Hypnos/AergiaNeuron_Glow");
@@ -48,20 +48,20 @@ namespace EverquartzAdventure.NPCs.Hypnos
         #endregion
 
         #region BuffInfo
-        public static List<int> debuffs => new List<int>()
+        public static List<int> VanillaDebuffs => new List<int>()
         {
             BuffID.Ichor,
             BuffID.BetsysCurse
         };
 
-        public static List<int> calDebuffs => new List<int>()
+        public static List<int> CalamityDebuffs => new List<int>()
         {
             CalamityWeakRef.MarkedForDeathBuff,
         CalamityWeakRef.ArmorCrunchBuff,
                CalamityWeakRef.KamiFluBuff
         };
 
-        public static List<int> Debuffs => (ModCompatibility.calamityEnabled ? debuffs.Union(calDebuffs) : debuffs).ToList();
+        public static List<int> Debuffs => (ModCompatibility.calamityEnabled ? VanillaDebuffs.Union(CalamityDebuffs) : VanillaDebuffs).ToList();
 
         public static readonly int buffDuration = 3000;
 
@@ -106,7 +106,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
         #region Utils
         public static List<Projectile> AllNeurons => Main.projectile.Where(proj => proj != null && proj.active && proj.owner == 0 && proj.type == ModContent.ProjectileType<AergiaNeuron>()).ToList();
 
-        public static int CalcDamage(NPC target) => target.lifeMax / (target.boss ? 40000 : 3);
+        public static int CalcDamage(NPC target) => target.lifeMax / (target.boss ? 42000 : 3);
         public static void AddElectricDusts(Entity proj, int count = 3) // hey hypons or whatever your name u coded quite a lot maybe it is time to stop that is not healthy for you, i can tell by myself
         {
             for (int i = 0; i < count; i++)
@@ -146,6 +146,29 @@ namespace EverquartzAdventure.NPCs.Hypnos
             Projectile.DamageType = DamageClass.MagicSummonHybrid;
         }
 
+        
+        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            damage = CalcDamage(target);
+            crit = true;
+
+        }
+
+        public override void PostDraw(Color lightColor)
+        {
+            Texture2D sprite = Landed ? glowTex.Value : glowRedTex.Value;
+            float originOffsetX = (sprite.Width - Projectile.width) * 0.5f + Projectile.width * 0.5f + DrawOriginOffsetX;
+
+            Rectangle frame = new Rectangle(0, 0, sprite.Width, sprite.Height);
+
+            Vector2 origin = new Vector2(originOffsetX, Projectile.height / 2 - DrawOriginOffsetY);
+
+
+            Main.EntitySpriteDraw(sprite, Projectile.position - Main.screenPosition + new Vector2(originOffsetX + DrawOffsetX, Projectile.height / 2 + Projectile.gfxOffY), (Rectangle?)frame, Color.White, Projectile.rotation, origin, Projectile.scale, default(SpriteEffects), 0);
+        }
+        #endregion
+
+        #region AI
         public override void AI()
         {
             NPC hypnos = Hypnos.Instance;
@@ -199,8 +222,8 @@ namespace EverquartzAdventure.NPCs.Hypnos
                     else
                     {
                         Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.SafeDirectionTo(target.Center) * laserSpeed, ModContent.ProjectileType<BlueExoPulseLaser>(), 1, 0, 0, target.whoAmI);
-                        SoundStyle style = IPutTheSoundFileInLocalBecauseICouldntKnowCalamitysPathOfThis;
-                        style.Volume = IPutTheSoundFileInLocalBecauseICouldntKnowCalamitysPathOfThis.Volume - 0.1f;
+                        SoundStyle style = Hypnos.IPutTheSoundFileInLocalBecauseICouldntKnowCalamitysPathOfThis;
+                        style.Volume = Hypnos.IPutTheSoundFileInLocalBecauseICouldntKnowCalamitysPathOfThis.Volume - 0.1f;
                         SoundEngine.PlaySound(in style, Projectile.Center);
                         ShootCooldown = laserTimer;
 
@@ -233,32 +256,11 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
 
         }
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
-        {
-            damage = CalcDamage(target);
-            crit = true;
-
-        }
-
-        public override void PostDraw(Color lightColor)
-        {
-            Texture2D sprite = Landed ? glowTex.Value : glowRedTex.Value;
-            float originOffsetX = (sprite.Width - Projectile.width) * 0.5f + Projectile.width * 0.5f + DrawOriginOffsetX;
-
-            Rectangle frame = new Rectangle(0, 0, sprite.Width, sprite.Height);
-
-            Vector2 origin = new Vector2(originOffsetX, Projectile.height / 2 - DrawOriginOffsetY);
-
-
-            Main.EntitySpriteDraw(sprite, Projectile.position - Main.screenPosition + new Vector2(originOffsetX + DrawOffsetX, Projectile.height / 2 + Projectile.gfxOffY), (Rectangle?)frame, Color.White, Projectile.rotation, origin, Projectile.scale, default(SpriteEffects), 0);
-        }
         #endregion
 
 
 
-        
 
-        
     }
 
     public class BlueExoPulseLaser : ModProjectile
@@ -306,6 +308,30 @@ namespace EverquartzAdventure.NPCs.Hypnos
             Projectile.DamageType = DamageClass.MagicSummonHybrid;
         }
 
+        
+
+        public override void Kill(int timeLeft)
+        {
+            AergiaNeuron.AddElectricDusts(Projectile, 1);
+        }
+
+        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            damage = AergiaNeuron.CalcDamage(target);
+            AergiaNeuron.Debuffs.ForEach(buff => target.AddBuff(buff, AergiaNeuron.buffDuration));
+
+            NPC target2 = Projectile.Center.NearestEnemyPreferNoDebuff(800f, AergiaNeuron.Debuffs);
+            if (target2 != null)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center, Projectile.SafeDirectionTo(target2.Center) * AergiaNeuron.laserSpeed, ModContent.ProjectileType<BlueExoPulseLaser>(), 1, 0, 0, target.whoAmI);
+
+
+
+            }
+        }
+        #endregion
+
+        #region AI
         public override void AI()
         {
             base.Projectile.frameCounter++;
@@ -350,26 +376,6 @@ namespace EverquartzAdventure.NPCs.Hypnos
             if (base.Projectile.alpha >= 255)
             {
                 base.Projectile.Kill();
-            }
-        }
-
-        public override void Kill(int timeLeft)
-        {
-            AergiaNeuron.AddElectricDusts(Projectile, 1);
-        }
-
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
-        {
-            damage = AergiaNeuron.CalcDamage(target);
-            AergiaNeuron.Debuffs.ForEach(buff => target.AddBuff(buff, AergiaNeuron.buffDuration));
-
-            NPC target2 = Projectile.Center.NearestEnemyPreferNoDebuff(800f, AergiaNeuron.Debuffs);
-            if (target2 != null)
-            {
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center, Projectile.SafeDirectionTo(target2.Center) * AergiaNeuron.laserSpeed, ModContent.ProjectileType<BlueExoPulseLaser>(), 1, 0, 0, target.whoAmI);
-
-
-
             }
         }
         #endregion

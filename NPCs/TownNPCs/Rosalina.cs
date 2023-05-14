@@ -41,14 +41,9 @@ namespace EverquartzAdventure
 
         internal static int CalamitasNPC => ModContent.NPCType<WITCH>();
 
-        internal static int ProfanedCrucibleItem => ModContent.ItemType<ProfanedCrucible>();
-        internal static int DivineGeode => ModContent.ItemType<DivineGeode>();
-        internal static int NightmareFuel => ModContent.ItemType<NightmareFuel>();
-        internal static int EndothermicEnergy => ModContent.ItemType<EndothermicEnergy>();
-        internal static int DarksunFragment => ModContent.ItemType<DarksunFragment>();
-        internal static int RuneOfKos => ModContent.ItemType<RuneofKos>();
-        internal static int ElysianAegis => ModContent.ItemType<ElysianAegis>();
-        internal static int AsgardianAegis => ModContent.ItemType<AsgardianAegis>();
+        
+
+        
 
         internal static int HolyFlamesBuff => ModContent.BuffType<HolyFlames>();
         internal static int GodSlayerInfernoBuff => ModContent.BuffType<GodSlayerInferno>();
@@ -196,11 +191,7 @@ namespace EverquartzAdventure.NPCs.TownNPCs
 
         public override void AI()
         {
-            Func<NPC, bool> pred = (npc => npc.type == ModContent.NPCType<StarbornPrincess>() && npc.whoAmI != NPC.whoAmI);
-            if (Main.npc.Any(pred))
-            {
-                Main.npc.Where(pred).ToList().ForEach(npc => npc.active = false);
-            }
+            
 
         }
 
@@ -304,19 +295,19 @@ namespace EverquartzAdventure.NPCs.TownNPCs
 
             if (ModCompatibility.calamityEnabled)
             {
-                shop.AddShopItem(ref nextSlot, CalamityWeakRef.ProfanedCrucibleItem, Item.buyPrice(gold: 60));
-                shop.AddShopItem(ref nextSlot, CalamityWeakRef.DivineGeode, Item.buyPrice(gold: 6));
+                shop.AddShopItem(ref nextSlot, CalamityWeakRef.ItemType.ProfanedCrucible, Item.buyPrice(gold: 60));
+                shop.AddShopItem(ref nextSlot, CalamityWeakRef.ItemType.DivineGeode, Item.buyPrice(gold: 6));
                 if (CalamityWeakRef.downedDoG)
                 {
-                    shop.AddShopItem(ref nextSlot, CalamityWeakRef.NightmareFuel, Item.buyPrice(gold: 12));
-                    shop.AddShopItem(ref nextSlot, CalamityWeakRef.EndothermicEnergy, Item.buyPrice(gold: 12));
-                    shop.AddShopItem(ref nextSlot, CalamityWeakRef.DarksunFragment, Item.buyPrice(gold: 12));
+                    shop.AddShopItem(ref nextSlot, CalamityWeakRef.ItemType.NightmareFuel, Item.buyPrice(gold: 12));
+                    shop.AddShopItem(ref nextSlot, CalamityWeakRef.ItemType.EndothermicEnergy, Item.buyPrice(gold: 12));
+                    shop.AddShopItem(ref nextSlot, CalamityWeakRef.ItemType.DarksunFragment, Item.buyPrice(gold: 12));
                 }
 
                 Player player = Main.player[Main.myPlayer];
-                if (player.HasItem(CalamityWeakRef.ElysianAegis) || player.HasItem(CalamityWeakRef.AsgardianAegis) || CalamityWeakRef.HasElysianAegisBuff(player))
+                if (player.HasItem(CalamityWeakRef.ItemType.ElysianAegis) || player.HasItem(CalamityWeakRef.ItemType.AsgardianAegis) || CalamityWeakRef.HasElysianAegisBuff(player))
                 {
-                    shop.AddShopItem(ref nextSlot, CalamityWeakRef.RuneOfKos, Item.buyPrice(platinum: 2));
+                    shop.AddShopItem(ref nextSlot, CalamityWeakRef.ItemType.RuneOfKos, Item.buyPrice(platinum: 2));
                 }
             }
 
@@ -340,6 +331,7 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             }
 
         }
+        
         #endregion
 
         #region DeathEffect
@@ -397,7 +389,7 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             else if (Main.netMode == NetmodeID.Server)
             {
 
-                ModPacket packet = ModContent.GetInstance<EverquartzAdventureMod>().GetPacket();
+                ModPacket packet = EverquartzAdventureMod.Instance.GetPacket();
                 packet.Write((byte)EverquartzMessageType.DeimosItemKilled);
                 packet.Write(player.whoAmI);
                 packet.Write(helptext);
