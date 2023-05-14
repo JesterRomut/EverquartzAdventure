@@ -106,7 +106,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
         #region Utils
         public static List<Projectile> AllNeurons => Main.projectile.Where(proj => proj != null && proj.active && proj.owner == 0 && proj.type == ModContent.ProjectileType<AergiaNeuron>()).ToList();
 
-        public static int CalcDamage(NPC target) => target.lifeMax / (target.boss ? 42000 : 3);
+        public static int CalcDamage(NPC target) => (int)Math.Floor((float)target.lifeMax / (target.boss ? 42000 : 6));
         public static void AddElectricDusts(Entity proj, int count = 3) // hey hypons or whatever your name u coded quite a lot maybe it is time to stop that is not healthy for you, i can tell by myself
         {
             for (int i = 0; i < count; i++)
