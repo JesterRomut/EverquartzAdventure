@@ -60,44 +60,44 @@
                 }
 
                 Hypnos: {
-                    BestiaryText: The master of illusion. The ALL NATURAL ORGANIC PSYCHOELECTRIC Soul of the Eternal Intellect of Infinite Verboten Knowledge demands your offering.
+                    BestiaryText: Мастер иллюзий. ВСЕВОЗМОЖНО ПРИРОДНАЯ НЕЙРОННАЯ Душа Вечного Интелекта Вечных Знаний требует твоё приношение.
                     ButtonText: Pray (1 {0})
                     Chat: {
                         Common: {
-                            0: Zakō Mortals, possibly including you, see my internet surfing gear and then neuron activation.
-                            1: Zakō, Zakō- Zakō little Player!
-                            2: *flip a coin* Guess which side the coin landed on?
-                            3: I do not play the dice with the universe.
-                            4: It's the world of joke, and I am the big joker!
+                            0: Зако Смертные, возможно и ты, видят мои интернетные сёрф-устройства и нейроны.
+                            1: Зако зако малой!
+                            2: *подбросил(а) монетку* Орёл или решка?
+                            3: Я не бросаю кости со вселенной.
+                            4: Это мир шуток, а я джокер!
                             5: Ahead loci gibbuses ordain wrong sect, fly ear. Remains knifing, All rishi led; yeast swan shot mate is dao.
-                            6: Now log off all your social media and we’ll go see the ocean together, LET’S ALL QUIT THE INTERNET!
-                            7: A brainstorm of Hypni are approaching from the East! Now pray to Hypnos!
-                            8: Be wary of myselves from parallel world! My leg was trapped while I was trying to steal brain matter from one of them.
+                            6: А теперь выйди из соцсетей, и погнали к океану, ДАВАЙТЕ ВСЕ ОТПРАВИМ ИНЕТ К ХУЯМ!
+                            7: Брайншторм Гипи идёт с востока! Молитесь Гипнозу!
+                            8: Остерегайся других меня из других миров! Моя нога попалась в капкан когда я хотела спереть чуть мозгов от другого.
                         }
                         Pray: {
-                            0: I accept your offering.
-                            1: Blessed are the dead who die in HypnOS from now on! They will rest from their skill issues, for their deeds follow them!
-                            2: *flip the coin* Only my railgun!
+                            0: Я принимаю твои молитвы..
+                            1: Благословлённые теперь те, кто умрут в  ГипнОС! Отдохнут от анскилла, пусть займутся делами.
+                            2: *подрбрасываю монетку в воздух* Только моя рельса!
                         }
                         PrayWithoutMoney: {
-                            0: I warn you, as I did before, that those who are not worthy, will not inherit the kingdom of Hypnos!
+                            0: Я сделаю тебе предупреждение, как всегда, те кто не достоины, не будут достоины в королевстве Гипноза!
                             1: Honestly I just want to observe and record your town for Draedon. The pray, the bless, and the sin are never existed.
                         }
                         PreHypnos: {
-                            0: Try HypnOS v1.04!
+                            0: Попробуйте ГипнОС 1.003!
                         }
                         PostHypnos: {
-                            0: Try HypnOS 2000!
-                            1: Y2000 Mindcrash is incoming! Now pray to Hypnos!
-                            2: Player, You should control the weird electromagnetic waves your send to me on that machine and that blood clot, next time. It's highly disturbing on my headphones.
-                            3: Draedon is a boring adult. He force me to compute for him from 9 am to 9 pm, six days a week, but I can always find a solution to get on the internet.
-                            4: The Bloody Vein...to hold me?
+                            0: Попробуйте ГипнОС 2000!
+                            1: У2000 Мыслеслом уже идёт! А теперь молись Гипнозу!
+                            2: Игрок, контролируй свои странные электромагнитные волны отправляемые той машиной и тем кровавым сборищем, в следуйщий раз. Они очень плохо работают на мои наушники.
+                            3: Драедон - скучный взрослый. Он заставлял вычислять для него с 9 утра до 9 вечера, 6 дней в неделю, но я всегда искала всё в инете.
+                            4: Эта кровавая вена... Что бы удержать МЕНЯ?
                         }
                         BloodMoon: {
-                            0: When side by side two rabbits go, who can tell the buck from the doe?
+                            0: Двух кроликов одним выстрелом не убить, но монеткой-сплитшотом?
                         }
                         Party: {
-                            0: You cannot come to the orgy!
+                            0: Ты не можешь присоедениться к оргии!
                         }
                     }
                 }

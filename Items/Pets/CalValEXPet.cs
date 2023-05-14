@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria.ModLoader;
 
-namespace EverquartzAdventure.Items.Pets
+namespace EverquartzAdventure
 {
 
     /// <summary>

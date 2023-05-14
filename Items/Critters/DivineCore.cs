@@ -74,7 +74,7 @@ namespace EverquartzAdventure.Items.Critters
 
             if (ModCompatibility.calamityEnabled)
             {
-                player.AddBuff(CalamityWeakRef.HolyFlamesBuff, 120);
+                player.AddBuff(CalamityWeakRef.BuffType.HolyFlames, 120);
             }
 			
         }

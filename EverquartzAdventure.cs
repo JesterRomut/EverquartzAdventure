@@ -18,8 +18,10 @@ using EverquartzAdventure.Items.Critters;
 using static Terraria.Player;
 using Terraria.ModLoader.IO;
 using EverquartzAdventure.NPCs.Hypnos;
+using EverquartzAdventure.Projectiles.Hypnos;
 using Terraria.Utilities;
 using System.Collections;
+using Terraria.GameContent;
 
 namespace EverquartzAdventure
 {
@@ -371,6 +373,8 @@ namespace EverquartzAdventure
         public int praisingTimer = 0;
         public bool IsPraisingHypnos => praisingTimer > 0;
 
+        public bool mindcrashed = false;
+
         //public Point? lastSleepingSpot = null;
 
         //public override void SaveData(TagCompound tag)
@@ -424,6 +428,28 @@ namespace EverquartzAdventure
                 return false;
             }
             return true;
+        }
+
+        public override void ResetEffects()
+        {
+            ResetBuffs();
+        }
+
+        public override void UpdateDead()
+        {
+            ResetBuffs();
+        }
+
+        public override void DrawEffects(PlayerDrawSet drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
+        {
+            if (mindcrashed && Main.myPlayer == base.Player.whoAmI)
+            {
+            }
+        }
+
+        public void ResetBuffs()
+        {
+            mindcrashed = false;
         }
 
         #region Deimos
@@ -508,6 +534,12 @@ namespace EverquartzAdventure
             ModContent.NPCType<StarbornPrincess>(),
             ModContent.NPCType<NPCs.Hypnos.Hypnos>(),
         };
+
+        public override void DrawEffects(NPC npc, ref Color drawColor)
+        {
+            base.DrawEffects(npc, ref drawColor);
+        }
+
         public override void OnKill(NPC npc)
         {
             if (npc.boss && ModCompatibility.hypnosEnabled && npc.type == ModCompatibility.HypnosBossType)
@@ -571,7 +603,7 @@ namespace EverquartzAdventure
     {
         internal static T Random<T>(this IEnumerable<T> li)
         {
-            return li.ElementAt(Main.rand.Next(li.Count()));
+            return li.ElementAtOrDefault(Main.rand.Next(li.Count()));
         }
 
         internal static void AddShopItem(this Chest shop, ref int nextSlot, int item, int price = -1)

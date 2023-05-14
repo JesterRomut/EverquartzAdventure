@@ -183,8 +183,8 @@ namespace EverquartzAdventure.Items.Weapons
             crit = true;
             if (ModCompatibility.calamityEnabled)
             {
-                target.AddBuff(CalamityWeakRef.GodSlayerInfernoBuff, 120);
-                target.AddBuff(CalamityWeakRef.HolyFlamesBuff, 120);
+                target.AddBuff(CalamityWeakRef.BuffType.GodSlayerInferno, 120);
+                target.AddBuff(CalamityWeakRef.BuffType.HolyFlames, 120);
             }
             
         }

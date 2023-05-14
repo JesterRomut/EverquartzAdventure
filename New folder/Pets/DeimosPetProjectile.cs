@@ -3,8 +3,11 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using EverquartzAdventure;
+using EverquartzAdventure.Items.Pets;
+using EverquartzAdventure.Buffs.Pets;
 
-namespace EverquartzAdventure.Items.Pets
+namespace EverquartzAdventure.Projectiles.Pets
 {
     public class DeimosPetProjectile : CalValEXWalkingPet
     {

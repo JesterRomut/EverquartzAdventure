@@ -13,21 +13,10 @@ using Terraria.GameContent.Bestiary;
 using Terraria.Utilities;
 using Terraria.ID;
 using Terraria.Audio;
-using CalamityMod.Buffs.StatDebuffs;
+using EverquartzAdventure.NPCs.Hypnos;
 
-namespace EverquartzAdventure
-{
-    internal static partial class CalamityWeakRef
-    {
-        public static int MarkedForDeathBuff => ModContent.BuffType<MarkedforDeath>();
-        public static int ArmorCrunchBuff => ModContent.BuffType<ArmorCrunch>();
-        public static int KamiFluBuff => ModContent.BuffType<KamiFlu>();
 
-        //public static List<int> CalamityDebuffsUsedForHypnos => new List<int>();
-    }
-}
-
-namespace EverquartzAdventure.NPCs.Hypnos
+namespace EverquartzAdventure.Projectiles.Hypnos
 {
     public class AergiaNeuron : ModProjectile
     {
@@ -56,9 +45,9 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
         public static List<int> CalamityDebuffs => new List<int>()
         {
-            CalamityWeakRef.MarkedForDeathBuff,
-        CalamityWeakRef.ArmorCrunchBuff,
-               CalamityWeakRef.KamiFluBuff
+            CalamityWeakRef.BuffType.MarkedForDeath,
+        CalamityWeakRef.BuffType.ArmorCrunch,
+               CalamityWeakRef.BuffType.KamiFlu
         };
 
         public static List<int> Debuffs => (ModCompatibility.calamityEnabled ? VanillaDebuffs.Union(CalamityDebuffs) : VanillaDebuffs).ToList();
@@ -171,7 +160,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
         #region AI
         public override void AI()
         {
-            NPC hypnos = Hypnos.Instance;
+            NPC hypnos = NPCs.Hypnos.Hypnos.Instance;
 
             if (hypnos == null)
             {
@@ -222,8 +211,8 @@ namespace EverquartzAdventure.NPCs.Hypnos
                     else
                     {
                         Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.SafeDirectionTo(target.Center) * laserSpeed, ModContent.ProjectileType<BlueExoPulseLaser>(), 1, 0, 0, target.whoAmI);
-                        SoundStyle style = Hypnos.IPutTheSoundFileInLocalBecauseICouldntKnowCalamitysPathOfThis;
-                        style.Volume = Hypnos.IPutTheSoundFileInLocalBecauseICouldntKnowCalamitysPathOfThis.Volume - 0.1f;
+                        SoundStyle style = NPCs.Hypnos.Hypnos.IPutTheSoundFileInLocalBecauseICouldntKnowCalamitysPathOfThis;
+                        style.Volume = NPCs.Hypnos.Hypnos.IPutTheSoundFileInLocalBecauseICouldntKnowCalamitysPathOfThis.Volume - 0.1f;
                         SoundEngine.PlaySound(in style, Projectile.Center);
                         ShootCooldown = laserTimer;
 

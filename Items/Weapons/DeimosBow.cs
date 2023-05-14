@@ -12,8 +12,7 @@ namespace EverquartzAdventure
 {
     internal static partial class CalamityWeakRef
     {
-		public static int TelluricGlareArrowProjectile => ModContent.ProjectileType<TelluricGlareArrow>();
-		public static int DWArrowProjectile => ModContent.ProjectileType<DWArrow>();
+		
     }
 }
 
@@ -37,7 +36,7 @@ namespace EverquartzAdventure.Items.Weapons
 			Item.noMelee = true;
 			if (ModCompatibility.calamityEnabled)
 			{
-				Item.shoot = CalamityWeakRef.TelluricGlareArrowProjectile;
+				Item.shoot = CalamityWeakRef.ProjectileType.TelluricGlareArrow;
 
             }
                 
@@ -57,7 +56,7 @@ namespace EverquartzAdventure.Items.Weapons
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
 			for (int i = 0; i < 5; i++)
 			{
-    		Projectile.NewProjectile(source, position, velocity, CalamityWeakRef.DWArrowProjectile, damage, knockback, player.whoAmI);
+    		Projectile.NewProjectile(source, position, velocity, CalamityWeakRef.ProjectileType.DWArrow, damage, knockback, player.whoAmI);
 			}
 			if (n == 7){
     			float numberProjectiles = 3 + Main.rand.Next(3); // 3, 4, or 5 shots

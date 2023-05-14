@@ -45,8 +45,7 @@ namespace EverquartzAdventure
 
         
 
-        internal static int HolyFlamesBuff => ModContent.BuffType<HolyFlames>();
-        internal static int GodSlayerInfernoBuff => ModContent.BuffType<GodSlayerInferno>();
+        
 
 
 
@@ -148,8 +147,8 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             NPC.catchItem = ModContent.ItemType<StarbornPrincessItem>();
             if (ModCompatibility.calamityEnabled)
             {
-                NPC.buffImmune[CalamityWeakRef.HolyFlamesBuff] = true;
-                NPC.buffImmune[CalamityWeakRef.GodSlayerInfernoBuff] = true;
+                NPC.buffImmune[CalamityWeakRef.BuffType.HolyFlames] = true;
+                NPC.buffImmune[CalamityWeakRef.BuffType.GodSlayerInferno] = true;
             }
             //base.AnimationType = 124;
         }

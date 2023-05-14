@@ -9,8 +9,7 @@ namespace EverquartzAdventure
 {
     internal static partial class CalamityWeakRef
     {
-        public static int DeathHailBeamProjectile => ModContent.ProjectileType<DeathhailBeam>();
-        public static int HolyLaserProjectile => ModContent.ProjectileType<HolyLaser>();
+        
     }
 }
 
@@ -40,7 +39,7 @@ namespace EverquartzAdventure.Items.Weapons
 
             if (ModCompatibility.calamityEnabled)
             {
-                Item.shoot = CalamityWeakRef.DeathHailBeamProjectile;
+                Item.shoot = CalamityWeakRef.ProjectileType.DeathhailBeam;
             }
 
             Item.shootSpeed = 8f;
@@ -53,9 +52,9 @@ namespace EverquartzAdventure.Items.Weapons
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            Projectile.NewProjectile(source, position, Utils.RotatedBy(velocity, -0.02500000037252903, new Vector2()), CalamityWeakRef.HolyLaserProjectile, damage, knockback, player.whoAmI);
-            Projectile.NewProjectile(source, position, velocity, CalamityWeakRef.HolyLaserProjectile, damage, knockback, player.whoAmI);
-            Projectile.NewProjectile(source, position, Utils.RotatedBy(velocity, 0.02500000037252903, new Vector2()), CalamityWeakRef.HolyLaserProjectile, damage, knockback, player.whoAmI);
+            Projectile.NewProjectile(source, position, Utils.RotatedBy(velocity, -0.02500000037252903, new Vector2()), CalamityWeakRef.ProjectileType.HolyLaser, damage, knockback, player.whoAmI);
+            Projectile.NewProjectile(source, position, velocity, CalamityWeakRef.ProjectileType.HolyLaser, damage, knockback, player.whoAmI);
+            Projectile.NewProjectile(source, position, Utils.RotatedBy(velocity, 0.02500000037252903, new Vector2()), CalamityWeakRef.ProjectileType.HolyLaser, damage, knockback, player.whoAmI);
             Vector2 target = Main.screenPosition + new Vector2(Main.mouseX, Main.mouseY);
             float ceilingLimit = target.Y;
             if (ceilingLimit > player.Center.Y - 200f)

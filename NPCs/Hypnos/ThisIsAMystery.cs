@@ -26,7 +26,7 @@ using System.Collections;
 using System.IO;
 using Terraria.ModLoader.IO;
 using EverquartzAdventure.NPCs.TownNPCs;
-using CalamityMod.Items.Potions.Alcohol;
+using EverquartzAdventure.Projectiles.Hypnos;
 
 namespace EverquartzAdventure
 {
@@ -86,6 +86,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
         #region Consts
         public static readonly double despawnTime = 28000;
+        
         #endregion
 
         #region ServerSideVariables
@@ -961,7 +962,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
         }
         public void Pray(Player player)
         {
-            if (player.Everquartz().IsPraisingHypnos)
+            if (player.Everquartz().IsPraisingHypnos || player.CCed)
             {
                 return;
             }

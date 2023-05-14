@@ -1,6 +1,17 @@
 Mods: {
 	EverquartzAdventure: 
     {
+        Buffs: {
+            Mindcrashed: {
+                Descriptions: {
+                    0: 在HypnOS里而死的人有福了！
+                    1: 你知道什么 你扮演什么 你记得什么 你爱着什么
+                    2: 我们活在光中就像修普诺斯在光中
+                    3: 诱惑
+                    4: 现在退出互联网
+                }
+            }
+        }
         NPCs: {
             TownNPCs: {
                 StarbornPrincess: {

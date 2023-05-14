@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using EverquartzAdventure.Projectiles.Pets;
+using EverquartzAdventure.Buffs.Pets;
 
 namespace EverquartzAdventure.Items.Pets
 {

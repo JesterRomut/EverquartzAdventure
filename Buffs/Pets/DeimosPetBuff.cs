@@ -1,8 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
+using EverquartzAdventure.Projectiles.Pets;
 
-namespace EverquartzAdventure.Items.Pets
+namespace EverquartzAdventure.Buffs.Pets
 {
 	public class DeimosPetBuff : ModBuff
 	{
