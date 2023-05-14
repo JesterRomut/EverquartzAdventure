@@ -85,11 +85,11 @@ namespace EverquartzAdventure
                         NPCs.Hypnos.Hypnos.HandleDepartHypnosUniversal(hypnos);
                     }
                     break;
-                case EverquartzMessageType.EverquartzSyncPlayer:
-                    byte playernumber = reader.ReadByte();
-                    EverquartzPlayer ePlayer = Main.player[playernumber].GetModPlayer<EverquartzPlayer>();
-                    ePlayer.lastSleepingSpot = reader.ReadVector2().ToPoint();
-                    break;
+                //case EverquartzMessageType.EverquartzSyncPlayer:
+                //    byte playernumber = reader.ReadByte();
+                //    EverquartzPlayer ePlayer = Main.player[playernumber].GetModPlayer<EverquartzPlayer>();
+                //    ePlayer.lastSleepingSpot = reader.ReadVector2().ToPoint();
+                //    break;
             }
         }
 
@@ -371,35 +371,39 @@ namespace EverquartzAdventure
         public int praisingTimer = 0;
         public bool IsPraisingHypnos => praisingTimer > 0;
 
-        public Point lastSleepingSpot;
+        //public Point? lastSleepingSpot = null;
 
-        public override void SaveData(TagCompound tag)
-        {
-            tag["lastSleepingSpot"] = lastSleepingSpot.ToVector2();
-        }
+        //public override void SaveData(TagCompound tag)
+        //{
+        //    if (lastSleepingSpot.HasValue)
+        //    {
+        //        tag.Add("lastSleepingSpots", new TagCompound() { [Main.worldID.ToString()] = lastSleepingSpot.Value.ToVector2() });
+        //    }
+            
+        //}
 
-        public override void LoadData(TagCompound tag)
-        {
-            lastSleepingSpot = tag.Get<Vector2>("lastSleepingSpot").ToPoint();
-        }
+        //public override void LoadData(TagCompound tag)
+        //{
+        //    lastSleepingSpot = tag.GetCompound("lastSleepingSpots").Get<Vector2>(Main.worldID.ToString()).ToPoint();
+        //}
 
         public override void PostUpdate()
         {
-            if (Player.sleeping.isSleeping)
-            {
-                lastSleepingSpot = (Player.Bottom + new Vector2(0f, -2f)).ToTileCoordinates();
-            }
+            //if (Player.sleeping.isSleeping)
+            //{
+            //    lastSleepingSpot = (Player.Bottom + new Vector2(0f, -2f)).ToTileCoordinates();
+            //}
             UpdatePraisingHypnos();
         }
 
-        public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
-        {
-            ModPacket packet = Mod.GetPacket();
-            packet.Write((byte)EverquartzMessageType.EverquartzSyncPlayer);
-            packet.Write((byte)Player.whoAmI);
-            packet.WriteVector2(lastSleepingSpot.ToVector2());
-            packet.Send(toWho, fromWho);
-        }
+        //public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
+        //{
+        //    ModPacket packet = Mod.GetPacket();
+        //    packet.Write((byte)EverquartzMessageType.EverquartzSyncPlayer);
+        //    packet.Write((byte)Player.whoAmI);
+        //    packet.WriteVector2(lastSleepingSpot.GetValueOrDefault().ToVector2());
+        //    packet.Send(toWho, fromWho);
+        //}
 
         public override bool PreItemCheck()
         {
@@ -521,7 +525,7 @@ namespace EverquartzAdventure
         HypnosReward, // id, player.whoAmI, rewards(bytes)
         HypnoCoinAdd, // id
         HypnosDeparted, // id
-        EverquartzSyncPlayer // id, player.whoAmI (see EverquartzPlayer.SyncPlayer)
+        //EverquartzSyncPlayer // id, player.whoAmI (see EverquartzPlayer.SyncPlayer)
     }
 
     public static class ModCompatibility

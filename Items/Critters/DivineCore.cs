@@ -28,7 +28,7 @@ namespace EverquartzAdventure.Items.Critters
 	{
         public override string Texture => "EverquartzAdventure/NPCs/Critters/DivineCore";
         public static readonly int buffDuration = 126000;
-        public static readonly List<int> buffs = new List<int>() {
+        public static List<int> Buffs => new List<int>() {
             BuffID.Rage,
             BuffID.Wrath,
             BuffID.Lifeforce,
@@ -38,7 +38,7 @@ namespace EverquartzAdventure.Items.Critters
             BuffID.Regeneration,
             BuffID.Swiftness
         };
-        public static readonly List<int> calamityBuffs = new List<int>()
+        public static List<int> CalamityBuffs => new List<int>()
         {
             CalamityWeakRef.SoaringBuff,
             CalamityWeakRef.OmniscienceBuff,
@@ -110,10 +110,10 @@ namespace EverquartzAdventure.Items.Critters
                 base.Item.useStyle = ItemUseStyleID.EatFood;
                 base.Item.noUseGraphic = false;
                 SoundEngine.PlaySound(SoundID.Item2, player.Center);
-                buffs.ForEach(buff => player.AddBuff(buff, buffDuration));
+                Buffs.ForEach(buff => player.AddBuff(buff, buffDuration));
                 if (ModCompatibility.calamityEnabled)
                 {
-                    calamityBuffs.ForEach(buff => player.AddBuff(buff, buffDuration));
+                    CalamityBuffs.ForEach(buff => player.AddBuff(buff, buffDuration));
                 }
                 player.Heal(20);
                 player.HealEffect(20);

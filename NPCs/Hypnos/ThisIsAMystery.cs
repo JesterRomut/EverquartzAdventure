@@ -399,6 +399,18 @@ namespace EverquartzAdventure.NPCs.Hypnos
             instance = NPC.whoAmI;
             //CombatText.NewText(NPC.Hitbox, Color.White, timePassed.ToString());
             NPC.homeless = true;
+
+            if (Main.rand.NextBool(10))
+            {
+                Vector2 home = new Vector2(NPC.homeTileX, NPC.homeTileY - 2f).ToWorldCoordinates();
+                if (Vector2.Distance(NPC.Center, home) > 500f && !IsNpcOnscreen(NPC.Center) && !IsNpcOnscreen(home))
+                {
+                    NPC.Center = home;
+                    NPC.netUpdate = true;
+                    NPC.velocity = Vector2.Zero;
+                }
+            }
+            
             // massive linq
             //if (Main.rand.NextBool(3))
             //{
@@ -506,9 +518,12 @@ namespace EverquartzAdventure.NPCs.Hypnos
             if (hypnos == null && CanSpawnNow())
             {
                 FindHomeTile(out int homeX, out int homeY);
+                
                 FindSpawnPoint(new Point(homeX, homeY), out int bestX, out int bestY);
 
-                hypnos = NPC.NewNPCDirect(Terraria.Entity.GetSource_TownSpawn(), bestX /16, bestY /16, ModContent.NPCType<Hypnos>(), 1); // Spawning at the world spawn
+                EverquartzAdventureMod.Instance.Logger.Info($"({homeX}, {homeY}) ({bestX}, {bestY})");
+
+                hypnos = NPC.NewNPCDirect(Terraria.Entity.GetSource_TownSpawn(), bestX *16, bestY *16, ModContent.NPCType<Hypnos>(), 1); // Spawning at the world spawn
                 
                 hypnos.homeless = true;
                 hypnos.direction = bestX >= homeX ? -1 : 1;
@@ -540,12 +555,14 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
         private static void FindHomeTile(out int homeTileX, out int homeTileY)
         {
-            IEnumerable<Player> players = Main.player.Where(p => p != null && p.active && p.Everquartz().lastSleepingSpot != default);
-            if (players.Any())
+            List<Player> players = Main.player.Where(p => p != null && p.active).ToList();
+            players.ForEach(player => player.FindSpawn());
+            IEnumerable<Player> playersChangedSpawn = players.Where(p => p.SpawnX != -1 && p.SpawnY != -1);
+            if (playersChangedSpawn.Any())
             {
-                Point spot = players.Random().Everquartz().lastSleepingSpot;
-                homeTileX = spot.X;
-                homeTileY = spot.Y;
+                Player random = playersChangedSpawn.Random();
+                homeTileX = random.SpawnX;
+                homeTileY = random.SpawnY;
                 return;
             }
             IEnumerable<NPC> npcs = Main.npc.Where(npc => npc.active && npc.townNPC && npc.type != NPCID.OldMan && !npc.homeless);
