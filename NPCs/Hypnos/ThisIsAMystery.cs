@@ -26,6 +26,7 @@ using System.Collections;
 using System.IO;
 using Terraria.ModLoader.IO;
 using EverquartzAdventure.NPCs.TownNPCs;
+using CalamityMod.Items.Potions.Alcohol;
 
 namespace EverquartzAdventure
 {
@@ -125,7 +126,8 @@ namespace EverquartzAdventure.NPCs.Hypnos
             hypnos.active = false;
             hypnos.netSkip = -1;
             hypnos.life = 0;
-            hypnos = null;
+            //hypnos = null;
+            timePassed = 0;
         }
         public static void HandleHypnoCoinAddServer()
         {
@@ -211,7 +213,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
             //                                                                                          ↑it's from hypnocord
             //NPCID.Sets.ActsLikeTownNPC[Type] = true;
             //NPCID.Sets.SpawnsWithCustomName[Type] = true;
-            Main.npcFrameCount[base.NPC.type] = 12;
+            Main.npcFrameCount[base.NPC.type] = 13;
 
             NPCID.Sets.TownNPCBestiaryPriority.Add(Type);
             NPCID.Sets.NPCBestiaryDrawModifiers drawModifiers = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
@@ -247,6 +249,9 @@ namespace EverquartzAdventure.NPCs.Hypnos
             NPC.aiStyle = NPCAIStyleID.Passive;
             NPC.damage = 200;
             NPC.defense = 90;
+            NPC.homeTileX = -1;
+            NPC.homeTileY = -1;
+            NPC.homeless = true;
 
             NPC.HitSound = ICannotFindThisEither;
             NPC.DeathSound = SoundID.Item14;
@@ -257,7 +262,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
             //NPC.rarity = 2;//设置稀有度
             //AnimationType = npcID;
 
-            base.NPC.Happiness.SetBiomeAffection<OceanBiome>(AffectionLevel.Dislike);
+            //base.NPC.Happiness.SetBiomeAffection<OceanBiome>(AffectionLevel.Dislike);
 
             NPC.lifeMax = 1320000;
         }
@@ -269,6 +274,13 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
         public override void FindFrame(int frameHeight)
         {
+            NPC.spriteDirection = NPC.direction;
+            if (NPC.velocity.Y > 0)
+            {
+                NPC.frame.Y = frameHeight;
+                base.NPC.frameCounter = 0;
+                return;
+            }
             if (NPC.velocity.X == 0)
             {
                 NPC.frame.Y = 0;
@@ -277,11 +289,13 @@ namespace EverquartzAdventure.NPCs.Hypnos
             else
             {
                 base.NPC.frameCounter += 0.3;
-                base.NPC.frameCounter %= Main.npcFrameCount[base.NPC.type] - 1;
+                base.NPC.frameCounter %= Main.npcFrameCount[base.NPC.type] - 2;
                 int frame = (int)base.NPC.frameCounter;
-                base.NPC.frame.Y = (frame + 1) * frameHeight;
+                base.NPC.frame.Y = (frame + 2) * frameHeight;
             }
-            NPC.spriteDirection = NPC.direction;
+
+
+
         }
 
         public override bool CanGoToStatue(bool toKingStatue)
@@ -307,7 +321,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
         {
             Player player = Main.player[Main.myPlayer];
 
-            
+
 
             Pray(player);
         }
@@ -400,17 +414,33 @@ namespace EverquartzAdventure.NPCs.Hypnos
             //CombatText.NewText(NPC.Hitbox, Color.White, timePassed.ToString());
             NPC.homeless = true;
 
-            if (Main.rand.NextBool(10))
+            if (NPC.homeTileX == -1 || NPC.homeTileY == -1)
             {
-                Vector2 home = new Vector2(NPC.homeTileX, NPC.homeTileY - 2f).ToWorldCoordinates();
-                if (Vector2.Distance(NPC.Center, home) > 500f && !IsNpcOnscreen(NPC.Center) && !IsNpcOnscreen(home))
-                {
-                    NPC.Center = home;
-                    NPC.netUpdate = true;
-                    NPC.velocity = Vector2.Zero;
-                }
+                FindHomeTile(out int tileX, out int tileY);
+                FindHomeTileAndSpawnPointTraveling(tileX, tileY, out NPC.homeTileX, out NPC.homeTileY, out int _, out int _);
             }
-            
+
+            if (Main.rand.NextBool(200))
+            {
+                
+                if (NPC.homeTileX != -1 &&  NPC.homeTileY != -1)
+                {
+                    Point homePoint = new Point(NPC.homeTileX, NPC.homeTileY - 3);
+
+                    Vector2 home = homePoint.ToWorldCoordinates(0, 0);
+                    Dust.NewDustPerfect(home, DustID.Electric, Vector2.Zero);
+                    //EverquartzAdventureMod.Instance.Logger.Info($"{Vector2.Distance(NPC.position, home) > 500f} && {EverquartzUtils.TileCapable(homePoint.X, homePoint.Y)} && {!IsNpcOnscreen(NPC.Center)} && {!IsNpcOnscreen(home)}");
+                    if (Vector2.Distance(NPC.position, home) > 1000f && EverquartzUtils.TileCapable(homePoint.X, homePoint.Y) && !IsNpcOnscreen(NPC.Center) && !IsNpcOnscreen(home))
+                    {
+                        NPC.position = home;
+                        NPC.velocity = Vector2.Zero;
+                        NPC.netUpdate = true;
+
+                    }
+                }
+                
+            }
+
             // massive linq
             //if (Main.rand.NextBool(3))
             //{
@@ -502,7 +532,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
                 if (hypnos == null && NPC.downedMoonlord && Main.rand.NextBool(5))
                 { // 4 = 25% Chance
                   // Here we can make it so the NPC doesnt spawn at the EXACT same time every time it does spawn
-                    spawnTime = GetRandomSpawnTime(5400, 8100); // minTime = 6:00am, maxTime = 7:30am
+                    spawnTime = GetRandomSpawnTime(1, 54000); // minTime = 6:00am, maxTime = 7:30am
                     //if (Main.netMode == NetmodeID.Server)
                     //{
                     //    ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral($"debug: spawntime = {spawnTime}"), Color.Purple);
@@ -517,16 +547,17 @@ namespace EverquartzAdventure.NPCs.Hypnos
             // Spawn the traveler if the spawn conditions are met (time of day, no events, no sundial)
             if (hypnos == null && CanSpawnNow())
             {
-                FindHomeTile(out int homeX, out int homeY);
-                
-                FindSpawnPoint(new Point(homeX, homeY), out int bestX, out int bestY);
+                FindHomeTile(out int tileX, out int tileY);
 
-                EverquartzAdventureMod.Instance.Logger.Info($"({homeX}, {homeY}) ({bestX}, {bestY})");
+                //FindSpawnPoint(new Point(homeX, homeY), out int bestX, out int bestY);
+                FindHomeTileAndSpawnPointTraveling(tileX, tileY, out int homeX, out int homeY, out int spawnX, out int spawnY);
 
-                hypnos = NPC.NewNPCDirect(Terraria.Entity.GetSource_TownSpawn(), bestX *16, bestY *16, ModContent.NPCType<Hypnos>(), 1); // Spawning at the world spawn
-                
+                //EverquartzAdventureMod.Instance.Logger.Info($"({homeX}, {homeY}) ({bestX}, {bestY})");
+
+                hypnos = NPC.NewNPCDirect(Terraria.Entity.GetSource_TownSpawn(), spawnX, spawnY, ModContent.NPCType<Hypnos>(), 1); // Spawning at the world spawn
+
                 hypnos.homeless = true;
-                hypnos.direction = bestX >= homeX ? -1 : 1;
+                hypnos.direction = spawnX / 16 >= homeX ? -1 : 1;
                 hypnos.netUpdate = true;
                 hypnos.homeTileX = homeX;
                 hypnos.homeTileY = homeY;
@@ -565,7 +596,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
                 homeTileY = random.SpawnY;
                 return;
             }
-            IEnumerable<NPC> npcs = Main.npc.Where(npc => npc.active && npc.townNPC && npc.type != NPCID.OldMan && !npc.homeless);
+            IEnumerable<NPC> npcs = Main.npc.Where(npc => npc.active && npc.townNPC && npc.type != NPCID.OldMan && !npc.homeless && !IsNpcOnscreen(new Point(npc.homeTileX, npc.homeTileY).ToVector2()));
             if (npcs.Any())
             {
                 NPC randomNPC = npcs.Random();
@@ -577,137 +608,225 @@ namespace EverquartzAdventure.NPCs.Hypnos
             homeTileY = Main.spawnTileY;
         }
 
-        public static bool CheckSpwanTile(int tileX, int tileY)
+        public static void FindHomeTileAndSpawnPointTraveling(int homeTileX, int homeTileY, out int homeX, out int homeY, out int spawnX, out int spawnY)
         {
-            //EverquartzAdventureMod.Instance.Logger.Info($"({tileX},{tileY})");
-
-            if (tileX < 0 || tileY < 0 || tileX > Main.maxTilesX || tileY > Main.maxTilesY)
+            int bestX = homeTileX;
+            int bestY = homeTileY;
+            int minValue = bestX;
+            int num7 = bestX;
+            int num8 = bestY;
+            int num9 = bestX;
+            while (num9 > bestX - 10 && (WorldGen.SolidTile(num9, num8) || Main.tileSolidTop[Main.tile[num9, num8].TileType]) && (!Main.tile[num9, num8 - 1].HasTile || !Main.tileSolid[Main.tile[num9, num8 - 1].TileType] || Main.tileSolidTop[Main.tile[num9, num8 - 1].TileType]) && (!Main.tile[num9, num8 - 2].HasTile || !Main.tileSolid[Main.tile[num9, num8 - 2].TileType] || Main.tileSolidTop[Main.tile[num9, num8 - 2].TileType]) && (!Main.tile[num9, num8 - 3].HasTile || !Main.tileSolid[Main.tile[num9, num8 - 3].TileType] || Main.tileSolidTop[Main.tile[num9, num8 - 3].TileType]))
             {
-                return false;
+                minValue = num9;
+                num9--;
             }
-
-            //Dust.NewDustPerfect(new Vector2(tileX * 16, tileY * 16), DustID.Water, Vector2.Zero);
-
-            if (!Main.tile[tileX, tileY + 4].Solid() && !Main.tile[tileX + 1, tileY + 4].Solid())
+            for (int k = bestX; k < bestX + 10 && (WorldGen.SolidTile(k, num8) || Main.tileSolidTop[Main.tile[k, num8].TileType]) && (!Main.tile[k, num8 - 1].HasTile || !Main.tileSolid[Main.tile[k, num8 - 1].TileType] || Main.tileSolidTop[Main.tile[k, num8 - 1].TileType]) && (!Main.tile[k, num8 - 2].HasTile || !Main.tileSolid[Main.tile[k, num8 - 2].TileType] || Main.tileSolidTop[Main.tile[k, num8 - 2].TileType]) && (!Main.tile[k, num8 - 3].HasTile || !Main.tileSolid[Main.tile[k, num8 - 3].TileType] || Main.tileSolidTop[Main.tile[k, num8 - 3].TileType]); k++)
             {
-                return false;
+                num7 = k;
             }
-            if (Main.tile[tileX, tileY].HasLiquid() || Main.tile[tileX, tileY+1].HasLiquid() || Main.tile[tileX, tileY+2].HasLiquid() || Collision.SolidTiles(tileX, tileX + 1, tileY, tileY + 3))
+            for (int l = 0; l < 30; l++)
             {
-                return false;
+                int num10 = Main.rand.Next(minValue, num7 + 1);
+                if (l < 20)
+                {
+                    if (num10 < bestX - 1 || num10 > bestX + 1)
+                    {
+                        bestX = num10;
+                        break;
+                    }
+                }
+                else if (num10 != bestX)
+                {
+                    bestX = num10;
+                    break;
+                }
             }
-
-
-            return !IsNpcOnscreen(new Point(tileX, tileY - 1).ToWorldCoordinates());
+            int num11 = bestX;
+            int num12 = bestY;
+            bool flag = false;
+            if (!flag && !((double)num12 > Main.worldSurface))
+            {
+                //Rectangle value = default(Rectangle);
+                for (int m = 20; m < 500; m++)
+                {
+                    for (int n = 0; n < 2; n++)
+                    {
+                        num11 = ((n != 0) ? (bestX - m * 2) : (bestX + m * 2));
+                        if (num11 > 10 && num11 < Main.maxTilesX - 10)
+                        {
+                            int num13 = bestY - m;
+                            double num2 = bestY + m;
+                            if (num13 < 10)
+                            {
+                                num13 = 10;
+                            }
+                            if (num2 > Main.worldSurface)
+                            {
+                                num2 = Main.worldSurface;
+                            }
+                            for (int num3 = num13; (double)num3 < num2; num3++)
+                            {
+                                num12 = num3;
+                                if (!Main.tile[num11, num12].HasUnactuatedTile || !Main.tileSolid[Main.tile[num11, num12].TileType])
+                                {
+                                    continue;
+                                }
+                                if (Main.tile[num11, num12 - 3].LiquidAmount != 0 || Main.tile[num11, num12 - 2].LiquidAmount != 0 || Main.tile[num11, num12 - 1].LiquidAmount != 0 || Collision.SolidTiles(num11 - 1, num11 + 1, num12 - 3, num12 - 1))
+                                {
+                                    break;
+                                }
+                                flag = true;
+                                Rectangle value = new Rectangle(num11 * 16 + 8 - NPC.sWidth / 2 - NPC.safeRangeX, num12 * 16 + 8 - NPC.sHeight / 2 - NPC.safeRangeY, NPC.sWidth + NPC.safeRangeX * 2, NPC.sHeight + NPC.safeRangeY * 2);
+                                for (int num4 = 0; num4 < 255; num4++)
+                                {
+                                    if (Main.player[num4].active)
+                                    {
+                                        Rectangle val = new Rectangle((int)Main.player[num4].position.X, (int)Main.player[num4].position.Y, Main.player[num4].width, Main.player[num4].height);
+                                        if (val.Intersects(value))
+                                        {
+                                            flag = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        if (flag)
+                        {
+                            break;
+                        }
+                    }
+                    if (flag)
+                    {
+                        break;
+                    }
+                }
+            }
+            homeX = bestX;
+            homeY = bestY;
+            spawnX = num11 * 16;
+            spawnY = num12 * 16;
         }
 
-        public static void FindSpawnPoint(Point pos, out int bestX, out int bestY)
-        {
-            FindSpawnPoint(pos, pos, out bestX, out bestY);
-        }
+        //public static bool CheckSpwanTile(int tileX, int tileY)
+        //{
+        //    //EverquartzAdventureMod.Instance.Logger.Info($"({tileX},{tileY})");
 
-        private static void FindSpawnPoint(Point start, Point end, out int bestX, out int bestY, bool clockwise = true)
-        {
-            int direction = clockwise.ToDirectionInt();
-            //distance
-            if (start.X == end.X && start.Y == end.Y)
-            {
-                FindSpawnPoint(new Point(start.X, start.Y - 1), new Point(start.X + direction, start.Y - 1), out bestX, out bestY);
-                return;
-            }
 
-            if (start.X < end.X)
-            {
-                int level = end.X - start.X;
-                if (level > Main.maxTilesX)
-                {
-                    bestX = -1;
-                    bestY = -1;
-                    return;
-                }
-                for (int x = start.X; x < end.X; x++)
-                {
-                    if (CheckSpwanTile(x, start.Y))
-                    {
-                        bestX = x;
-                        bestY = start.Y;
-                        return;
-                    }
-                }
-                FindSpawnPoint(new Point(end.X, end.Y + direction), new Point(end.X, end.Y + (level + 1) * direction), out bestX, out bestY);
-                return;
-            }
-            else if (start.X > end.X)
-            {
-                int level = start.X - end.X;
-                if (level > Main.maxTilesX)
-                {
-                    bestX = -1;
-                    bestY = -1;
-                    return;
-                }
-                for (int x = start.X; x >= end.X; x--)
-                {
-                    if (CheckSpwanTile(x, start.Y))
-                    {
-                        bestX = x;
-                        bestY = start.Y;
-                        return;
-                    }
-                }
-                FindSpawnPoint(new Point(end.X, end.Y - direction), new Point(end.X, end.Y - (level + 1) * direction), out bestX, out bestY);
-                return;
-            }
-            else if (start.Y < end.Y)
-            {
-                int level = end.Y - start.Y;
-                if (level > Main.maxTilesX)
-                {
-                    bestX = -1;
-                    bestY = -1;
-                    return;
-                }
-                for (int y = start.Y; y < end.Y; y++)
-                {
-                    if (CheckSpwanTile(start.X, y))
-                    {
-                        bestX = start.X;
-                        bestY = y;
-                        return;
-                    }
-                }
-                FindSpawnPoint(new Point(end.X - direction, end.Y), new Point(end.X - (level + 1) * direction, end.Y), out bestX, out bestY);
-                return;
-            }
-            else if (start.Y > end.Y)
-            {
-                int level = start.Y - end.Y;
-                if (level > Main.maxTilesX)
-                {
-                    bestX = -1;
-                    bestY = -1;
-                    return;
-                }
-                for (int y = start.Y; y >= end.Y; y--)
-                {
-                    if (CheckSpwanTile(start.X, y))
-                    {
-                        bestX = start.X;
-                        bestY = y;
-                        return;
-                    }
-                }
-                FindSpawnPoint(new Point(end.X, end.Y - 1), new Point(end.X + (level + 2)*direction, end.Y - 1), out bestX, out bestY);
-                return;
-            }
-            else
-            {
-                bestX = -1;
-                bestY = -1;
-                return;
-            }
 
-        }
+
+        //    return EverquartzUtils.TileCapable(tileX, tileY) && !IsNpcOnscreen(new Point(tileX, tileY - 1).ToWorldCoordinates());
+        //}
+
+        //public static void FindSpawnPoint(Point pos, out int bestX, out int bestY)
+        //{
+        //    FindSpawnPoint(pos, pos, out bestX, out bestY);
+        //}
+
+        //private static void FindSpawnPoint(Point start, Point end, out int bestX, out int bestY, bool clockwise = true)
+        //{
+        //    int direction = clockwise.ToDirectionInt();
+        //    //distance
+        //    if (start.X == end.X && start.Y == end.Y)
+        //    {
+        //        FindSpawnPoint(new Point(start.X, start.Y - 1), new Point(start.X + direction, start.Y - 1), out bestX, out bestY);
+        //        return;
+        //    }
+
+        //    if (start.X < end.X)
+        //    {
+        //        int level = end.X - start.X;
+        //        if (level > Main.maxTilesX)
+        //        {
+        //            bestX = -1;
+        //            bestY = -1;
+        //            return;
+        //        }
+        //        for (int x = start.X; x < end.X; x++)
+        //        {
+        //            if (CheckSpwanTile(x, start.Y))
+        //            {
+        //                bestX = x;
+        //                bestY = start.Y;
+        //                return;
+        //            }
+        //        }
+        //        FindSpawnPoint(new Point(end.X, end.Y + direction), new Point(end.X, end.Y + (level + 1) * direction), out bestX, out bestY);
+        //        return;
+        //    }
+        //    else if (start.X > end.X)
+        //    {
+        //        int level = start.X - end.X;
+        //        if (level > Main.maxTilesX)
+        //        {
+        //            bestX = -1;
+        //            bestY = -1;
+        //            return;
+        //        }
+        //        for (int x = start.X; x >= end.X; x--)
+        //        {
+        //            if (CheckSpwanTile(x, start.Y))
+        //            {
+        //                bestX = x;
+        //                bestY = start.Y;
+        //                return;
+        //            }
+        //        }
+        //        FindSpawnPoint(new Point(end.X, end.Y - direction), new Point(end.X, end.Y - (level + 1) * direction), out bestX, out bestY);
+        //        return;
+        //    }
+        //    else if (start.Y < end.Y)
+        //    {
+        //        int level = end.Y - start.Y;
+        //        if (level > Main.maxTilesX)
+        //        {
+        //            bestX = -1;
+        //            bestY = -1;
+        //            return;
+        //        }
+        //        for (int y = start.Y; y < end.Y; y++)
+        //        {
+        //            if (CheckSpwanTile(start.X, y))
+        //            {
+        //                bestX = start.X;
+        //                bestY = y;
+        //                return;
+        //            }
+        //        }
+        //        FindSpawnPoint(new Point(end.X - direction, end.Y), new Point(end.X - (level + 1) * direction, end.Y), out bestX, out bestY);
+        //        return;
+        //    }
+        //    else if (start.Y > end.Y)
+        //    {
+        //        int level = start.Y - end.Y;
+        //        if (level > Main.maxTilesX)
+        //        {
+        //            bestX = -1;
+        //            bestY = -1;
+        //            return;
+        //        }
+        //        for (int y = start.Y; y >= end.Y; y--)
+        //        {
+        //            if (CheckSpwanTile(start.X, y))
+        //            {
+        //                bestX = start.X;
+        //                bestY = y;
+        //                return;
+        //            }
+        //        }
+        //        FindSpawnPoint(new Point(end.X, end.Y - 1), new Point(end.X + (level + 2) * direction, end.Y - 1), out bestX, out bestY);
+        //        return;
+        //    }
+        //    else
+        //    {
+        //        bestX = -1;
+        //        bestY = -1;
+        //        return;
+        //    }
+
+        //}
 
         private static bool IsNpcOnscreen(Vector2 center)
         {
@@ -817,7 +936,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
         }
         public string GetPrayChat(bool hasEnoughMoney)
         {
-            
+
             WeightedRandom<string> textSelector = new WeightedRandom<string>(Main.rand);
             if (hasEnoughMoney)
             {

@@ -641,6 +641,8 @@ namespace EverquartzAdventure
             return target;
         }
 
+        
+
         internal static bool HasAnyBuff(this NPC npc, List<int> debuffs) {
             return debuffs.Where(npc.HasBuff).Any();
         }
@@ -695,6 +697,48 @@ namespace EverquartzAdventure
 
     internal static class EverquartzUtils
     {
+        internal static bool ActiveTiles(int startX, int endX, int startY, int endY)
+        {
+            for (int i = startX; i < endX + 1; i++)
+            {
+                for (int j = startY; j < endY + 1; j++)
+                {
+                    if (Main.tile[i, j] == null)
+                    {
+                        return false;
+                    }
+                    if (!Main.tile[i, j].HasUnactuatedTile || !Main.tileSolid[Main.tile[i, j].TileType])
+                    {
+                        Dust.NewDustPerfect(new Point(i, j).ToWorldCoordinates(), DustID.Water, Vector2.Zero);
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        internal static bool TileCapable(int tileX, int tileY)
+        {
+            if (tileX < 0 || tileY < 0 || tileX >= Main.maxTilesX || tileY >= Main.maxTilesY)
+            {
+                //EverquartzAdventureMod.Instance.Logger.Info("not pass: tileX < 0 || tileY < 0 || tileX > Main.maxTilesX || tileY > Main.maxTilesY");
+                return false;
+            }
+
+            //Dust.NewDustPerfect(new Vector2(tileX * 16, tileY * 16), DustID.Water, Vector2.Zero);
+
+            if (!ActiveTiles(tileX, tileX + 1, tileY + 3, tileY + 3))//!Main.tile[tileX, tileY + 4].Solid() && !Main.tile[tileX + 1, tileY + 4].Solid())
+            {
+                //EverquartzAdventureMod.Instance.Logger.Info("not pass: !Collision.SolidTiles(tileX, tileX + 1, tileY + 4, tileY + 4)");
+                return false;
+            }
+            if (Main.tile[tileX, tileY].HasLiquid() || Main.tile[tileX, tileY + 1].HasLiquid() || Main.tile[tileX, tileY + 2].HasLiquid() || ActiveTiles(tileX, tileX + 1, tileY, tileY + 2))
+            {
+                //EverquartzAdventureMod.Instance.Logger.Info("not pass: hasliquid or");
+                return false;
+            }
+            return true;
+        }
 
         internal static List<string> GetTextListFromKey(string key)
         {
