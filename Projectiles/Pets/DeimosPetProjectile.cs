@@ -11,7 +11,7 @@ namespace EverquartzAdventure.Projectiles.Pets
 {
     public class DeimosPetProjectile : CalValEXWalkingPet
     {
-        public override string Texture => "EverquartzAdventure/Items/Pets/DeimosPetProjectileFull";
+        public override string Texture => "EverquartzAdventure/Projectiles/Pets/DeimosPetProjectileFull";
         public override float BackToFlyingThreshold => 600f;
         public override int JumpOffset => 10;
         public override void SetStaticDefaults()

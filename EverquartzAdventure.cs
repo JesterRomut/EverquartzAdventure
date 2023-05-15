@@ -22,6 +22,12 @@ using EverquartzAdventure.Projectiles.Hypnos;
 using Terraria.Utilities;
 using System.Collections;
 using Terraria.GameContent;
+using EverquartzAdventure.Buffs;
+using EverquartzAdventure.Buffs.Hypnos;
+using Terraria.Graphics.Effects;
+using Microsoft.Xna.Framework.Graphics.PackedVector;
+using static Terraria.ModLoader.PlayerDrawLayer;
+using ReLogic.Content;
 
 namespace EverquartzAdventure
 {
@@ -228,7 +234,7 @@ namespace EverquartzAdventure
 
         public static Color ColorSwap()
         { // 0 < colormepurple < 1
-            return EverquartzUtils.ColorSwap(firstColor, secondColor, thirdColor, 3);
+            return EverquartzUtils.ColorSwap(firstColor, secondColor, thirdColor, 3);//EverquartzUtils.ColorSwap(Buffs.Hypnos.Mindcrashed.Palette, 5); //
         }
         public static void PreDraw(Item item, DrawableTooltipLine line, ref int yOffset)
         {
@@ -368,188 +374,8 @@ namespace EverquartzAdventure
         }
     }
 
-    public class EverquartzPlayer : ModPlayer
-    {
-        public int praisingTimer = 0;
-        public bool IsPraisingHypnos => praisingTimer > 0;
-
-        public bool mindcrashed = false;
-
-        //public Point? lastSleepingSpot = null;
-
-        //public override void SaveData(TagCompound tag)
-        //{
-        //    if (lastSleepingSpot.HasValue)
-        //    {
-        //        tag.Add("lastSleepingSpots", new TagCompound() { [Main.worldID.ToString()] = lastSleepingSpot.Value.ToVector2() });
-        //    }
-            
-        //}
-
-        //public override void LoadData(TagCompound tag)
-        //{
-        //    lastSleepingSpot = tag.GetCompound("lastSleepingSpots").Get<Vector2>(Main.worldID.ToString()).ToPoint();
-        //}
-
-        public override void PostUpdate()
-        {
-            //if (Player.sleeping.isSleeping)
-            //{
-            //    lastSleepingSpot = (Player.Bottom + new Vector2(0f, -2f)).ToTileCoordinates();
-            //}
-            UpdatePraisingHypnos();
-        }
-
-        //public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
-        //{
-        //    ModPacket packet = Mod.GetPacket();
-        //    packet.Write((byte)EverquartzMessageType.EverquartzSyncPlayer);
-        //    packet.Write((byte)Player.whoAmI);
-        //    packet.WriteVector2(lastSleepingSpot.GetValueOrDefault().ToVector2());
-        //    packet.Send(toWho, fromWho);
-        //}
-
-        public override bool PreItemCheck()
-        {
-            if (IsPraisingHypnos)
-            {
-                int num9 = Player.miscCounter % 14 / 7;
-                CompositeArmStretchAmount stretch = CompositeArmStretchAmount.ThreeQuarters;
-                float num2 = 0.3f;
-                if (num9 == 1)
-                {
-                    //stretch = CompositeArmStretchAmount.Full;
-                    num2 = 0.35f;
-                }
-
-                Player.SetCompositeArmBack(enabled: true, stretch, (float)Math.PI * -2f * num2 * (float)Player.direction);
-                Player.SetCompositeArmFront(enabled: true, stretch, (float)Math.PI * -2f * num2 * (float)Player.direction);
-
-                return false;
-            }
-            return true;
-        }
-
-        public override void ResetEffects()
-        {
-            ResetBuffs();
-        }
-
-        public override void UpdateDead()
-        {
-            ResetBuffs();
-        }
-
-        public override void DrawEffects(PlayerDrawSet drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
-        {
-            if (mindcrashed && Main.myPlayer == base.Player.whoAmI)
-            {
-            }
-        }
-
-        public void ResetBuffs()
-        {
-            mindcrashed = false;
-        }
-
-        #region Deimos
-
-        public void HandleDeadDeimos(Player murderer)
-        {
-            StarbornPrincess.DeathEffectClient(murderer.position, murderer.width, murderer.height);
-        }
-
-        #endregion
-        
-        #region Hypnos
-        public void InterruptPraisingHypnos()
-        {
-            praisingTimer = 0;
-        }
-
-        public void DonePraisingHypnos()
-        {
-            //client side
-            NPC hypnos = NPCs.Hypnos.Hypnos.Instance;
-            AergiaNeuron.AddElectricDusts(hypnos != null ? hypnos : Player);
-
-            List<HypnosReward> rewards = NPCs.Hypnos.Hypnos.GenerateRewards();
-            
-
-            if (Main.netMode == NetmodeID.SinglePlayer)
-            {
-                NPCs.Hypnos.Hypnos.HandleRewardsServer(Player, rewards);
-            }
-            else
-            {
-                int rewardCount = EverquartzUtils.EnumCount<HypnosReward>();
-                //this.Mod.Logger.Info(rewards);
-                ModPacket packet = base.Mod.GetPacket();
-                packet.Write((byte)EverquartzMessageType.HypnosReward);
-                packet.Write(Player.whoAmI);
-                bool[] rewardBools = new bool[rewardCount] ;
-                rewards.ForEach(reward => rewardBools[(int)reward] = true);
-                BitArray bitArray = new BitArray(rewardBools);
-                packet.Write(bitArray.ToByteArray());
-                
-                packet.Send();
-            }
-
-            InterruptPraisingHypnos();
-        }
-
-        
-
-        public void UpdatePraisingHypnos()
-        {
-            if (!IsPraisingHypnos)
-            {
-                return;
-            }
-            if (Player.talkNPC == -1)
-            {
-                InterruptPraisingHypnos();
-                return;
-            }
-            int num = Math.Sign(Main.npc[Player.talkNPC].Center.X - Player.Center.X);
-            if (Player.controlLeft || Player.controlRight || Player.controlUp || Player.controlDown || Player.controlJump || Player.pulley || Player.mount.Active || num != Player.direction)
-            {
-                InterruptPraisingHypnos();
-                return;
-            }
-            praisingTimer--;
-            if (praisingTimer <= 0)
-            {
-                DonePraisingHypnos();
-            }
-        }
-
-        #endregion
-        
-    }
-
-    public class EverquartzGlobalNPC : GlobalNPC
-    {
-        public static List<int> UniqueNPCs => new List<int>() {
-            ModContent.NPCType<StarbornPrincess>(),
-            ModContent.NPCType<NPCs.Hypnos.Hypnos>(),
-        };
-
-        public override void DrawEffects(NPC npc, ref Color drawColor)
-        {
-            base.DrawEffects(npc, ref drawColor);
-        }
-
-        public override void OnKill(NPC npc)
-        {
-            if (npc.boss && ModCompatibility.hypnosEnabled && npc.type == ModCompatibility.HypnosBossType)
-            {
-                int hypNpcType = ModContent.NPCType<NPCs.Hypnos.Hypnos>();
-                Main.npc.Where(npc2 => npc2.active && npc2.type == hypNpcType).ToList().ForEach(hypno => ((NPCs.Hypnos.Hypnos)hypno.ModNPC).KillWithCoins());
-            }
-        }
-    }
-
+    
+    
     public enum EverquartzMessageType
     {
         DeimosItemKilled, // id, player.whoAmI, helptext
@@ -692,8 +518,8 @@ namespace EverquartzAdventure
             
             NPC target = null;
             float distance = maxDistance;
-            
-            bool checkNPCInSight(NPC npc) => npc != null && npc.active && npc.CanBeChasedBy() && Vector2.Distance(position, npc.Center) < distance + ((float)(npc.width / 2) + (float)(npc.height / 2));
+
+            bool checkNPCInSight(NPC npc) => position.CheckNPCInSight(npc, distance);
 
             bool shouldAttackAllDebuffed = !Main.npc.Where(npc => checkNPCInSight(npc) && !npc.HasAllBuffs(debuffs)).Any();
             bool shouldAttackAnyDebuffed = !Main.npc.Where(npc => checkNPCInSight(npc) && !npc.HasAnyBuff(debuffs)).Any();
@@ -715,6 +541,33 @@ namespace EverquartzAdventure
             return target;
         }
 
+        public static bool CheckNPCInSight(this Vector2 position, NPC npc, float distance) => npc != null && npc.active && npc.CanBeChasedBy() && npc.chaseable && Vector2.Distance(position, npc.Center) < distance + ((float)(npc.width / 2) + (float)(npc.height / 2));
+        public static NPC NearestEnemyPreferNoMindcrashed(this Vector2 position, float maxDistance)
+        {
+
+            NPC target = null;
+            float distance = maxDistance;
+
+            bool checkNPCInSight(NPC npc) => position.CheckNPCInSight(npc, distance);
+
+            bool shouldAttackDebuffed = !Main.npc.Where(npc => checkNPCInSight(npc) && !(npc.Everquartz().mindcrashed > 0)).Any();
+            foreach (NPC npc in Main.npc)
+            {
+
+                if (checkNPCInSight(npc))
+                {
+                    bool debuffed = npc.Everquartz().mindcrashed > 0;
+                    if (debuffed == shouldAttackDebuffed)
+                    {
+                        distance = Vector2.Distance(position, npc.Center);
+                        target = npc;
+                    }
+
+                }
+            }
+            return target;
+        }
+
 
         public static byte[] ToByteArray(this BitArray bits)
         {
@@ -723,6 +576,7 @@ namespace EverquartzAdventure
             return ret;
         }
 
+        public static EverquartzGlobalNPC Everquartz(this NPC npc) => npc.GetGlobalNPC<EverquartzGlobalNPC>();
 
         internal static EverquartzPlayer Everquartz(this Player player) => player.GetModPlayer<EverquartzPlayer>();
     }
@@ -825,6 +679,29 @@ namespace EverquartzAdventure
                 return Color.Lerp(thirdColor, firstColor, (colorMePurple - 0.66f) * 3);
             }
 
+        }
+
+        public static Color ColorSwap(List<Color> colors, float seconds)
+        {
+            float colorMePurple = (float)((Math.Sin((double)((float)Math.PI * 2f / seconds) * (double)Main.GlobalTimeWrappedHourly) + 1.0) * 0.5);
+            //ModContent.GetInstance<EverquartzAdventureMod>().Logger.Info(colorMePurple);
+            int count = colors.Count();
+
+            for(int i = 1; i <= count; i++)
+            {
+                double level = (double)i / (double)count;
+                //EverquartzAdventureMod.Instance.Logger.Info($"{i} {count} {level} {(double)(i - 1) / count}");
+                if (colorMePurple < level)
+                {
+                    double lerpAmount = (double)(i - 1) / count;
+                    if (i == count)
+                    {
+                        return Color.Lerp(colors[i - 1], colors[0], (float)(((double)colorMePurple - lerpAmount) * count));
+                    }
+                    return Color.Lerp(colors[i - 1], colors[i], (float)(((double)colorMePurple - lerpAmount) * count));
+                }
+            }
+            return Color.White;
         }
     }
 }

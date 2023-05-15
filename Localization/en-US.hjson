@@ -9,6 +9,7 @@
                     2: We are living in the light as Hypnos is in the light
                     3: TEMPTATION
                     4: NOW QUIT THE INTERNET
+                    5: 彁
                 }
             }
         }
@@ -71,7 +72,7 @@
                     }
                 }
                 Hypnos: {
-                    BestiaryText: The master of illusion. The ALL NATURAL ORGANIC PSYCHOELECTRIC Soul of the Eternal Intellect of Infinite Verboten Knowledge demands your offering.
+                    BestiaryText: The master of illusion. The ALL NATURAL- ORGANIC- PSYCHOELECTRIC Soul of the Eternal Intellect of Infinite Verboten Knowledge demands your offering!
                     ButtonText: Pray (1 {0})
                     Chat: {
                         Common: {
@@ -89,6 +90,7 @@
                             0: I accept your offering.
                             1: Blessed are the dead who die in HypnOS from now on! They will rest from their skill issues, for their deeds follow them!
                             2: *flip the coin* Only my railgun!
+                            3: A new mandate from Hypnos has arrived, Hypnos believes good mental health results in the finest neurons!
                         }
                         PrayWithoutMoney: {
                             0: I warn you, as I did before, that those who are not worthy, will not inherit the kingdom of Hypnos!

@@ -27,6 +27,7 @@ using System.IO;
 using Terraria.ModLoader.IO;
 using EverquartzAdventure.NPCs.TownNPCs;
 using EverquartzAdventure.Projectiles.Hypnos;
+using EverquartzAdventure.Buffs.Hypnos;
 
 namespace EverquartzAdventure
 {
@@ -58,7 +59,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
     public class Hypnos : ModNPC
     {
         #region ExtraAssets
-        public static readonly SoundStyle IPutTheSoundFileInLocalBecauseICouldntKnowCalamitysPathOfThis = new SoundStyle("EverquartzAdventure/Sounds/ExoMechs/ExoLaserShoot");
+        public static readonly SoundStyle IPutTheSoundFileInLocalBecauseICouldntKnowCalamitysPathOfThis = new SoundStyle("EverquartzAdventure/Sounds/ExoMechs/ExoLaserShoot"); 
         public static readonly SoundStyle ICannotFindThisEither = new SoundStyle("EverquartzAdventure/Sounds/ExoMechs/ExoHit", 4)
         {
             Volume = 0.4f
@@ -166,6 +167,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
                     break;
                 case HypnosReward.Hypnotize:
                     player.AddBuff(BuffID.Webbed, 240);
+                    player.AddBuff(ModContent.BuffType<Mindcrashed>(), 1200);
                     break;
                 case HypnosReward.Euthanasia:
                     player.Hurt(PlayerDeathReason.ByOther(10), 200, 0);
@@ -429,7 +431,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
                     Point homePoint = new Point(NPC.homeTileX, NPC.homeTileY - 3);
 
                     Vector2 home = homePoint.ToWorldCoordinates(0, 0);
-                    Dust.NewDustPerfect(home, DustID.Electric, Vector2.Zero);
+                    //Dust.NewDustPerfect(home, DustID.Electric, Vector2.Zero);
                     //EverquartzAdventureMod.Instance.Logger.Info($"{Vector2.Distance(NPC.position, home) > 500f} && {EverquartzUtils.TileCapable(homePoint.X, homePoint.Y)} && {!IsNpcOnscreen(NPC.Center)} && {!IsNpcOnscreen(home)}");
                     if (Vector2.Distance(NPC.position, home) > 1000f && EverquartzUtils.TileCapable(homePoint.X, homePoint.Y) && !IsNpcOnscreen(NPC.Center) && !IsNpcOnscreen(home))
                     {

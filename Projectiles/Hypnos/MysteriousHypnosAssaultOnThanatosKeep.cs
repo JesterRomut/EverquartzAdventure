@@ -14,7 +14,7 @@ using Terraria.Utilities;
 using Terraria.ID;
 using Terraria.Audio;
 using EverquartzAdventure.NPCs.Hypnos;
-
+using EverquartzAdventure.Buffs.Hypnos;
 
 namespace EverquartzAdventure.Projectiles.Hypnos
 {
@@ -24,9 +24,9 @@ namespace EverquartzAdventure.Projectiles.Hypnos
         
 
         public static string readThisIfYouAreUsingADecompiler => "The aergia neuron and blue exo laser's sprites can both be found on fandom - absolutely bread fangirl";
-        public static readonly Asset<Texture2D> glowTex = ModContent.Request<Texture2D>("EverquartzAdventure/NPCs/Hypnos/AergiaNeuron_Glow");
-        public static readonly Asset<Texture2D> glowRedTex = ModContent.Request<Texture2D>("EverquartzAdventure/NPCs/Hypnos/AergiaNeuron_GlowRed");
-        public static readonly Asset<Texture2D> tubeTex = ModContent.Request<Texture2D>("EverquartzAdventure/NPCs/Hypnos/HypnosPlugCable");
+        public static readonly Asset<Texture2D> glowTex = ModContent.Request<Texture2D>("EverquartzAdventure/Projectiles/Hypnos/AergiaNeuron_Glow");
+        public static readonly Asset<Texture2D> glowRedTex = ModContent.Request<Texture2D>("EverquartzAdventure/Projectiles/Hypnos/AergiaNeuron_GlowRed");
+        //public static readonly Asset<Texture2D> tubeTex = ModContent.Request<Texture2D>("EverquartzAdventure/Projectiles/Hypnos/HypnosPlugCable");
         #endregion
 
         #region Consts
@@ -37,22 +37,25 @@ namespace EverquartzAdventure.Projectiles.Hypnos
         #endregion
 
         #region BuffInfo
-        public static List<int> VanillaDebuffs => new List<int>()
-        {
-            BuffID.Ichor,
-            BuffID.BetsysCurse
-        };
+        //public static List<int> VanillaDebuffs => new List<int>()
+        //{
+        //    BuffID.Ichor,
+        //    BuffID.BetsysCurse,
+        //    ModContent.BuffType<Mindcrashed>(),
+        //};
 
-        public static List<int> CalamityDebuffs => new List<int>()
-        {
-            CalamityWeakRef.BuffType.MarkedForDeath,
-        CalamityWeakRef.BuffType.ArmorCrunch,
-               CalamityWeakRef.BuffType.KamiFlu
-        };
+        //public static List<int> CalamityDebuffs => new List<int>()
+        //{
+        //    CalamityWeakRef.BuffType.MarkedForDeath,
+        //CalamityWeakRef.BuffType.ArmorCrunch,
+        //       CalamityWeakRef.BuffType.KamiFlu
+        //};
 
-        public static List<int> Debuffs => (ModCompatibility.calamityEnabled ? VanillaDebuffs.Union(CalamityDebuffs) : VanillaDebuffs).ToList();
+        //public static List<int> Debuffs => (ModCompatibility.calamityEnabled ? VanillaDebuffs.Union(CalamityDebuffs) : VanillaDebuffs).ToList();
 
-        public static readonly int buffDuration = 3000;
+        //public static int Debuff => ModContent.BuffType<Mindcrashed>();
+
+        public static readonly int buffDuration = 300;
 
         #endregion
 
@@ -95,7 +98,7 @@ namespace EverquartzAdventure.Projectiles.Hypnos
         #region Utils
         public static List<Projectile> AllNeurons => Main.projectile.Where(proj => proj != null && proj.active && proj.owner == 0 && proj.type == ModContent.ProjectileType<AergiaNeuron>()).ToList();
 
-        public static int CalcDamage(NPC target) => (int)Math.Floor((float)target.lifeMax / (target.boss ? 42000 : 6));
+        public static int CalcDamage(NPC target) => (int)Math.Floor((float)target.lifeMax / (target.boss ? 128000 : 6));
         public static void AddElectricDusts(Entity proj, int count = 3) // hey hypons or whatever your name u coded quite a lot maybe it is time to stop that is not healthy for you, i can tell by myself
         {
             for (int i = 0; i < count; i++)
@@ -133,13 +136,15 @@ namespace EverquartzAdventure.Projectiles.Hypnos
             Projectile.netImportant = true;
             Projectile.npcProj = true;
             Projectile.DamageType = DamageClass.MagicSummonHybrid;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 0;
         }
 
         
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             damage = CalcDamage(target);
-            crit = true;
+            //crit = true;
 
         }
 
@@ -200,7 +205,7 @@ namespace EverquartzAdventure.Projectiles.Hypnos
                 idealx8 = MathHelper.Lerp(Projectile.position.X, hyposx4, 0.8f);
                 idealy8 = MathHelper.Lerp(Projectile.position.Y, hyposy4, 0.8f);
 
-                NPC target = Projectile.Center.NearestEnemyPreferNoDebuff(800f, Debuffs);
+                NPC target = Projectile.Center.NearestEnemyPreferNoMindcrashed(800f);
                 if (target != null)
                 {
                     Projectile.timeLeft = refreshTimeLeft;
@@ -260,7 +265,7 @@ namespace EverquartzAdventure.Projectiles.Hypnos
             get
             {
                 NPC npc = Main.npc.ElementAtOrDefault((int)Projectile.ai[0]);
-                if (npc != null && npc.active)
+                if (npc != null && npc.active && npc.CanBeChasedBy() && npc.chaseable)
                 {
                     return npc;
                 }
@@ -307,9 +312,10 @@ namespace EverquartzAdventure.Projectiles.Hypnos
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             damage = AergiaNeuron.CalcDamage(target);
-            AergiaNeuron.Debuffs.ForEach(buff => target.AddBuff(buff, AergiaNeuron.buffDuration));
+            //crit = true;
+            target.Everquartz().mindcrashed = AergiaNeuron.buffDuration;
 
-            NPC target2 = Projectile.Center.NearestEnemyPreferNoDebuff(800f, AergiaNeuron.Debuffs);
+            NPC target2 = Projectile.Center.NearestEnemyPreferNoMindcrashed(800f);
             if (target2 != null)
             {
                 Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center, Projectile.SafeDirectionTo(target2.Center) * AergiaNeuron.laserSpeed, ModContent.ProjectileType<BlueExoPulseLaser>(), 1, 0, 0, target.whoAmI);
