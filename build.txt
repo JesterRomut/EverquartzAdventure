@@ -1,4 +1,4 @@
 displayName = Everquartz's Adventure
 author = Everquartz Prime Plus Weaver Fans
-version = 0.2.2.0
+version = 0.2.3.0
 weakReferences = CalamityMod, Hypnos
