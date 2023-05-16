@@ -138,9 +138,9 @@ namespace EverquartzAdventure.Projectiles.Hypnos
             Projectile.DamageType = DamageClass.MagicSummonHybrid;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 0;
+            Projectile.timeLeft = refreshTimeLeft;
         }
 
-        
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             damage = CalcDamage(target);
@@ -187,7 +187,7 @@ namespace EverquartzAdventure.Projectiles.Hypnos
                 ((float)Math.PI * 2f * aergiaIndex / neuronCount + offset).ToRotationVector2() * (float)dist4 + hypnos.Center
                 );
 
-            if (dist < 15f && Landed == false)
+            if (dist < 20f && Landed == false)
             {
                 Landed = true;
                 AddElectricDusts();
@@ -208,6 +208,7 @@ namespace EverquartzAdventure.Projectiles.Hypnos
                 NPC target = Projectile.Center.NearestEnemyPreferNoMindcrashed(800f);
                 if (target != null)
                 {
+                    //CombatText.NewText(Projectile.Hitbox, Color.White, $"{target.FullName} {target.CanBeChasedBy()} {target.chaseable}");
                     Projectile.timeLeft = refreshTimeLeft;
                     if (ShootCooldown > 0)
                     {
@@ -223,6 +224,13 @@ namespace EverquartzAdventure.Projectiles.Hypnos
 
                     }
 
+                }
+                else
+                {
+                    if (Projectile.timeLeft > refreshTimeLeft)
+                    {
+                        Projectile.timeLeft = refreshTimeLeft;
+                    }
                 }
             }
 
@@ -260,6 +268,7 @@ namespace EverquartzAdventure.Projectiles.Hypnos
     public class BlueExoPulseLaser : ModProjectile
     {
         #region Fields
+        public int TargetInt => (int)Projectile.ai[0];
         public NPC Target
         {
             get
@@ -316,7 +325,7 @@ namespace EverquartzAdventure.Projectiles.Hypnos
             target.Everquartz().mindcrashed = AergiaNeuron.buffDuration;
 
             NPC target2 = Projectile.Center.NearestEnemyPreferNoMindcrashed(800f);
-            if (target2 != null)
+            if (target2 != null && target2.whoAmI != TargetInt)
             {
                 Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center, Projectile.SafeDirectionTo(target2.Center) * AergiaNeuron.laserSpeed, ModContent.ProjectileType<BlueExoPulseLaser>(), 1, 0, 0, target.whoAmI);
 

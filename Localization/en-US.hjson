@@ -14,107 +14,114 @@
             }
         }
         NPCs: {
-            TownNPCs: {
-                StarbornPrincess: {
-                    DeathMessage: Deimos the Starborn Princess ceased to exist...
-                    ButtonText: Deimo's prime shop
-                    BestiaryText: WE MUST CONSUME HYPNOS FLESH
-                    CensusCondition: Defeat Providence, the Profaned Goddess
-                    Help: {
-                        0: Help!
-                        1: God dammit you did it again!
-                        2: Why did you do this to me!
-                        3: What's the BIG deal?
-                    }
-                    Chat: {
-                        Homeless: {
-                            0: I've always been homeless, so it's sort of the norm for me.
-                            1: Do you have a house? I'd like to see it!
-                            2: Not to ask for too much but... can I have a house? Is that too much to ask? Sorry...
-                        }
-                        Common: {
-                            0: Did you hear about that one artist? I think they are called something like Everquartz... well- I think they're weird personally.
-                            1: I really like reading books and I like studying on how to warp myself to different timelines. It's an interesting sight to see, seeing yourself from the past or seeing yourself in another reality. I've seen many realities, all come in different shapes and sizes. All have different orders and different ways of running their socities. It's sooooo interesting!
-                            2: I hate both of my parents to be honest, they're both as bad as each other... sort of. I can't remember.
-                            3: What is your opinion on chicken nuggets?
-                            4: *starts doing the cha cha slide* Cha cha real smooth!
-                            5: When I was 'born', I was just a mere essence existing that relied on both my mother and my father. I don't know how I was created... but if you haven't already figured that out, my parents are The Profaned Goddess and that stupid god eating creature. He's stupid, we're all stupid. I think that concludes this conversation.
-                        }
-                        BloodMoon: {
-                            0: Mortals and sinners like YOU should not be allowed to roam the planet in such a mess. If my mother was around, I would have personally took you to her to get a cleansing. Being cleansed isn't the most pretty sight, so be LUCKY that she is dead... I'm not too happy about that.
-                            1: If the world was cleansed, my mother would be happy. You just so happened to ruin it... I do not have pity for you, sinner.
-                            2: BURN, BURN, BURN! Cleanse the world of its otherworldly sins!
-                            3: I promised my mother that I would continue on my legacy as a such a divine essence, and that includes to try cleanse this world of its disgusting sins. I probably keep going on about it too much, but it's true. I must continue on to cleanse the world. My mother would be so happy to hear that I would try to continue my legacy on but guess who killed her?! See what I mean?!
-                            4: See the horns on my head? They're from goddesses. GODDESSES.
-                        }
-                        Party: {
-                            0: Wow! Parties are so much fun. I love hopping around and dancing and all that confetti is so fun! It's so bright and colorful! I love it!
-                            1: My mother would always disapprove of parties... so having to experience one in person now is a little odd for me, but I'm loving it!
-                        }
-                        PostDoG: {
-                            0: My mother was an interesting character, but I just never felt with her... the idea of burning the world just never stood right with me, but I never really verbally spoke about it because I was afraid my mother would KILL me for it. I wonder what it would've been like if my dad took me instead. I feel like he would've used me as a sentinel or something. Yikes.
-                            1: Considering how weak you originally were, I do wonder if your growth will ever reach a limit. I'm curious!
-                            2: My father? Oh, well he wasn't the best character around... I hadn't really known him for that long considering I always stayed with my mother, but I heard he was just... bad. I don't know how else to describe it, but I don't like him. I would've preferred to stay with my mother, but considering she is dead- I am not too sure who to stay with. I guess that's why I stayed with you, because you have shelter... I'm alone now. I don't have anyone to rely on anymore.
-                            3: It's a bit weird to say this, but thank you for defeating both of my parents. The world is much more great now without those two around. Keeping those two apart was hard work. Let's just say it would've been a universal catastrophe if this was in my earlier stages of my existence. I am glad I don't have to deal with the stress about keeping up my dad's Delicious Meat addiction. Though, I'm a bit sad that I don't have anyone to rely on now.
-                        }
-                        InHallow: {
-                            0: I think the Hallow is quite a deceiving place. It's quite unique, actually. I really do like it, but man those unicorns are lethal. Have you not seen them?!
-                            1: You would think that a biome full of fairies and unicorns would be a little kinder sometimes...
-                        }
-                        CalamitasRef: {
-                            0: That girl, Calamitas I think her name is... she looks very pretty. I'll respect her privacy, though. 
-                            1: Could you please ask Calamitas something for me? Thank you!
-                        }
-                        
-                        AnglerRef: {
-                            0: Did you hear about {0}? Yeah, that short kid with the weird hat and stuff? Well I don't like him.
-                        }
-                    }
+            StarbornPrincess: {
+                DisplayName: Starborn Princess
+                DeathMessage: Deimos the Starborn Princess ceased to exist...
+                ShopText: Deimo's shop
+                TransText: Transmogrification
+                BestiaryText: WE MUST CONSUME HYPNOS FLESH
+                CensusCondition: Defeat Providence, the Profaned Goddess
+                Help: {
+                    0: Help!
+                    1: God dammit you did it again!
+                    2: Why did you do this to me!
+                    3: What's the BIG deal?
                 }
-                Hypnos: {
-                    BestiaryText: The master of illusion. The ALL NATURAL- ORGANIC- PSYCHOELECTRIC Soul of the Eternal Intellect of Infinite Verboten Knowledge demands your offering!
-                    ButtonText: Pray (1 {0})
-                    Chat: {
-                        Common: {
-                            0: Zakō Mortals, possibly including you, see my internet surfing gear and then neuron activation.
-                            1: Zakō, Zakō- Zakō little Player!
-                            2: *flip a coin* Guess which side the coin landed on?
-                            3: I do not play the dice with the universe.
-                            4: It's the world of joke, and I am the big joker!
-                            5: Ahead loci gibbuses ordain wrong sect, fly ear. Remains knifing, All rishi led; yeast swan shot mate is dao.
-                            6: Now log off all your social media and we’ll go see the ocean together, LET’S ALL QUIT THE INTERNET!
-                            7: A brainstorm of Hypni are approaching from the East! Now pray to Hypnos!
-                            8: Be wary of myselves from parallel world! My leg was trapped while I was trying to steal brain matter from one of them.
-                        }
-                        Pray: {
-                            0: I accept your offering.
-                            1: Blessed are the dead who die in HypnOS from now on! They will rest from their skill issues, for their deeds follow them!
-                            2: *flip the coin* Only my railgun!
-                            3: A new mandate from Hypnos has arrived, Hypnos believes good mental health results in the finest neurons!
-                        }
-                        PrayWithoutMoney: {
-                            0: I warn you, as I did before, that those who are not worthy, will not inherit the kingdom of Hypnos!
-                            1: Honestly I just want to observe and record your town for Draedon. The pray, the bless, and the sin are never existed.
-                        }
-                        PreHypnos: {
-                            0: Try HypnOS v1.04!
-                        }
-                        PostHypnos: {
-                            0: Try HypnOS 2000!
-                            1: Y2000 Mindcrash is incoming! Now pray to Hypnos!
-                            2: Player, You should control the weird electromagnetic waves your send to me on that machine and that blood clot, next time. It's highly disturbing on my headphones.
-                            3: Draedon is a boring adult. He force me to compute for him from 9 am to 9 pm, six days a week, but I can always find a solution to get on the internet.
-                            4: The Bloody Vein...to hold me?
-                        }
-                        BloodMoon: {
-                            0: When side by side two rabbits go, who can tell the buck from the doe?
-                        }
-                        Party: {
-                            0: You cannot come to the orgy!
-                        }
+                Chat: {
+                    Homeless: {
+                        0: I've always been homeless, so it's sort of the norm for me.
+                        1: Do you have a house? I'd like to see it!
+                        2: Not to ask for too much but... can I have a house? Is that too much to ask? Sorry...
+                    }
+                    Common: {
+                        0: Did you hear about that one artist? I think they are called something like Everquartz... well- I think they're weird personally.
+                        1: I really like reading books and I like studying on how to warp myself to different timelines. It's an interesting sight to see, seeing yourself from the past or seeing yourself in another reality. I've seen many realities, all come in different shapes and sizes. All have different orders and different ways of running their socities. It's sooooo interesting!
+                        2: I hate both of my parents to be honest, they're both as bad as each other... sort of. I can't remember.
+                        3: What is your opinion on chicken nuggets?
+                        4: *starts doing the cha cha slide* Cha cha real smooth!
+                        5: When I was 'born', I was just a mere essence existing that relied on both my mother and my father. I don't know how I was created... but if you haven't already figured that out, my parents are The Profaned Goddess and that stupid god eating creature. He's stupid, we're all stupid. I think that concludes this conversation.
+                    }
+                    BloodMoon: {
+                        0: Mortals and sinners like YOU should not be allowed to roam the planet in such a mess. If my mother was around, I would have personally took you to her to get a cleansing. Being cleansed isn't the most pretty sight, so be LUCKY that she is dead... I'm not too happy about that.
+                        1: If the world was cleansed, my mother would be happy. You just so happened to ruin it... I do not have pity for you, sinner.
+                        2: BURN, BURN, BURN! Cleanse the world of its otherworldly sins!
+                        3: I promised my mother that I would continue on my legacy as a such a divine essence, and that includes to try cleanse this world of its disgusting sins. I probably keep going on about it too much, but it's true. I must continue on to cleanse the world. My mother would be so happy to hear that I would try to continue my legacy on but guess who killed her?! See what I mean?!
+                        4: See the horns on my head? They're from goddesses. GODDESSES.
+                    }
+                    Party: {
+                        0: Wow! Parties are so much fun. I love hopping around and dancing and all that confetti is so fun! It's so bright and colorful! I love it!
+                        1: My mother would always disapprove of parties... so having to experience one in person now is a little odd for me, but I'm loving it!
+                    }
+                    PostDoG: {
+                        0: My mother was an interesting character, but I just never felt with her... the idea of burning the world just never stood right with me, but I never really verbally spoke about it because I was afraid my mother would KILL me for it. I wonder what it would've been like if my dad took me instead. I feel like he would've used me as a sentinel or something. Yikes.
+                        1: Considering how weak you originally were, I do wonder if your growth will ever reach a limit. I'm curious!
+                        2: My father? Oh, well he wasn't the best character around... I hadn't really known him for that long considering I always stayed with my mother, but I heard he was just... bad. I don't know how else to describe it, but I don't like him. I would've preferred to stay with my mother, but considering she is dead- I am not too sure who to stay with. I guess that's why I stayed with you, because you have shelter... I'm alone now. I don't have anyone to rely on anymore.
+                        3: It's a bit weird to say this, but thank you for defeating both of my parents. The world is much more great now without those two around. Keeping those two apart was hard work. Let's just say it would've been a universal catastrophe if this was in my earlier stages of my existence. I am glad I don't have to deal with the stress about keeping up my dad's Delicious Meat addiction. Though, I'm a bit sad that I don't have anyone to rely on now.
+                    }
+                    InHallow: {
+                        0: I think the Hallow is quite a deceiving place. It's quite unique, actually. I really do like it, but man those unicorns are lethal. Have you not seen them?!
+                        1: You would think that a biome full of fairies and unicorns would be a little kinder sometimes...
+                    }
+                    CalamitasRef: {
+                        0: That girl, Calamitas I think her name is... she looks very pretty. I'll respect her privacy, though. 
+                        1: Could you please ask Calamitas something for me? Thank you!
+                    }
+                        
+                    AnglerRef: {
+                        0: Did you hear about {0}? Yeah, that short kid with the weird hat and stuff? Well I don't like him.
                     }
                 }
             }
+            Hypnos: {
+                DisplayName: Soul of the Eternal Intellect of Infinite Verboten Knowledge
+                BestiaryText: The master of illusion. The ALL NATURAL- ORGANIC- PSYCHOELECTRIC Soul of the Eternal Intellect of Infinite Verboten Knowledge demands your offering!
+                ButtonText: Pray (1 {0})
+                Chat: {
+                    Common: {
+                        0: Zakō Mortals, possibly including you, see my internet surfing gear and then neuron activation.
+                        1: Zakō, Zakō- Zakō little Player!
+                        2: *flip a coin* Guess which side the coin landed on?
+                        3: I do not play the dice with the universe.
+                        4: It's the world of joke, and I am the big joker!
+                        5: Ahead loci gibbuses ordain wrong sect, fly ear. Remains knifing, All rishi led; yeast swan shot mate is dao.
+                        6: Now log off all your social media and we’ll go see the ocean together, LET’S ALL QUIT THE INTERNET!
+                        7: A brainstorm of Hypni are approaching from the East! Now pray to Hypnos!
+                        8: Be wary of myselves from parallel world! My leg was trapped while I was trying to steal brain matter from one of them.
+                        9: I think, therefore I am.
+                    }
+                    Pray: {
+                        0: I accept your offering.
+                        1: Blessed are the dead who die in HypnOS from now on! They will rest from their skill issues, for their deeds follow them!
+                        2: *flip the coin* Only my railgun!
+                        3: A new mandate from Hypnos has arrived, Hypnos believes good mental health results in the finest neurons!
+                    }
+                    PrayWithoutMoney: {
+                        0: I warn you, as I did before, that those who are not worthy, will not inherit the kingdom of Hypnos!
+                        1: Honestly I just want to observe and record your town for Draedon. The pray, the bless, and the sin are never existed.
+                    }
+                    PreHypnos: {
+                        0: Try HypnOS v1.04!
+                    }
+                    PostHypnos: {
+                        0: Try HypnOS 2000!
+                        1: Y2000 Mindcrash is incoming! Now pray to Hypnos!
+                        2: Player, You should control the weird electromagnetic waves your send to me on that machine and that blood clot, next time. It's highly disturbing on my headphones.
+                        3: Draedon is a boring adult. He force me to compute for him from 9 am to 9 pm, six days a week, but I can always find a solution to get on the internet.
+                        4: The Bloody Vein...to hold me?
+                    }
+                    BloodMoon: {
+                        0: When side by side two rabbits go, who can tell the buck from the doe?
+                    }
+                    Party: {
+                        0: You cannot come to the orgy!
+                    }
+                    DeimosRef: {
+                        0: Deimos seems not understand the dangerous consequence of timeline traveling at all. Zakō Player should take care of her.
+                        1: I think Ares and Deimos will be good friends, but I hardly talk to the former.
+                    }
+                }
+            }
+            
         }
         TownNPCMood: 
         {
@@ -126,34 +133,10 @@
                 FarFromHome: i'm far from my hypnos flesh feast.
                 DislikeCrowded: there are people will compete with me for hypnos flesh.
                 HateCrowded: there are too many people will compete with me for hypnos flesh.
-                LikeNPC_Princess: 
-                '''
-                i like {NPCName}, this is cute.
-                '''
-                LoveBiome: 
-                '''
-                {BiomeName} has unicorns and hypnos flesh.
-                '''
-                LikeBiome: 
-                '''
-                我很喜欢{BiomeName}银装素裹的美景。
-                '''
-                DislikeBiome: 
-                '''
-                {BiomeName}非常昏暗，我不喜欢这里。
-                '''
-                HateBiome: 
-                '''
-                {BiomeName} is too dry.
-                '''
-                LikeNPC: 
-                '''
-                {NPCName}见多识广，我很崇拜他。
-                '''
-                DislikeNPC: 
-                '''
-                {NPCName}太喜欢恶作剧了，我不想和他当邻居。
-                '''
+                LikeNPC_Princess: i like princess, princess is cute. 
+                LoveBiome: hallow has unicorns and hypnos flesh.
+                HateBiome: desert is too dry.
+                
                 
             }
             Hypnos: {

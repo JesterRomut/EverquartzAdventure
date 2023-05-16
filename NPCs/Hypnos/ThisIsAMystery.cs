@@ -82,7 +82,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
         public static readonly string ChatPostHypnosKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.PostHypnos";
         public static readonly string ChatPrayKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.Pray";
         public static readonly string ChatPrayWithoutMoneyKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.PrayWithoutMoney";
-
+        public static readonly string ChatDeimosRefKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.DeimosRef";
         #endregion LanguageKeys
 
         #region Consts
@@ -191,7 +191,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
         public override void TownNPCAttackStrength(ref int damage, ref float knockback)
         {
 
-            damage = 200;
+            damage = 1;
             knockback = 0;
         }
 
@@ -211,9 +211,9 @@ namespace EverquartzAdventure.NPCs.Hypnos
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Soul of the Eternal Intellect of Infinite Verboten Knowledge");
-            DisplayName.AddTranslation(7, "无限禁忌知识的永恒智慧之魂");
-            DisplayName.AddTranslation(6, "Душа Вечного Интелекта Бесконечных Запрещённых Знаний"); // is that a meme item? or from community remix? - blitz
-            //                                                                                          ↑it's from hypnocord
+            //DisplayName.AddTranslation(7, "无限禁忌知识的永恒智慧之魂");
+            //DisplayName.AddTranslation(6, "Душа Вечного Интелекта Бесконечных Запрещённых Знаний"); // is that a meme item? or from community remix? - blitz
+            ////                                                                                          ↑it's from hypnocord
             //NPCID.Sets.ActsLikeTownNPC[Type] = true;
             //NPCID.Sets.SpawnsWithCustomName[Type] = true;
             Main.npcFrameCount[base.NPC.type] = 13;
@@ -372,6 +372,10 @@ namespace EverquartzAdventure.NPCs.Hypnos
             {
                 EverquartzUtils.GetTextListFromKey(ChatPreHypnosKey).ForEach(st => textSelector.Add(st));
             }
+            if (NPC.AnyNPCs(ModContent.NPCType<StarbornPrincess>()))
+            {
+                EverquartzUtils.GetTextListFromKey(ChatDeimosRefKey).ForEach(st => textSelector.Add(st));
+            }
 
             string thingToSay = textSelector.Get();
             return thingToSay;
@@ -504,7 +508,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
                 }
                 else if (Main.netMode == NetmodeID.Server)
                 {
-                    ModPacket packet = EverquartzAdventureMod.Instance.GetPacket();
+                    ModPacket packet = EverquartzAdventureMod.instance.GetPacket();
                     packet.Write((byte)EverquartzMessageType.HypnosDeparted);
                     packet.Send();
                     ChatHelper.BroadcastChatMessage(NetworkText.FromKey(Lang.misc[35].Key, fullName), new Color(50, 125, 255));

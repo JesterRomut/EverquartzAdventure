@@ -19,6 +19,11 @@ namespace EverquartzAdventure
             npc.Calamity().DR = 0;
         }
     }
+}
+
+namespace EverquartzAdventure.NPCs
+{
+    
     public class EverquartzGlobalNPC : GlobalNPC
     {
         public static List<int> UniqueNPCs => new List<int>() {
