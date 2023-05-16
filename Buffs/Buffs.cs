@@ -7,6 +7,7 @@ namespace EverquartzAdventure
 {
     internal static partial class CalamityWeakRef
     {
+        [JITWhenModsEnabled("Calamitymod")]
         internal static class BuffType
         {
             internal static int HolyFlames => ModContent.BuffType<HolyFlames>();

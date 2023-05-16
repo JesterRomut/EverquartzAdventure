@@ -81,22 +81,22 @@ namespace EverquartzAdventure.NPCs.TownNPCs
         #endregion
 
         #region LanguageKeys
-        public static readonly string DeathMessageKey = "Mods.EverquartzAdventure.NPCs.StarbornPrincess.DeathMessage";
-        public static readonly string ShopTextKey = "Mods.EverquartzAdventure.NPCs.StarbornPrincess.ShopText";
-        public static readonly string TransTextKey = "Mods.EverquartzAdventure.NPCs.StarbornPrincess.TransText";
-        public static readonly string BestiaryTextKey = "Mods.EverquartzAdventure.NPCs.StarbornPrincess.BestiaryText";
-        public static readonly string HelpListKey = "Mods.EverquartzAdventure.NPCs.StarbornPrincess.Help";
+        public static string DeathMessageKey => "Mods.EverquartzAdventure.NPCs.StarbornPrincess.DeathMessage";
+        public static string ShopTextKey => "Mods.EverquartzAdventure.NPCs.StarbornPrincess.ShopText";
+        public static string TransTextKey => "Mods.EverquartzAdventure.NPCs.StarbornPrincess.TransText";
+        public static string BestiaryTextKey => "Mods.EverquartzAdventure.NPCs.StarbornPrincess.BestiaryText";
+        public static string HelpListKey => "Mods.EverquartzAdventure.NPCs.StarbornPrincess.Help";
 
-        public static readonly string ChatHomelessKey = "Mods.EverquartzAdventure.NPCs.StarbornPrincess.Chat.Homeless";
-        public static readonly string ChatCommonKey = "Mods.EverquartzAdventure.NPCs.StarbornPrincess.Chat.Common";
-        public static readonly string ChatBloodMoonKey = "Mods.EverquartzAdventure.NPCs.StarbornPrincess.Chat.BloodMoon";
-        public static readonly string ChatPartyKey = "Mods.EverquartzAdventure.NPCs.StarbornPrincess.Chat.Party";
-        public static readonly string ChatPostDoGKey = "Mods.EverquartzAdventure.NPCs.StarbornPrincess.Chat.PostDoG";
-        public static readonly string ChatInHallowKey = "Mods.EverquartzAdventure.NPCs.StarbornPrincess.Chat.InHallow";
-        public static readonly string ChatCalamitasRefKey = "Mods.EverquartzAdventure.NPCs.StarbornPrincess.Chat.CalamitasRef";
-        public static readonly string ChatAnglerRefKey = "Mods.EverquartzAdventure.NPCs.StarbornPrincess.Chat.AnglerRef";
+        public static string ChatHomelessKey => "Mods.EverquartzAdventure.NPCs.StarbornPrincess.Chat.Homeless";
+        public static string ChatCommonKey => "Mods.EverquartzAdventure.NPCs.StarbornPrincess.Chat.Common";
+        public static string ChatBloodMoonKey => "Mods.EverquartzAdventure.NPCs.StarbornPrincess.Chat.BloodMoon";
+        public static string ChatPartyKey => "Mods.EverquartzAdventure.NPCs.StarbornPrincess.Chat.Party";
+        public static string ChatPostDoGKey => "Mods.EverquartzAdventure.NPCs.StarbornPrincess.Chat.PostDoG";
+        public static string ChatInHallowKey => "Mods.EverquartzAdventure.NPCs.StarbornPrincess.Chat.InHallow";
+        public static string ChatCalamitasRefKey => "Mods.EverquartzAdventure.NPCs.StarbornPrincess.Chat.CalamitasRef";
+        public static string ChatAnglerRefKey => "Mods.EverquartzAdventure.NPCs.StarbornPrincess.Chat.AnglerRef";
 
-        public static readonly string CensusConditionKey = "Mods.EverquartzAdventure.NPCs.StarbornPrincess.CensusCondition";
+        public static string CensusConditionKey => "Mods.EverquartzAdventure.NPCs.StarbornPrincess.CensusCondition";
 
         #endregion
 
@@ -104,8 +104,8 @@ namespace EverquartzAdventure.NPCs.TownNPCs
         public override void SetStaticDefaults()
         {
             base.DisplayName.SetDefault("Starborn Princess");
-            //DisplayName.AddTranslation(7, "星光公主");
-            //DisplayName.AddTranslation(6, "Принцесса, рождённая в небесах");
+            DisplayName.AddTranslation(7, "星光公主");
+            DisplayName.AddTranslation(6, "Принцесса, рождённая в небесах");
             Main.npcFrameCount[base.NPC.type] = 6;
             //NPCID.Sets.ExtraFramesCount[base.NPC.type] = 9;
             //NPCID.Sets.AttackFrameCount[base.NPC.type] = 4;
@@ -278,7 +278,7 @@ namespace EverquartzAdventure.NPCs.TownNPCs
                 // remove the chat window...
                 Main.npcChatText = "";
                 // and start an instance of our UIState.
-                EverquartzUI.instance.userInterface.SetState(new TransmogrificationUI());
+                EverquartzUI.instance.userInterface.SetState(EverquartzUI.instance.transmogrificationUI);
             }
             
         }

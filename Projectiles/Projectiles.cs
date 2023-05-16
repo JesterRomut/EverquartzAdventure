@@ -6,6 +6,7 @@ namespace EverquartzAdventure
 {
     internal static partial class CalamityWeakRef
     {
+        [JITWhenModsEnabled("Calamitymod")]
         internal static class ProjectileType
         {
             public static int TelluricGlareArrow => ModContent.ProjectileType<TelluricGlareArrow>();

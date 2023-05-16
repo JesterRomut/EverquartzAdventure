@@ -16,84 +16,104 @@ using Terraria.DataStructures;
 using EverquartzAdventure.UI;
 using System.Collections.Generic;
 using ReLogic.Utilities;
+using System.Linq;
+using EverquartzAdventure.UI.Transmogrification;
+using ReLogic.Graphics;
+using static System.Net.Mime.MediaTypeNames;
+using EverquartzAdventure.Buffs.Hypnos;
+using static Terraria.ModLoader.PlayerDrawLayer;
+using EverquartzAdventure.Items;
 
 namespace EverquartzAdventure
 {
     public class TransmogrificationUI : UIState
     {
+        #region LanguageKeys
+        public static string PlaceItemKey => "Mods.EverquartzAdventure.UI.Transmogrification.PlaceItem";
+        public static string ProceedKey => "Mods.EverquartzAdventure.UI.Transmogrification.Proceed";
+        public static string TransmogrifingKey => "Mods.EverquartzAdventure.UI.Transmogrification.Transmogrifing";
+        public static string DoneKey => "Mods.EverquartzAdventure.UI.Transmogrification.Done";
+        #endregion
         private UIItemSlot _vanillaItemSlot;
         private List<UIItemNoSlot> _secondaryItems;
         //private UIItemNoSlot _secondaryMiddle;
         private UIItemSlot _resultItemSlot;
-        List<int> testItems = new List<int>()
-        {
-            ItemID.MartianArmorDye,
-            ItemID.Zenith,
-            ItemID.Wood,
-        };
+        private UIItemNoSlot _resultPreview;
+        //List<int?> testItems = new List<int?>()
+        //{
+        //    ItemID.MartianArmorDye,
+        //    ItemID.Zenith,
+        //    ItemID.Wood,
+        //};
+        List<TransmogrificationRecipe> currenRecipes;
+        public int index = 0;
         const int slotX = 50;
         const int slotY = 270;
+
+        #region Overrides
         public override void OnInitialize()
         {
             _vanillaItemSlot = new UIItemSlot(ItemSlot.Context.BankItem, 0.85f)
             {
                 Left = { Pixels = slotX },
                 Top = { Pixels = slotY },
-                ValidItemFunc = item => true
+                ValidItemFunc = item => TransmogrificationManager.CanTrans(item.type),
             };
             // Here we limit the items that can be placed in the slot. We are fine with placing an empty item in or a non-empty item that can be prefixed. Calling Prefix(-3) is the way to know if the item in question can take a prefix or not.
             Append(_vanillaItemSlot);
             _secondaryItems = new List<UIItemNoSlot>();
             UIItemNoSlot one = new UIItemNoSlot(0.5f)
             {
-                Left = { Pixels = slotX + 120 },
-                Top = { Pixels = slotY + 20 },
+                Left = { Pixels = slotX + 140 },
+                Top = { Pixels = slotY + 25 },
             };
             Append(one);
             _secondaryItems.Add(one);
-            UIItemNoSlot two = new UIItemNoSlot(0.85f, ItemSlot.Context.BankItem)
+            UIItemNoSlot two = new UIItemNoSlot(0.85f)
             {
-                Left = { Pixels = slotX + 140 },
-                Top = { Pixels = slotY + 20 },
+                Left = { Pixels = slotX + 155 },
+                Top = { Pixels = slotY + 15 },
             };
             Append(two);
             _secondaryItems.Add(two);
             UIItemNoSlot three = new UIItemNoSlot(0.5f)
             {
-                Left = { Pixels = slotX + 160 },
-                Top = { Pixels = slotY + 20 },
+                Left = { Pixels = slotX + 185 },
+                Top = { Pixels = slotY + 27 },
             };
             Append(three);
             _secondaryItems.Add(three);
-                //_secondaryItems = new List<UIItemNoSlot>()
-                //{
-
-                //    new UIItemNoSlot(0.9f){ 
-                //        Left = { Pixels = slotX + 140 },
-                //        Top = { Pixels = slotY + 20 },
-                //    },
-                //    new UIItemNoSlot(0.5f){
-                //        Left = { Pixels = slotX + 160 },
-                //        Top = { Pixels = slotY + 20 },
-                //    },
-                //};
-                //Array.ForEach(_secondaryItems, slot => Append(slot));
-
-                //_secondaryMiddle = new UIItemNoSlot(1)
-                //{
-                //    Left = { Pixels = slotX + 120 },
-                //    Top = { Pixels = slotY + 20 },
-                //}; 
-                //Append(_secondaryMiddle);
-                _resultItemSlot = new UIItemSlot(ItemSlot.Context.ChestItem, 0.85f)
+            _resultItemSlot = new UIItemSlot(ItemSlot.Context.ChestItem, 0.85f)
             {
-                Left = { Pixels = slotX + 210 },
+                Left = { Pixels = slotX + 230 },
                 Top = { Pixels = slotY },
-                ValidItemFunc = item => false
+                ValidItemFunc = item => !item.IsAir && Main.mouseItem.IsAir,
             };
             Append(_resultItemSlot);
-        }
+            _resultPreview = new UIItemNoSlot(0.85f)
+            {
+                Left = { Pixels = slotX + 230 },
+                Top = { Pixels = slotY },
+                DrawColor = () => new Color(1, 1, 1, 0.1f),
+            };
+            Append(_resultPreview);
 
+            index = 0;
+            try
+            {
+                int idx = Main.LocalPlayer.Everquartz().transIndex;
+                if (idx > -1)
+                {
+                    index = idx;
+                }
+            }catch (IndexOutOfRangeException)
+            {
+
+            }
+            
+            
+            currenRecipes = new List<TransmogrificationRecipe>();
+        }
 
         // OnDeactivate is called when the UserInterface switches to a different state. In this mod, we switch between no state (null) and this state (ExamplePersonUI).
         // Using OnDeactivate is useful for clearing out Item slots and returning them to the player, as we do here.
@@ -113,9 +133,23 @@ namespace EverquartzAdventure
                     slot.item.TurnToAir();
                 }
             });
+            if (!_resultItemSlot.item.IsAir)
+            {
+                Main.LocalPlayer.QuickSpawnClonedItem(Main.LocalPlayer.GetSource_GiftOrReward(), _resultItemSlot.item, _resultItemSlot.item.stack);
+                _resultItemSlot.item.TurnToAir();
+                ResetTransmogrification();
+            }
+            if (!_resultPreview.item.IsAir)
+            {
+                _resultPreview.item.TurnToAir();
+            }
+
+            Main.LocalPlayer.Everquartz().transIndex = index;
             // Note that in ExamplePerson we call .SetState(new UI.ExamplePersonUI());, thereby creating a new instance of this UIState each time. 
             // You could go with a different design, keeping around the same UIState instance if you wanted. This would preserve the UIState between opening and closing. Up to you.
         }
+
+
 
         // Update is called on a UIState while it is the active state of the UserInterface.
         // We use Update to handle automatically closing our UI when the player is no longer talking to our Example Person NPC.
@@ -132,134 +166,313 @@ namespace EverquartzAdventure
             }
         }
 
-        private bool tickPlayed;
-
-        //private void DrawSecondariies(SpriteBatch spriteBatch)
-        //{
-        //    int secondaryMiddleX = slotX + 100;
-        //    int secondaryMiddleY = slotY + 40;
-        //    Texture2D secondaryMiddleTexture = TextureAssets.Item[testItems[0]].Value;
-        //    Vector2 size = secondaryMiddleTexture.Size();
-        //    bool hoveringOverMiddle = Main.mouseX > secondaryMiddleX - size.X && Main.mouseX < secondaryMiddleX + size.X && Main.mouseY > secondaryMiddleY - size.Y && Main.mouseY < secondaryMiddleY + size.Y && !PlayerInput.IgnoreMouseInterface;
-        //    spriteBatch.Draw(secondaryMiddleTexture, new Vector2(secondaryMiddleX, secondaryMiddleY), null, Color.White, 0f, size, 0.8f, SpriteEffects.None, 0f);
-        //    if (hoveringOverMiddle)
-        //    {
-        //        Main.hoverItemName = testItems[0];
-        //    }
-        //    }
-
         protected override void DrawSelf(SpriteBatch spriteBatch)
         {
             base.DrawSelf(spriteBatch);
-
-            // This will hide the crafting menu similar to the reforge menu. For best results this UI is placed before "Vanilla: Inventory" to prevent 1 frame of the craft menu showing.
-            //Main.HidePlayerCraftingMenu = true;
             Main.hidePlayerCraftingMenu = true;
 
-
-
-            #region SecondaryMaterial
-            //DrawSecondariies(spriteBatch);
-            #endregion
-
-            #region ProceedButton
-            // Here we have a lot of code. This code is mainly adapted from the vanilla code for the reforge option.
-            // This code draws "Place an item here" when no item is in the slot and draws the reforge cost and a reforge button when an item is in the slot.
-            // This code could possibly be better as different UIElements that are added and removed, but that's not the main point of this example.
-            // If you are making a UI, add UIElements in OnInitialize that act on your ItemSlot or other inputs rather than the non-UIElement approach you see below.
-
-
-            if (!_vanillaItemSlot.item.IsAir)
+            Item item = Main.LocalPlayer.Everquartz().transResult;
+            if (item != null && !item.IsAir)
             {
-                _secondaryItems.ForEach(delegate (UIItemNoSlot slot)
-                {
-                    if (slot.item.IsAir)
-                    {
-                        slot.item.SetDefaults(_vanillaItemSlot.item.type);
-                        slot.item.CloneWithModdedDataFrom(_vanillaItemSlot.item);
-                    }
-                });
+                DrawTransmogrifing(spriteBatch);
+            }
+            else
+            {
+                DrawInsertItem(spriteBatch);
+            }
+        }
+        #endregion
 
-                int awesomePrice = Item.buyPrice(0, 1, 0, 0);
+        public static void DrawItemAura(Item item, SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            float pulse = Main.GlobalTimeWrappedHourly * 0.75f % 1f;
+            float outwardnessFactor = MathHelper.Lerp(0.9f, 1.3f, pulse);
+            Color color = EverquartzUtils.ColorSwap(new Color(255, 215, 159), new Color(246, 128, 159), new Color(160, 99, 185), 1f) * (1f - pulse);//* 0.27f;
+            Texture2D asset = TextureAssets.Item[item.type].Value;
+            Vector2 baseDrawPosition = position + frame.Size() * scale / 2;
+            drawColor.A = ((byte)0);
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin((SpriteSortMode)1, BlendState.Additive, (SamplerState)null, (DepthStencilState)null, (RasterizerState)null, (Effect)null, Main.UIScaleMatrix);
+            for (int i = 0; i < 5; i += 2)
+            {
+                float drawScale = scale * outwardnessFactor;
+                Vector2 drawPosition = baseDrawPosition + ((float)Math.PI * 2f * (float)i / 4f).ToRotationVector2() * 4f;
+                spriteBatch.Draw(asset, drawPosition, (Rectangle?)frame, color, 0f, frame.Size() * 0.5f, drawScale, SpriteEffects.None, 0f);
+            }
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin((SpriteSortMode)0, BlendState.AlphaBlend, (SamplerState)null, (DepthStencilState)null, (RasterizerState)null, (Effect)null, Main.UIScaleMatrix);
+        }
 
+        private bool tickPlayed = false;
+        private bool resultGenerated = false;
 
-                string costText = Language.GetTextValue("LegacyInterface.46") + ": ";
-                string coinsText = "";
-                int[] coins = Utils.CoinsSplit(awesomePrice);
-                if (coins[3] > 0)
-                {
-                    coinsText = coinsText + "[c/" + Colors.AlphaDarken(Colors.CoinPlatinum).Hex3() + ":" + coins[3] + " " + Language.GetTextValue("LegacyInterface.15") + "] ";
-                }
-                if (coins[2] > 0)
-                {
-                    coinsText = coinsText + "[c/" + Colors.AlphaDarken(Colors.CoinGold).Hex3() + ":" + coins[2] + " " + Language.GetTextValue("LegacyInterface.16") + "] ";
-                }
-                if (coins[1] > 0)
-                {
-                    coinsText = coinsText + "[c/" + Colors.AlphaDarken(Colors.CoinSilver).Hex3() + ":" + coins[1] + " " + Language.GetTextValue("LegacyInterface.17") + "] ";
-                }
-                if (coins[0] > 0)
-                {
-                    coinsText = coinsText + "[c/" + Colors.AlphaDarken(Colors.CoinCopper).Hex3() + ":" + coins[0] + " " + Language.GetTextValue("LegacyInterface.18") + "] ";
-                }
-                ItemSlot.DrawSavings(Main.spriteBatch, slotX + 130, Main.instance.invBottom, true);
-                ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, FontAssets.MouseText.Value, costText, new Vector2(slotX + 50, slotY), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, Vector2.Zero, Vector2.One, -1f, 2f);
-                ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, FontAssets.MouseText.Value, coinsText, new Vector2(slotX + 50 + FontAssets.MouseText.Value.MeasureString(costText).X, (float)slotY), Color.White, 0f, Vector2.Zero, Vector2.One, -1f, 2f);
-                int reforgeX = slotX + 70;
-                int reforgeY = slotY + 40;
-                bool hoveringOverReforgeButton = Main.mouseX > reforgeX - 15 && Main.mouseX < reforgeX + 15 && Main.mouseY > reforgeY - 15 && Main.mouseY < reforgeY + 15 && !PlayerInput.IgnoreMouseInterface;
-                Texture2D reforgeTexture = TextureAssets.Reforge[hoveringOverReforgeButton ? 1 : 0].Value;
+        private void InteractWithPrev()
+        {
+            index--;
+            NormalizeIndex();
+        }
 
-                spriteBatch.Draw(reforgeTexture, new Vector2(reforgeX, reforgeY), null, Color.White, 0f, reforgeTexture.Size() / 2f, 0.8f, SpriteEffects.None, 0f);
-                if (hoveringOverReforgeButton)
-                {
-                    Main.hoverItemName = Language.GetTextValue("LegacyInterface.19");
-                    if (!tickPlayed)
-                    {
-                        SoundEngine.PlaySound(SoundID.MenuTick);
-                    }
-                    tickPlayed = true;
-                    Main.LocalPlayer.mouseInterface = true;
-                    if (Main.mouseLeftRelease && Main.mouseLeft && Main.LocalPlayer.CanBuyItem(awesomePrice, -1) && ItemLoader.PreReforge(_vanillaItemSlot.item))
-                    {
-                        Main.LocalPlayer.BuyItem(awesomePrice, -1);
-                        bool favorited = _vanillaItemSlot.item.favorited;
-                        int stack = _vanillaItemSlot.item.stack;
-                        Item reforgeItem = new Item();
-                        reforgeItem.netDefaults(_vanillaItemSlot.item.netID);
-                        reforgeItem = reforgeItem.CloneWithModdedDataFrom(_vanillaItemSlot.item);
-                        // This is the main effect of this slot. Giving the Awesome prefix 90% of the time and the ReallyAwesome prefix the other 10% of the time. All for a constant 1 gold. Useless, but informative.
+        private void InteractWithNext()
+        {
+            index++;
+            NormalizeIndex();
+        }
 
-                        _vanillaItemSlot.item = reforgeItem.Clone();
-                        _vanillaItemSlot.item.position.X = Main.LocalPlayer.position.X + (float)(Main.LocalPlayer.width / 2) - (float)(_vanillaItemSlot.item.width / 2);
-                        _vanillaItemSlot.item.position.Y = Main.LocalPlayer.position.Y + (float)(Main.LocalPlayer.height / 2) - (float)(_vanillaItemSlot.item.height / 2);
-                        _vanillaItemSlot.item.favorited = favorited;
-                        _vanillaItemSlot.item.stack = stack;
-                        ItemLoader.PostReforge(_vanillaItemSlot.item);
-                        //PopupText.NewText(_vanillaItemSlot.Item, _vanillaItemSlot.Item.stack, true, false);
-                        SoundEngine.PlaySound(SoundID.Item37);
-                    }
-                }
-                else
+        private void InteractWithProceed(TransmogrificationRecipe recipe, int transAmount)
+        {
+
+            //bool favorited = _vanillaItemSlot.item.favorited;
+            //_resultItemSlot.item.SetDefaults(recipe.ResultItemType);
+            //_resultItemSlot.item.position.X = Main.LocalPlayer.position.X + (float)(Main.LocalPlayer.width / 2) - (float)(_resultItemSlot.item.width / 2);
+            //_resultItemSlot.item.position.Y = Main.LocalPlayer.position.Y + (float)(Main.LocalPlayer.height / 2) - (float)(_resultItemSlot.item.height / 2);
+            //_resultItemSlot.item.favorited = favorited;
+            //_resultItemSlot.item.stack = _vanillaItemSlot.item.stack * recipe.ResultItemStack;
+            Player player = Main.LocalPlayer;
+            
+            
+            EverquartzPlayer modPlayer = Main.LocalPlayer.Everquartz();
+
+            DateTime time = DateTime.UtcNow;
+            time += new TimeSpan(0, 0, recipe.TimeInSeconds);
+            modPlayer.transEndTime = time;
+
+            Item result = new Item();
+            result.SetDefaults(recipe.ResultItemType);
+            //result = result.CloneWithModdedDataFrom(_vanillaItemSlot.item);
+            result.stack = recipe.ResultItemStack;
+
+            modPlayer.transResult = result.Clone();
+
+            _vanillaItemSlot.item.stack -= transAmount;
+            if (_vanillaItemSlot.item.stack <= 0)
+            {
+                _vanillaItemSlot.item.TurnToAir();
+            }
+            player.TakeItem(recipe.SecondaryMaterialType, recipe.SecondatyMaterialStack * transAmount);
+            //PopupText.NewText(_vanillaItemSlot.Item, _vanillaItemSlot.Item.stack, true, false);
+            SoundEngine.PlaySound(SoundID.Item2);
+        }
+
+        private void NormalizeIndex()
+        {
+            if (index >= currenRecipes.Count)
+            {
+                index = currenRecipes.Count - 1;
+            }
+            if (index < 0)
+            {
+                index = 0;
+            }
+        }
+
+        private void SetupItemSlot(int itemType, int itemStack, ref UIItemNoSlot slot)
+        {
+            if (itemType != -1)
+            {
+                if (slot.item.IsAir || slot.item.type != itemType)
                 {
-                    tickPlayed = false;
+                    slot.item.SetDefaults(itemType);
+                }
+                if (!slot.item.IsAir && slot.item.stack != itemStack)
+                {
+                    slot.item.stack = itemStack;
                 }
             }
             else
             {
-                _secondaryItems.ForEach(delegate (UIItemNoSlot slot)
-                {
-                    if (!slot.item.IsAir)
-                    {
-                        slot.item.TurnToAir();
-                    }
-                });
-
-                string message = "Place an item here to Awesomeify";
-                ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, FontAssets.MouseText.Value, message, new Vector2(slotX + 50, slotY), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, Vector2.Zero, Vector2.One, -1f, 2f);
+                slot.item.TurnToAir();
             }
-            #endregion
         }
+
+        private void ClearItemSlot(ref UIItemNoSlot slot)
+        {
+            if (!slot.item.IsAir)
+            {
+                slot.item.TurnToAir();
+            }
+        }
+        private void ClearItemSlot(UIItemNoSlot slot)
+        {
+            ClearItemSlot(ref slot);
+        }
+
+        private void DrawInsertItem(SpriteBatch spriteBatch)
+        {
+            if (!_vanillaItemSlot.item.IsAir && _resultItemSlot.item.IsAir)
+            {
+                currenRecipes = TransmogrificationManager.FindAvaliableTransByMainIngredient(_vanillaItemSlot.item.type, Main.LocalPlayer)
+                    .Concat(TransmogrificationManager.FindUnavaliableTransByMainIngredient(_vanillaItemSlot.item.type, Main.LocalPlayer)).ToList();
+                NormalizeIndex();
+                
+                for (int i = 0; i < 3; i++)
+                {
+                    UIItemNoSlot slot = _secondaryItems[i];
+                    TransmogrificationRecipe recipe = currenRecipes.ElementAtOrDefault(index + i - 1);
+                    int amount = Math.Min(_vanillaItemSlot.item.stack, TransmogrificationManager.MaxTransmogrificationAmount(Main.LocalPlayer, recipe));
+                    if (amount <= 0)
+                    {
+                        amount = 1;
+                        
+                        slot.DrawColor = () => new Color(1, 1, 1, 0.1f);
+                    }
+                    else
+                    {
+                        slot.DrawColor = null;
+                    }
+                    SetupItemSlot(recipe.SecondaryMaterialType, recipe.SecondatyMaterialStack * amount, ref slot);
+                }
+                TransmogrificationRecipe currenRecipe = currenRecipes.ElementAtOrDefault(index);
+                int transAmount = transAmount = Math.Min(_vanillaItemSlot.item.stack, TransmogrificationManager.MaxTransmogrificationAmount(Main.LocalPlayer, currenRecipe)); ;
+                bool unavaliable = false;
+                if (transAmount <= 0)
+                {
+                    unavaliable = true;
+                    transAmount = 1;
+                }
+                SetupItemSlot(currenRecipe.ResultItemType, currenRecipe.ResultItemStack * transAmount, ref _resultPreview);
+
+                //DrawSecondariies(spriteBatch);
+                Texture2D prevTexture = TextureAssets.ScrollLeftButton.Value;
+                int prevX = slotX + 100;
+                int prevY = slotY + 40;
+                spriteBatch.Draw(prevTexture, new Vector2(prevX, prevY), null, Color.White, 0f, prevTexture.Size() / 2f, 1f, SpriteEffects.None, 0f);
+                bool hoveringOverPrev = Main.mouseX > prevX - prevTexture.Width && Main.mouseX < prevX + prevTexture.Width && Main.mouseY > prevY - prevTexture.Height && Main.mouseY < prevY + prevTexture.Height && !PlayerInput.IgnoreMouseInterface;
+                if (hoveringOverPrev)
+                {
+                    Main.LocalPlayer.mouseInterface = true;
+                    if (Main.mouseLeftRelease && Main.mouseLeft)
+                    {
+                        InteractWithPrev();
+                    }
+
+                }
+                Texture2D nextTexture = TextureAssets.ScrollRightButton.Value;
+                int nextX = slotX + 120;
+                int nextY = slotY + 40;
+                spriteBatch.Draw(nextTexture, new Vector2(nextX, nextY), null, Color.White, 0f, nextTexture.Size() / 2f, 1f, SpriteEffects.None, 0f);
+                bool hoveringOverNext = Main.mouseX > nextX - nextTexture.Width && Main.mouseX < nextX + nextTexture.Width && Main.mouseY > nextY - nextTexture.Height && Main.mouseY < nextY + nextTexture.Height && !PlayerInput.IgnoreMouseInterface;
+                if (hoveringOverNext)
+                {
+                    Main.LocalPlayer.mouseInterface = true;
+                    if (Main.mouseLeftRelease && Main.mouseLeft)
+                    {
+                        InteractWithNext();
+                    }
+
+                }
+                int timeCost = currenRecipe.TimeInSeconds * transAmount;
+
+                string costText = Language.GetTextValue("LegacyInterface.46") + ": ";
+                string coinsText = Lang.LocalizedDuration(new TimeSpan(0, 0, timeCost), abbreviated: true, showAllAvailableUnits: false);
+
+                ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, FontAssets.MouseText.Value, costText, new Vector2(slotX + 50, slotY), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, Vector2.Zero, Vector2.One, -1f, 2f);
+                ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, FontAssets.MouseText.Value, coinsText, new Vector2(slotX + 50 + FontAssets.MouseText.Value.MeasureString(costText).X, (float)slotY), Color.White, 0f, Vector2.Zero, Vector2.One, -1f, 2f);
+                if (!unavaliable)
+                {
+                    
+                    int reforgeX = slotX + 70;
+                    int reforgeY = slotY + 40;
+                    bool hoveringOverReforgeButton = Main.mouseX > reforgeX - 15 && Main.mouseX < reforgeX + 15 && Main.mouseY > reforgeY - 15 && Main.mouseY < reforgeY + 15 && !PlayerInput.IgnoreMouseInterface;
+                    Texture2D reforgeTexture = TextureAssets.Reforge[hoveringOverReforgeButton ? 1 : 0].Value;
+
+                    spriteBatch.Draw(reforgeTexture, new Vector2(reforgeX, reforgeY), null, Color.White, 0f, reforgeTexture.Size() / 2f, 0.8f, SpriteEffects.None, 0f);
+                    if (hoveringOverReforgeButton)
+                    {
+                        Main.hoverItemName = Language.GetTextValue(ProceedKey);
+                        if (!tickPlayed)
+                        {
+                            SoundEngine.PlaySound(SoundID.MenuTick);
+                        }
+                        tickPlayed = true;
+                        Main.LocalPlayer.mouseInterface = true;
+                        if (Main.mouseLeftRelease && Main.mouseLeft)
+                        {
+                            InteractWithProceed(currenRecipe, transAmount);
+                        }
+                    }
+                    else
+                    {
+                        tickPlayed = false;
+                    }
+                }
+                //int awesomePrice = Item.buyPrice(0, 1, 0, 0);
+                
+                //int[] coins = Utils.CoinsSplit(awesomePrice);
+                //if (coins[3] > 0)
+                //{
+                //    coinsText = coinsText + "[c/" + Colors.AlphaDarken(Colors.CoinPlatinum).Hex3() + ":" + coins[3] + " " + Language.GetTextValue("LegacyInterface.15") + "] ";
+                //}
+                //if (coins[2] > 0)
+                //{
+                //    coinsText = coinsText + "[c/" + Colors.AlphaDarken(Colors.CoinGold).Hex3() + ":" + coins[2] + " " + Language.GetTextValue("LegacyInterface.16") + "] ";
+                //}
+                //if (coins[1] > 0)
+                //{
+                //    coinsText = coinsText + "[c/" + Colors.AlphaDarken(Colors.CoinSilver).Hex3() + ":" + coins[1] + " " + Language.GetTextValue("LegacyInterface.17") + "] ";
+                //}
+                //if (coins[0] > 0)
+                //{
+                //    coinsText = coinsText + "[c/" + Colors.AlphaDarken(Colors.CoinCopper).Hex3() + ":" + coins[0] + " " + Language.GetTextValue("LegacyInterface.18") + "] ";
+                //}
+                //ItemSlot.DrawSavings(Main.spriteBatch, slotX + 130, Main.instance.invBottom, true);
+                
+            }
+            else
+            {
+                _secondaryItems.ForEach(ClearItemSlot);
+                ClearItemSlot(ref _resultPreview);
+
+                string message = Language.GetTextValue(PlaceItemKey);
+                ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, message, new Vector2(slotX + 50, slotY), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, Vector2.Zero, Vector2.One, -1f, 2f);
+            }
+        }
+
+        private void ResetTransmogrification()
+        {
+            Main.LocalPlayer.Everquartz().ResetTransmogrification();
+            resultGenerated = false;
+        }
+
+        private void DrawTransmogrifing(SpriteBatch spriteBatch)
+        {
+            _secondaryItems.ForEach(ClearItemSlot);
+            EverquartzPlayer modPlayer = Main.LocalPlayer.Everquartz();
+            
+            string message = Language.GetTextValue(TransmogrifingKey);
+            long ticks =  modPlayer.transEndTime.Ticks - DateTime.UtcNow.Ticks;
+            string timeRemaining = "";
+            if (ticks <= 0)
+            {
+                ClearItemSlot(ref _resultPreview);
+                timeRemaining = Language.GetTextValue(DoneKey);
+                if (_resultItemSlot.item.IsAir)
+                {
+                    if (resultGenerated)
+                    {
+                        ResetTransmogrification();
+                    }
+                    else
+                    {
+                        _resultItemSlot.item = modPlayer.transResult.Clone();
+                        _resultItemSlot.item.position.X = Main.LocalPlayer.position.X + (float)(Main.LocalPlayer.width / 2) - (float)(_resultItemSlot.item.width / 2);
+                        _resultItemSlot.item.position.Y = Main.LocalPlayer.position.Y + (float)(Main.LocalPlayer.height / 2) - (float)(_resultItemSlot.item.height / 2);
+                        resultGenerated = true;
+                    }
+                    
+                    
+                }
+            }
+            else
+            {
+                SetupItemSlot(modPlayer.transResult.type, modPlayer.transResult.stack, ref _resultPreview);
+                timeRemaining = Lang.LocalizedDuration(TimeSpan.FromTicks(ticks), abbreviated: true, showAllAvailableUnits: false);
+            }
+            
+            ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, message, new Vector2(slotX + 50, slotY), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, Vector2.Zero, Vector2.One, -1f, 2f);
+            ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, timeRemaining, new Vector2(slotX + 50, slotY + 20), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, Vector2.Zero, Vector2.One, -1f, 2f);
+        }
+
+        
     }
     internal class UIItemSlot : UIElement
     {
@@ -267,6 +480,7 @@ namespace EverquartzAdventure
         private readonly int _context;
         private readonly float _scale;
         internal Func<Item, bool> ValidItemFunc;
+        internal Action<Item> ItemChangedAction;
 
         public static Asset<Texture2D> defaultBackgroundTexture = TextureAssets.InventoryBack9;
         public bool hide = false;
@@ -293,10 +507,16 @@ namespace EverquartzAdventure
             if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
             {
                 Main.LocalPlayer.mouseInterface = true;
-                if (ValidItemFunc == null || ValidItemFunc(Main.mouseItem))
+
+                if (ValidItemFunc == null || Main.mouseItem.IsAir || ValidItemFunc(Main.mouseItem))
                 {
+                    int oldItemType = item.type;
                     // Handle handles all the click and hover actions based on the context.
                     ItemSlot.Handle(ref item, _context);
+                    if (oldItemType != item.type && ItemChangedAction != null)
+                    {
+                        ItemChangedAction(item);
+                    }
                 }
             }
             // Draw draws the slot itself and Item. Depending on context, the color will change, as will drawing other things like stack counts.
@@ -312,6 +532,8 @@ namespace EverquartzAdventure
         public int ItemType => item?.type ?? -1;
 
         public Item item;
+
+        internal Func<Color> DrawColor;
 
         public UIItemNoSlot(float scale = 0.75f, int context = ItemSlot.Context.ChatItem)
         {
@@ -346,7 +568,7 @@ namespace EverquartzAdventure
             //}
             float inventoryScale = Main.inventoryScale;
             Main.inventoryScale = scale;
-            ItemSlot.Draw(spriteBatch, ref item, context, GetInnerDimensions().ToRectangle().TopLeft(), Color.White);
+            ItemSlot.Draw(spriteBatch, ref item, context, GetInnerDimensions().ToRectangle().TopLeft(), DrawColor != null ? DrawColor() : Color.White);
             Main.inventoryScale = inventoryScale;
             if (base.IsMouseHovering)
             {

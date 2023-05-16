@@ -72,17 +72,17 @@ namespace EverquartzAdventure.NPCs.Hypnos
         #endregion
 
         #region LanguageKeys
-        public static readonly string ButtonTextKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.ButtonText";
-        public static readonly string BestiaryTextKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.BestiaryText";
+        public static string ButtonTextKey => "Mods.EverquartzAdventure.NPCs.Hypnos.ButtonText";
+        public static string BestiaryTextKey => "Mods.EverquartzAdventure.NPCs.Hypnos.BestiaryText";
 
-        public static readonly string ChatCommonKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.Common";
-        public static readonly string ChatBloodMoonKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.BloodMoon";
-        public static readonly string ChatPartyKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.Party";
-        public static readonly string ChatPreHypnosKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.PreHypnos";
-        public static readonly string ChatPostHypnosKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.PostHypnos";
-        public static readonly string ChatPrayKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.Pray";
-        public static readonly string ChatPrayWithoutMoneyKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.PrayWithoutMoney";
-        public static readonly string ChatDeimosRefKey = "Mods.EverquartzAdventure.NPCs.TownNPCs.Hypnos.Chat.DeimosRef";
+        public static string ChatCommonKey => "Mods.EverquartzAdventure.NPCs.Hypnos.Chat.Common";
+        public static string ChatBloodMoonKey => "Mods.EverquartzAdventure.NPCs.Hypnos.Chat.BloodMoon";
+        public static string ChatPartyKey => "Mods.EverquartzAdventure.NPCs.Hypnos.Chat.Party";
+        public static string ChatPreHypnosKey => "Mods.EverquartzAdventure.NPCs.Hypnos.Chat.PreHypnos";
+        public static string ChatPostHypnosKey => "Mods.EverquartzAdventure.NPCs.Hypnos.Chat.PostHypnos";
+        public static string ChatPrayKey => "Mods.EverquartzAdventure.NPCs.Hypnos.Chat.Pray";
+        public static string ChatPrayWithoutMoneyKey => "Mods.EverquartzAdventure.NPCs.Hypnos.Chat.PrayWithoutMoney";
+        public static string ChatDeimosRefKey => "Mods.EverquartzAdventure.NPCs.Hypnos.Chat.DeimosRef";
         #endregion LanguageKeys
 
         #region Consts
@@ -211,8 +211,8 @@ namespace EverquartzAdventure.NPCs.Hypnos
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Soul of the Eternal Intellect of Infinite Verboten Knowledge");
-            //DisplayName.AddTranslation(7, "无限禁忌知识的永恒智慧之魂");
-            //DisplayName.AddTranslation(6, "Душа Вечного Интелекта Бесконечных Запрещённых Знаний"); // is that a meme item? or from community remix? - blitz
+            DisplayName.AddTranslation(7, "无限禁忌知识的永恒智慧之魂");
+            DisplayName.AddTranslation(6, "Душа Вечного Интелекта Бесконечных Запрещённых Знаний"); // is that a meme item? or from community remix? - blitz
             ////                                                                                          ↑it's from hypnocord
             //NPCID.Sets.ActsLikeTownNPC[Type] = true;
             //NPCID.Sets.SpawnsWithCustomName[Type] = true;

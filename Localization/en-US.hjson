@@ -123,6 +123,14 @@
             }
             
         }
+        UI: {
+            Transmogrification: {
+                PlaceItem: Transmogrification
+                Proceed: Transmogrify
+                Transmogrifing: Transmogrifing
+                Done: Done!
+            }
+        }
         TownNPCMood: 
         {
             StarbornPrincess: 

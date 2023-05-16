@@ -9,31 +9,28 @@ using static Terraria.Player;
 using EverquartzAdventure.NPCs.Hypnos;
 using EverquartzAdventure.Projectiles.Hypnos;
 using System.Collections;
+using EverquartzAdventure.UI.Transmogrification;
+using Terraria.ModLoader.IO;
 
 namespace EverquartzAdventure
 {
     public class EverquartzPlayer : ModPlayer
     {
-        public int praisingTimer = 0;
-        public bool IsPraisingHypnos => praisingTimer > 0;
+        
 
         public bool mindcrashed = false;
 
         //public Point? lastSleepingSpot = null;
 
-        //public override void SaveData(TagCompound tag)
-        //{
-        //    if (lastSleepingSpot.HasValue)
-        //    {
-        //        tag.Add("lastSleepingSpots", new TagCompound() { [Main.worldID.ToString()] = lastSleepingSpot.Value.ToVector2() });
-        //    }
+        public override void SaveData(TagCompound tag)
+        {
+            tag.Add("transmogrification", SaveTransmogrificationInfo());
+        }
 
-        //}
-
-        //public override void LoadData(TagCompound tag)
-        //{
-        //    lastSleepingSpot = tag.GetCompound("lastSleepingSpots").Get<Vector2>(Main.worldID.ToString()).ToPoint();
-        //}
+        public override void LoadData(TagCompound tag)
+        {
+            LoadTransmogrificationInfo(tag.GetCompound("transmogrification"));
+        }
 
         public override void PostUpdate()
         {
@@ -57,18 +54,7 @@ namespace EverquartzAdventure
         {
             if (IsPraisingHypnos)
             {
-                int num9 = Player.miscCounter % 14 / 7;
-                CompositeArmStretchAmount stretch = CompositeArmStretchAmount.ThreeQuarters;
-                float num2 = 0.3f;
-                if (num9 == 1)
-                {
-                    //stretch = CompositeArmStretchAmount.Full;
-                    num2 = 0.35f;
-                }
-
-                Player.SetCompositeArmBack(enabled: true, stretch, (float)Math.PI * -2f * num2 * (float)Player.direction);
-                Player.SetCompositeArmFront(enabled: true, stretch, (float)Math.PI * -2f * num2 * (float)Player.direction);
-
+                PraisingHypnosAnimation();
                 return false;
             }
             return true;
@@ -115,18 +101,69 @@ namespace EverquartzAdventure
         }
 
         #region Deimos
+        //public DateTime transStartTime;
+        public Item transResult;
+        public DateTime transEndTime;
+        public int transIndex = -1;
 
-        public void HandleDeadDeimos(Player murderer)
+        private TagCompound SaveTransmogrificationInfo()
         {
-            StarbornPrincess.DeathEffectClient(murderer.position, murderer.width, murderer.height);
+            TagCompound result = new TagCompound();
+            if (transResult != null && !transResult.IsAir)
+            {
+                result.Add("transEndTime", transEndTime.ToISO8601());
+                //result.Add("transTime", transStartTime.ToISO8601());
+                result.Add("transResult", transResult);
+            }
+            if (transIndex > -1)
+            {
+                result.Add("transIndex", transIndex);
+            }
+            
+            return result;
+        }
+
+        public void ResetTransmogrification()
+        {
+            //transStartTime = default;
+            transEndTime = default;
+            transResult?.TurnToAir();
+            transResult = null;
+        }
+
+        private void LoadTransmogrificationInfo(TagCompound tag)
+        {
+            //transStartTime = tag.GetString("transTime").ToISO8601();
+            transEndTime = tag.GetString("transEndTime").ToISO8601();
+            transResult = tag.Get<Item>("transResult");
+            transIndex = tag.GetInt("transIndex");
         }
 
         #endregion
 
         #region Hypnos
+
+        public int praisingTimer = 0;
+        public bool IsPraisingHypnos => praisingTimer > 0;
         public void InterruptPraisingHypnos()
         {
             praisingTimer = 0;
+        }
+
+        private void PraisingHypnosAnimation()
+        {
+            int num9 = Player.miscCounter % 14 / 7;
+            CompositeArmStretchAmount stretch = CompositeArmStretchAmount.ThreeQuarters;
+            float num2 = 0.3f;
+            if (num9 == 1)
+            {
+                //stretch = CompositeArmStretchAmount.Full;
+                num2 = 0.35f;
+            }
+
+            Player.SetCompositeArmBack(enabled: true, stretch, (float)Math.PI * -2f * num2 * (float)Player.direction);
+            Player.SetCompositeArmFront(enabled: true, stretch, (float)Math.PI * -2f * num2 * (float)Player.direction);
+
         }
 
         public void DonePraisingHypnos()

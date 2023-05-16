@@ -1,6 +1,18 @@
 ﻿Mods: {
 	EverquartzAdventure: 
     {
+        Buffs: {
+            Mindcrashed: {
+                Descriptions: {
+                    0: Blessed are the dead who die in HypnOS from now on!
+                    1: WHAT DO YOU KNOW WHAT DO YOU PLAY WHAT DO YOU REMEMBER WHAT DO YOU LOVE
+                    2: We are living in the light as Hypnos is in the light
+                    3: TEMPTATION
+                    4: NOW QUIT THE INTERNET
+                    5: 彁
+                }
+            }
+        }
         NPCs: {
             StarbornPrincess: {
                 DisplayName: Принцесса, рождённая в небесах
@@ -110,6 +122,14 @@
                 }
             }
             
+        }
+        UI: {
+            Transmogrification: {
+                PlaceItem: Transmogrification
+                Proceed: Transmogrify
+                Transmogrifing: Transmogrifing
+                Done: Done!
+            }
         }
         TownNPCMood: 
         {

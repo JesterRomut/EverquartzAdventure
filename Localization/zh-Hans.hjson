@@ -123,6 +123,14 @@ Mods: {
             }
             
         }
+        UI: {
+            Transmogrification: {
+                PlaceItem: 超级变变变
+                Proceed: 超级变变变
+                Transmogrifing: 正在变变变
+                Done: 完成！
+            }
+        }
         TownNPCMood: 
         {
             StarbornPrincess: {

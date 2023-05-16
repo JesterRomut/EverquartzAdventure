@@ -65,7 +65,7 @@ namespace EverquartzAdventure.Buffs.Hypnos
 
 		public static void DrawBackAfterimages(SpriteBatch spriteBatch, NPC npc, Vector2 screenPos)
 		{
-			DrawBackAfterimage(spriteBatch, npc, screenPos);
+			DrawBackAfterImage(spriteBatch, npc, screenPos);
 			for (int i = 1; i < 3; i++)
 			{
 				Vector2 oldpos = npc.oldPos.ElementAtOrDefault(i);
@@ -73,11 +73,11 @@ namespace EverquartzAdventure.Buffs.Hypnos
 				{
 					break;
 				}
-				DrawBackAfterimage(spriteBatch, npc, screenPos, oldpos);
+				DrawBackAfterImage(spriteBatch, npc, screenPos, oldpos);
 			}
 		}
 
-		public static void DrawBackAfterimage(SpriteBatch spriteBatch, NPC npc, Vector2 screenPos, Vector2? position = null)
+		public static void DrawBackAfterImage(SpriteBatch spriteBatch, NPC npc, Vector2 screenPos, Vector2? position = null)
 		{
 			float pulse = Main.GlobalTimeWrappedHourly * 0.75f % 1f;
 			float outwardnessFactor = MathHelper.Lerp(0.9f, 1.3f, pulse);
