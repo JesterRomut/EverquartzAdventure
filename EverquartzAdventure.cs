@@ -116,6 +116,7 @@ namespace EverquartzAdventure
 
             ModCompatibility.calamityEnabled = ModLoader.HasMod("CalamityMod");
             ModCompatibility.hypnosEnabled = ModLoader.HasMod("Hypnos");
+            ModCompatibility.calRemixEnabled = ModLoader.HasMod("CalRemix");
 
             TransmogrificationManager.LoadAllTrans();
 
@@ -132,6 +133,7 @@ namespace EverquartzAdventure
 
             ModCompatibility.calamityEnabled = false;
             ModCompatibility.hypnosEnabled = false;
+            ModCompatibility.calRemixEnabled = false;
 
             TransmogrificationManager.UnloadAllTrans();
 
@@ -234,6 +236,7 @@ namespace EverquartzAdventure
     {
         public static bool calamityEnabled = false;
         public static bool hypnosEnabled = false;
+        public static bool calRemixEnabled = false;
         public static Mod censusMod;
         public static Mod hypnosMod;
         private static int? hypnosBossType = null;
@@ -265,6 +268,12 @@ namespace EverquartzAdventure
 
     [JITWhenModsEnabled("Hypnos")]
     internal static partial class HypnosWeakRef
+    {
+
+    }
+
+    [JITWhenModsEnabled("CalRemix")]
+    internal static partial class CalRemixWeakRef
     {
 
     }
@@ -343,7 +352,72 @@ namespace EverquartzAdventure
             return target;
         }
 
-        
+        public static string LocalizedDuration(this TimeSpan time, bool abbreviated, bool showAllAvailableUnits)
+        {
+            string text = "";
+            abbreviated |= !GameCulture.FromCultureName(GameCulture.CultureName.English).IsActive;
+            if (time.Days > 0)
+            {
+                int num = time.Days;
+                //if (!showAllAvailableUnits && time > TimeSpan.FromDays(1.0))
+                //{
+                //    num++;
+                //}
+
+                text = text + num + (abbreviated ? (" " + Language.GetTextValue("Misc.ShortDays")) : ((num == 1) ? " day" : " days"));
+                if (!showAllAvailableUnits)
+                {
+                    return text;
+                }
+
+                text += " ";
+            }
+
+            if (time.Hours > 0)
+            {
+                int num2 = time.Hours;
+                //if (!showAllAvailableUnits && time > TimeSpan.FromHours(1.0))
+                //{
+                //    num2++;
+                //}
+
+                text = text + num2 + (abbreviated ? (" " + Language.GetTextValue("Misc.ShortHours")) : ((num2 == 1) ? " hour" : " hours"));
+                if (!showAllAvailableUnits)
+                {
+                    return text;
+                }
+
+                text += " ";
+            }
+
+            if (time.Minutes > 0)
+            {
+                int num3 = time.Minutes;
+                //if (!showAllAvailableUnits && time > TimeSpan.FromMinutes(1.0))
+                //{
+                //    num3++;
+                //}
+
+                text = text + num3 + (abbreviated ? (" " + Language.GetTextValue("Misc.ShortMinutes")) : ((num3 == 1) ? " minute" : " minutes"));
+                if (!showAllAvailableUnits)
+                {
+                    return text;
+                }
+
+                text += " ";
+            }
+            if (time.Seconds > 0)
+            {
+                int num4 = time.Seconds;
+                //if (!showAllAvailableUnits && time >= TimeSpan.FromSeconds(1.0))
+                //{
+                //    num4++;
+                //}
+                text = text + num4 + (abbreviated ? (" " + Language.GetTextValue("Misc.ShortSeconds")) : ((time.Seconds == 1) ? " second" : " seconds"));
+            }
+
+            return text;
+        }
 
         internal static bool HasAnyBuff(this NPC npc, List<int> debuffs) {
             return debuffs.Where(npc.HasBuff).Any();

@@ -169,6 +169,17 @@ namespace EverquartzAdventure.UI.Transmogrification
                 Transmogrifications.Add(new TransmogrificationRecipe(ItemType.LeviathanAmbergris, ItemType.Nucleogenesis, 1, ItemID.Shrimp, 1, 20));
                 Transmogrifications.Add(new TransmogrificationRecipe(ItemType.CryoStone, ItemType.EssenceofSunlight, 1, ItemID.WaterBucket, 1, 0));
                 Transmogrifications.Add(new TransmogrificationRecipe(ItemType.ShardofAntumbra, ItemID.SoulofLight, 5, ItemType.LightGodsBrilliance, 1, 60));
+                if (ModCompatibility.calRemixEnabled)
+                {
+                    Transmogrifications.Add(new TransmogrificationRecipe(CalRemixWeakRef.ItemType.YharimBar, ItemType.UnholyEssence, 20, ItemType.DivineGeode, 20, 60));
+                    Transmogrifications.Add(new TransmogrificationRecipe(CalRemixWeakRef.ItemType.YharimBar, ItemType.Phantoplasm, 10, ItemType.RuinousSoul, 10, 180));
+                    Transmogrifications.Add(new TransmogrificationRecipe(CalRemixWeakRef.ItemType.YharimBar, ItemType.EndothermicEnergy, 20, ItemType.NightmareFuel, 20, 60));
+                    Transmogrifications.Add(new TransmogrificationRecipe(CalRemixWeakRef.ItemType.YharimBar, ItemType.NightmareFuel, 20, ItemType.EndothermicEnergy, 21, 60));
+                    Transmogrifications.Add(new TransmogrificationRecipe(CalRemixWeakRef.ItemType.YharimBar, ItemID.SoulofNight, 20, ItemType.DarksunFragment, 20, 60));
+                    Transmogrifications.Add(new TransmogrificationRecipe(CalRemixWeakRef.ItemType.YharimBar, ItemType.AuricOre, 5, ItemType.YharonSoulFragment, 5, 300));
+                    Transmogrifications.Add(new TransmogrificationRecipe(CalRemixWeakRef.ItemType.YharimBar, ItemType.AshesofAnnihilation, 5, ItemType.ExoPrism, 5, 600));
+                    Transmogrifications.Add(new TransmogrificationRecipe(CalRemixWeakRef.ItemType.YharimBar, ItemType.ExoPrism, 5, ItemType.AshesofAnnihilation, 5, 600));
+                }
             }
 
         }

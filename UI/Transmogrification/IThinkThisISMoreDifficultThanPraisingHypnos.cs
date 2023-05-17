@@ -363,7 +363,7 @@ namespace EverquartzAdventure
                 int timeCost = currenRecipe.TimeInSeconds * transAmount;
 
                 string costText = Language.GetTextValue("LegacyInterface.46") + ": ";
-                string coinsText = Lang.LocalizedDuration(new TimeSpan(0, 0, timeCost), abbreviated: true, showAllAvailableUnits: false);
+                string coinsText = new TimeSpan(0, 0, timeCost).LocalizedDuration(abbreviated: true, showAllAvailableUnits: true);
 
                 ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, FontAssets.MouseText.Value, costText, new Vector2(slotX + 50, slotY), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, Vector2.Zero, Vector2.One, -1f, 2f);
                 ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, FontAssets.MouseText.Value, coinsText, new Vector2(slotX + 50 + FontAssets.MouseText.Value.MeasureString(costText).X, (float)slotY), Color.White, 0f, Vector2.Zero, Vector2.One, -1f, 2f);
@@ -465,7 +465,7 @@ namespace EverquartzAdventure
             else
             {
                 SetupItemSlot(modPlayer.transResult.type, modPlayer.transResult.stack, ref _resultPreview);
-                timeRemaining = Lang.LocalizedDuration(TimeSpan.FromTicks(ticks), abbreviated: true, showAllAvailableUnits: false);
+                timeRemaining = TimeSpan.FromTicks(ticks).LocalizedDuration(abbreviated: true, showAllAvailableUnits: false);
             }
             
             ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, message, new Vector2(slotX + 50, slotY), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, Vector2.Zero, Vector2.One, -1f, 2f);

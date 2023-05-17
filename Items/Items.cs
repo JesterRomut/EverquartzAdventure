@@ -17,6 +17,8 @@ using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Items.Pets;
 using CalamityMod.Items.Weapons.Rogue;
 using CalamityMod.Items.Weapons.Magic;
+using CalRemix.Items.Materials;
+using CalamityMod.Items.Placeables.Ores;
 
 namespace EverquartzAdventure
 {
@@ -52,6 +54,21 @@ namespace EverquartzAdventure
             internal static int EssenceofSunlight => ModContent.ItemType<EssenceofSunlight>();
             internal static int ShardofAntumbra => ModContent.ItemType<ShardofAntumbra>();
             internal static int LightGodsBrilliance => ModContent.ItemType<LightGodsBrilliance>();
+            internal static int UnholyEssence => ModContent.ItemType<UnholyEssence>();
+            internal static int Phantoplasm => ModContent.ItemType<Phantoplasm>();
+            internal static int RuinousSoul => ModContent.ItemType<RuinousSoul>();
+            internal static int AuricOre => ModContent.ItemType<AuricOre>();
+            internal static int YharonSoulFragment => ModContent.ItemType<YharonSoulFragment>();
+            internal static int AshesofAnnihilation => ModContent.ItemType<AshesofAnnihilation>();
+        }
+    }
+
+    internal static partial class CalRemixWeakRef
+    {
+        [JITWhenModsEnabled("CalRemix")]
+        internal static class ItemType
+        {
+            internal static int YharimBar => ModContent.ItemType<YharimBar>();
         }
     }
 }

@@ -14,6 +14,9 @@
     <Reference Include="CalamityMod">
       <HintPath>..\ModAssemblies\CalamityMod.dll</HintPath>
     </Reference>
+    <Reference Include="CalRemix">
+      <HintPath>..\ModAssemblies\CalRemix.dll</HintPath>
+    </Reference>
     <Reference Include="Hypnos">
       <HintPath>..\ModAssemblies\Hypnos.dll</HintPath>
     </Reference>
