@@ -13,6 +13,12 @@ Mods: {
                 }
             }
         }
+        Items: {
+            MelanieMartinezMusicBox: {
+                Trolled: 你个蠢货。你怎么会想听有版权的歌曲？
+                Trolled2: 如果你执意要听，后果概不负责。
+            }
+        }
         NPCs: {
             StarbornPrincess: {
                 DisplayName: 星光公主

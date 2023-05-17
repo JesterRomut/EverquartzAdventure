@@ -4,6 +4,7 @@ using System.Linq;
 using EverquartzAdventure.Items;
 using EverquartzAdventure.Items.Critters;
 using EverquartzAdventure.Items.Pets;
+using EverquartzAdventure.Items.Placeable.MusicBoxes;
 using EverquartzAdventure.NPCs.Hypnos;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -155,6 +156,7 @@ namespace EverquartzAdventure.UI.Transmogrification
         {
             Transmogrifications = new List<TransmogrificationRecipe>
             {
+                new TransmogrificationRecipe(ItemID.MusicBox, ModContent.ItemType<DeimosFumo>(), 10, ModContent.ItemType<MelanieMartinezMusicBox>(), 1, 300)
                 //new TransmogrificationRecipe(ModContent.ItemType<DeimosFumo>(), ItemID.FallenStar, 10, ItemID.StarWrath, 1, 0),
                 //new TransmogrificationRecipe(ModContent.ItemType<DeimosFumo>(), ModContent.ItemType<Indulgence>(), 10, ModContent.ItemType<DeimosPetItem>(), 2, 10),
                 //new TransmogrificationRecipe(ModContent.ItemType<DeimosFumo>(), ModContent.ItemType<Indulgence>(), 10, ModContent.ItemType<StarbornPrincessItem>(), 3, 20),

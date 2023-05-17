@@ -11,6 +11,10 @@ using EverquartzAdventure.Projectiles.Hypnos;
 using System.Collections;
 using EverquartzAdventure.UI.Transmogrification;
 using Terraria.ModLoader.IO;
+using Terraria.GameInput;
+using EverquartzAdventure.Items.Placeable.MusicBoxes;
+using Microsoft.Xna.Framework;
+using Terraria.Localization;
 
 namespace EverquartzAdventure
 {
@@ -19,6 +23,8 @@ namespace EverquartzAdventure
         
 
         public bool mindcrashed = false;
+        public bool musicBoxTrolled = false;
+        public int musicBoxTrollAttempt = 0;
 
         //public Point? lastSleepingSpot = null;
 
@@ -57,6 +63,7 @@ namespace EverquartzAdventure
                 PraisingHypnosAnimation();
                 return false;
             }
+            
             return true;
         }
 

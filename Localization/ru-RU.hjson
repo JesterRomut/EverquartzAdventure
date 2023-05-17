@@ -13,6 +13,12 @@
                 }
             }
         }
+        Items: {
+            MelanieMartinezMusicBox: {
+                Trolled: You idiot. You cannot listen to a copyrighted song.
+                Trolled2: If you insist on listening, you will not be responsible for any consequences.
+            }
+        }
         NPCs: {
             StarbornPrincess: {
                 DisplayName: Принцесса, рождённая в небесах

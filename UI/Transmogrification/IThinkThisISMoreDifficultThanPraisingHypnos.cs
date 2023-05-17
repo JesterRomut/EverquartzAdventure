@@ -99,19 +99,14 @@ namespace EverquartzAdventure
             Append(_resultPreview);
 
             index = 0;
-            try
+            int idx = Main.LocalPlayer.Everquartz()?.transIndex ?? -1;
+            if (idx > -1)
             {
-                int idx = Main.LocalPlayer.Everquartz().transIndex;
-                if (idx > -1)
-                {
-                    index = idx;
-                }
-            }catch (IndexOutOfRangeException)
-            {
-
+                index = idx;
             }
-            
-            
+
+
+
             currenRecipes = new List<TransmogrificationRecipe>();
         }
 
@@ -228,8 +223,8 @@ namespace EverquartzAdventure
             //_resultItemSlot.item.favorited = favorited;
             //_resultItemSlot.item.stack = _vanillaItemSlot.item.stack * recipe.ResultItemStack;
             Player player = Main.LocalPlayer;
-            
-            
+
+
             EverquartzPlayer modPlayer = Main.LocalPlayer.Everquartz();
 
             DateTime time = DateTime.UtcNow;
@@ -303,7 +298,7 @@ namespace EverquartzAdventure
                 currenRecipes = TransmogrificationManager.FindAvaliableTransByMainIngredient(_vanillaItemSlot.item.type, Main.LocalPlayer)
                     .Concat(TransmogrificationManager.FindUnavaliableTransByMainIngredient(_vanillaItemSlot.item.type, Main.LocalPlayer)).ToList();
                 NormalizeIndex();
-                
+
                 for (int i = 0; i < 3; i++)
                 {
                     UIItemNoSlot slot = _secondaryItems[i];
@@ -312,7 +307,7 @@ namespace EverquartzAdventure
                     if (amount <= 0)
                     {
                         amount = 1;
-                        
+
                         slot.DrawColor = () => new Color(1, 1, 1, 0.1f);
                     }
                     else
@@ -369,7 +364,7 @@ namespace EverquartzAdventure
                 ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, FontAssets.MouseText.Value, coinsText, new Vector2(slotX + 50 + FontAssets.MouseText.Value.MeasureString(costText).X, (float)slotY), Color.White, 0f, Vector2.Zero, Vector2.One, -1f, 2f);
                 if (!unavaliable)
                 {
-                    
+
                     int reforgeX = slotX + 70;
                     int reforgeY = slotY + 40;
                     bool hoveringOverReforgeButton = Main.mouseX > reforgeX - 15 && Main.mouseX < reforgeX + 15 && Main.mouseY > reforgeY - 15 && Main.mouseY < reforgeY + 15 && !PlayerInput.IgnoreMouseInterface;
@@ -396,7 +391,7 @@ namespace EverquartzAdventure
                     }
                 }
                 //int awesomePrice = Item.buyPrice(0, 1, 0, 0);
-                
+
                 //int[] coins = Utils.CoinsSplit(awesomePrice);
                 //if (coins[3] > 0)
                 //{
@@ -415,7 +410,7 @@ namespace EverquartzAdventure
                 //    coinsText = coinsText + "[c/" + Colors.AlphaDarken(Colors.CoinCopper).Hex3() + ":" + coins[0] + " " + Language.GetTextValue("LegacyInterface.18") + "] ";
                 //}
                 //ItemSlot.DrawSavings(Main.spriteBatch, slotX + 130, Main.instance.invBottom, true);
-                
+
             }
             else
             {
@@ -437,9 +432,9 @@ namespace EverquartzAdventure
         {
             _secondaryItems.ForEach(ClearItemSlot);
             EverquartzPlayer modPlayer = Main.LocalPlayer.Everquartz();
-            
+
             string message = Language.GetTextValue(TransmogrifingKey);
-            long ticks =  modPlayer.transEndTime.Ticks - DateTime.UtcNow.Ticks;
+            long ticks = modPlayer.transEndTime.Ticks - DateTime.UtcNow.Ticks;
             string timeRemaining = "";
             if (ticks <= 0)
             {
@@ -458,8 +453,8 @@ namespace EverquartzAdventure
                         _resultItemSlot.item.position.Y = Main.LocalPlayer.position.Y + (float)(Main.LocalPlayer.height / 2) - (float)(_resultItemSlot.item.height / 2);
                         resultGenerated = true;
                     }
-                    
-                    
+
+
                 }
             }
             else
@@ -467,12 +462,12 @@ namespace EverquartzAdventure
                 SetupItemSlot(modPlayer.transResult.type, modPlayer.transResult.stack, ref _resultPreview);
                 timeRemaining = TimeSpan.FromTicks(ticks).LocalizedDuration(abbreviated: true, showAllAvailableUnits: false);
             }
-            
+
             ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, message, new Vector2(slotX + 50, slotY), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, Vector2.Zero, Vector2.One, -1f, 2f);
             ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, timeRemaining, new Vector2(slotX + 50, slotY + 20), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, Vector2.Zero, Vector2.One, -1f, 2f);
         }
 
-        
+
     }
     internal class UIItemSlot : UIElement
     {

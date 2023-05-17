@@ -395,7 +395,7 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             else if (Main.netMode == NetmodeID.Server)
             {
 
-                ModPacket packet = EverquartzAdventureMod.instance.GetPacket();
+                ModPacket packet = EverquartzAdventureMod.Instance.GetPacket();
                 packet.Write((byte)EverquartzMessageType.DeimosItemKilled);
                 packet.Write(player.whoAmI);
                 packet.Write(helptext);

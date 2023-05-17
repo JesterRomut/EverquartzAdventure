@@ -5,39 +5,28 @@ using Terraria;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Terraria.ID;
-using Terraria.DataStructures;
 using EverquartzAdventure.NPCs.TownNPCs;
 using EverquartzAdventure.NPCs;
 using System;
 using Terraria.Audio;
 using Terraria.Localization;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.UI.Chat;
-using Terraria.UI;
 using EverquartzAdventure.Items.Critters;
-using static Terraria.Player;
 using Terraria.ModLoader.IO;
 using EverquartzAdventure.NPCs.Hypnos;
-using EverquartzAdventure.Projectiles.Hypnos;
-using Terraria.Utilities;
 using System.Collections;
-using Terraria.GameContent;
-using EverquartzAdventure.Buffs;
-using EverquartzAdventure.Buffs.Hypnos;
-using Terraria.Graphics.Effects;
-using Microsoft.Xna.Framework.Graphics.PackedVector;
-using static Terraria.ModLoader.PlayerDrawLayer;
-using ReLogic.Content;
+using EverquartzAdventure.ILEditing;
 using EverquartzAdventure.UI.Transmogrification;
-using CalamityMod.UI.CalamitasEnchants;
+using EverquartzAdventure.Items;
+using Mono.Cecil.Cil;
+using MonoMod.Cil;
 
 namespace EverquartzAdventure
 {
     public class EverquartzAdventureMod : Mod
     {
-        public static EverquartzAdventureMod instance;
+        public static EverquartzAdventureMod Instance { get; private set; }
 
-        
+
 
 
         public override void PostSetupContent()
@@ -80,7 +69,7 @@ namespace EverquartzAdventure
                     byte[] byteArray = reader.ReadBytes((EverquartzUtils.EnumCount<HypnosReward>() - 1) / 8 + 1);
                     BitArray bitArray = new BitArray(byteArray);
                     List<HypnosReward> rewards = new List<HypnosReward>();
-                    for(int i = 0; i < bitArray.Length; i++)
+                    for (int i = 0; i < bitArray.Length; i++)
                     {
                         if (bitArray.Get(i))
                         {
@@ -99,16 +88,22 @@ namespace EverquartzAdventure
                         NPCs.Hypnos.Hypnos.HandleDepartHypnosUniversal(hypnos);
                     }
                     break;
-                //case EverquartzMessageType.EverquartzSyncPlayer:
-                //    byte playernumber = reader.ReadByte();
-                //    EverquartzPlayer ePlayer = Main.player[playernumber].GetModPlayer<EverquartzPlayer>();
-                //    ePlayer.lastSleepingSpot = reader.ReadVector2().ToPoint();
-                //    break;
+                    //case EverquartzMessageType.EverquartzSyncPlayer:
+                    //    byte playernumber = reader.ReadByte();
+                    //    EverquartzPlayer ePlayer = Main.player[playernumber].GetModPlayer<EverquartzPlayer>();
+                    //    ePlayer.lastSleepingSpot = reader.ReadVector2().ToPoint();
+                    //    break;
             }
         }
 
         public override void Load()
         {
+            Instance = this;
+
+            ILChanges.Load();
+
+            TransmogrificationManager.LoadAllTrans();
+
             ModCompatibility.censusMod = null;
             ModLoader.TryGetMod("Census", out ModCompatibility.censusMod);
             ModCompatibility.hypnosMod = null;
@@ -118,13 +113,10 @@ namespace EverquartzAdventure
             ModCompatibility.hypnosEnabled = ModLoader.HasMod("Hypnos");
             ModCompatibility.calRemixEnabled = ModLoader.HasMod("CalRemix");
 
-            TransmogrificationManager.LoadAllTrans();
-
-            instance = this;
             base.Load();
         }
 
-        
+
 
         public override void Unload()
         {
@@ -137,7 +129,9 @@ namespace EverquartzAdventure
 
             TransmogrificationManager.UnloadAllTrans();
 
-            instance = null;
+            ILChanges.Unload();
+
+            Instance = null;
             base.Unload();
         }
 
@@ -176,10 +170,10 @@ namespace EverquartzAdventure
 
     }
 
-    
+
     public class EverquartzSystem : ModSystem
     {
-        
+
 
         public override void OnWorldLoad()
         {
@@ -206,7 +200,7 @@ namespace EverquartzAdventure
             EverquartzGlobalNPC.UniqueNPCs.ForEach(AntiDupe);
         }
 
-        
+
 
         public static void AntiDupe(int type)
         {
@@ -219,9 +213,9 @@ namespace EverquartzAdventure
         }
     }
 
-    
-    
-    
+
+
+
     public enum EverquartzMessageType
     {
         DeimosItemKilled, // id, player.whoAmI, helptext
@@ -419,7 +413,8 @@ namespace EverquartzAdventure
             return text;
         }
 
-        internal static bool HasAnyBuff(this NPC npc, List<int> debuffs) {
+        internal static bool HasAnyBuff(this NPC npc, List<int> debuffs)
+        {
             return debuffs.Where(npc.HasBuff).Any();
         }
 
@@ -433,7 +428,7 @@ namespace EverquartzAdventure
 
         public static NPC NearestEnemyPreferNoDebuff(this Vector2 position, float maxDistance, List<int> debuffs)
         {
-            
+
             NPC target = null;
             float distance = maxDistance;
 
@@ -453,7 +448,7 @@ namespace EverquartzAdventure
                         distance = Vector2.Distance(position, npc.Center);
                         target = npc;
                     }
-                    
+
                 }
             }
             return target;
@@ -490,7 +485,7 @@ namespace EverquartzAdventure
             return target;
         }
 
-        
+
         public static byte[] ToByteArray(this BitArray bits)
         {
             byte[] ret = new byte[(bits.Length - 1) / 8 + 1];
@@ -501,7 +496,7 @@ namespace EverquartzAdventure
         internal static int ItemCount(this Player player, int type)
         {
             int count = 0;
-            for(int l = 0; l < 58; l++)
+            for (int l = 0; l < 58; l++)
             {
                 Item item = player.inventory[l];
                 if (item.stack > 0 && item.type == type)
@@ -534,6 +529,28 @@ namespace EverquartzAdventure
             }
         }
 
+        internal static ILCursor GotoFinalRet(this ILCursor cursor)
+        {
+            while (cursor.TryGotoNext((Instruction c) => c.MatchRet()))
+            {
+            }
+
+            return cursor;
+        }
+
+        //internal static ILCursor GotoLast(this ILCursor cursor, MoveType moveType = MoveType.Before, params Func<Instruction, bool>[] predicates)
+        //{
+        //    while (true)
+        //    {
+        //        ILCursor lastCursor = cursor;
+        //        if (!cursor.TryGotoNext(moveType, predicates))
+        //        {
+        //            return lastCursor;
+        //        }
+        //    }
+            
+        //}
+
         public static string ToISO8601(this DateTime dateTime)
         {
             return dateTime.ToString("yyyyMMddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture);
@@ -547,9 +564,38 @@ namespace EverquartzAdventure
             return DateTime.ParseExact(str, "yyyyMMddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture);
         }
 
-        public static EverquartzGlobalNPC Everquartz(this NPC npc) => npc.GetGlobalNPC<EverquartzGlobalNPC>();
+        internal static EverquartzItem Everquartz(this Item item)
+        {
+            try
+            {
+                return (EverquartzItem)item.ModItem;
+            }
+            catch (InvalidCastException)
+            {
+                return null;
+            }
 
-        internal static EverquartzPlayer Everquartz(this Player player) => player.GetModPlayer<EverquartzPlayer>();
+
+        }
+
+        public static EverquartzGlobalNPC Everquartz(this NPC npc)
+        {
+            if (npc.TryGetGlobalNPC(out EverquartzGlobalNPC globalNPC))
+            {
+                return globalNPC;
+            }
+            return null;
+        }
+
+        internal static EverquartzPlayer Everquartz(this Player player)
+        {
+            if (player.TryGetModPlayer(out EverquartzPlayer modPlayer))
+            {
+                return modPlayer;
+            }
+            return null;
+
+        }
     }
 
     internal static class EverquartzUtils
@@ -622,7 +668,7 @@ namespace EverquartzAdventure
             return li;
         }
 
-        internal static int EnumCount<T> () where T: Enum
+        internal static int EnumCount<T>() where T : Enum
         {
             return Enum.GetNames(typeof(T)).Length;
         }
@@ -658,7 +704,7 @@ namespace EverquartzAdventure
             //ModContent.GetInstance<EverquartzAdventureMod>().Logger.Info(colorMePurple);
             int count = colors.Count();
 
-            for(int i = 1; i <= count; i++)
+            for (int i = 1; i <= count; i++)
             {
                 double level = (double)i / (double)count;
                 //EverquartzAdventureMod.Instance.Logger.Info($"{i} {count} {level} {(double)(i - 1) / count}");

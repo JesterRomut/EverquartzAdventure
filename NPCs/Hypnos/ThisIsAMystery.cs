@@ -56,6 +56,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
     }
 
     [AutoloadHead]
+    [LegacyName(new string[] { "HYPNO" })]
     public class Hypnos : ModNPC
     {
         #region ExtraAssets
@@ -224,11 +225,11 @@ namespace EverquartzAdventure.NPCs.Hypnos
                 Velocity = 0f,
             };
             NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, drawModifiers);
-            NPCID.Sets.BossBestiaryPriority.Add(base.Type);
+            //NPCID.Sets.BossBestiaryPriority.Add(base.Type);
 
             NPCID.Sets.AttackType[Type] = 2;
             NPCID.Sets.MagicAuraColor[Type] = Color.Purple;
-            NPCID.Sets.AttackTime[Type] = 200;
+            NPCID.Sets.AttackTime[Type] = 100;
             NPCID.Sets.DangerDetectRange[Type] = 500;
             NPCID.Sets.ActsLikeTownNPC[Type] = true;
 
@@ -508,7 +509,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
                 }
                 else if (Main.netMode == NetmodeID.Server)
                 {
-                    ModPacket packet = EverquartzAdventureMod.instance.GetPacket();
+                    ModPacket packet = EverquartzAdventureMod.Instance.GetPacket();
                     packet.Write((byte)EverquartzMessageType.HypnosDeparted);
                     packet.Send();
                     ChatHelper.BroadcastChatMessage(NetworkText.FromKey(Lang.misc[35].Key, fullName), new Color(50, 125, 255));

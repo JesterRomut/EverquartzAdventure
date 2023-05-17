@@ -1,4 +1,4 @@
-displayName = Everquartz's Adventure
+displayName = Everquartz's Adventure: Ultimate Cursed Collection
 author = Everquartz Prime Plus Weaver Fans
-version = 0.2.3.1
+version = 0.2.3.2
 weakReferences = CalamityMod, Hypnos, CalRemix
