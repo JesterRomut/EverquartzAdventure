@@ -77,13 +77,13 @@ namespace EverquartzAdventure
             ResetBuffs();
         }
 
-        public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit)
-        {
-            if (npc.Everquartz().mindcrashed > 0)
-            {
-                damage -= (int)Math.Floor(damage * 0.1);
-            }
-        }
+        //public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit)
+        //{
+        //    if (npc.Everquartz().mindcrashed > 0)
+        //    {
+        //        damage -= (int)Math.Floor(damage * 0.1);
+        //    }
+        //}
 
         public override void ModifyHitNPC(Item item, NPC target, ref int damage, ref float knockback, ref bool crit)
         {

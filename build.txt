@@ -1,4 +1,4 @@
 displayName = Everquartz's Adventure: Ultimate Cursed Collection
-author = Everquartz Prime Plus Weaver Fans
+author = Everquartz - Spriting + Idea, Jester and Gat - coding, Blitzträger and Jester - Russian and Chinese Translations.
 version = 0.2.3.3
 weakReferences = CalamityMod, Hypnos, CalRemix

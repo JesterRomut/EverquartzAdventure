@@ -36,6 +36,11 @@ namespace EverquartzAdventure.NPCs
             ModContent.NPCType<NPCs.Hypnos.Hypnos>(),
         };
 
+        //public override bool StrikeNPC(NPC npc, ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        //{
+
+        //}
+
         public int mindcrashed = 0;
 
         public override bool InstancePerEntity => true;

@@ -34,6 +34,7 @@ namespace EverquartzAdventure.Buffs.Hypnos
 		{
 			DisplayName.SetDefault("M I N D C R A S H E D 2000");
 			DisplayName.AddTranslation(7, "思 维 大 崩 溃 2000");
+			DisplayName.AddTranslation(6, "С Л О М А Н Н Ы Е М Ы С Л И 2000");
 			Description.SetDefault("");
 			Main.debuff[base.Type] = true;
 			Main.pvpBuff[base.Type] = true;

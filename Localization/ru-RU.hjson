@@ -4,19 +4,19 @@
         Buffs: {
             Mindcrashed: {
                 Descriptions: {
-                    0: Blessed are the dead who die in HypnOS from now on!
-                    1: WHAT DO YOU KNOW WHAT DO YOU PLAY WHAT DO YOU REMEMBER WHAT DO YOU LOVE
-                    2: We are living in the light as Hypnos is in the light
-                    3: TEMPTATION
-                    4: NOW QUIT THE INTERNET
-                    5: 彁
+                    0: Благословлённые те, кто умрут в ГипнОС!
+                    1: ЧТО ТЫ ЗНАЕШЬ, ЧТО ТЫ LUB-ИШЬ, ВО ЧТО ТЫ ИГРАЕШЬ!
+                    2: Живём, как в сказке, как Гипноз в свете
+                    3: ИСКУШЕНИЕ
+                    4: А ТЕПЕРЬ КЫШ ИЗ ИНЕТА
+                    5: Ass we can.
                 }
             }
         }
         Items: {
             MelanieMartinezMusicBox: {
-                Trolled: You idiot. You cannot listen to a copyrighted song.
-                Trolled2: If you insist on listening, you will not be responsible for any consequences.
+                Trolled: И-ди-от! Вы попытались послушать копирайтную музыку!.
+                Trolled2: Не говори что мы не предупреждали.
             }
         }
         NPCs: {
@@ -84,8 +84,8 @@
                 ButtonText: Pray (1 {0})
                 Chat: {
                     Common: {
-                        0: Зако Смертные, возможно и ты, видят мои интернетные сёрф-устройства и нейроны.
-                        1: Зако зако малой!
+                        0: Рачки Смертные, возможно и ты, видят мои интернетные сёрф-устройства и нейроны.
+                        1: Рачок и олень, малой!
                         2: *подбросил(а) монетку* Орёл или решка?
                         3: Я не бросаю кости со вселенной.
                         4: Это мир шуток, а я джокер!
@@ -93,18 +93,17 @@
                         6: А теперь выйди из соцсетей, и погнали к океану, ДАВАЙТЕ ВСЕ ОТПРАВИМ ИНЕТ К ХУЯМ!
                         7: Брайншторм Гипи идёт с востока! Молитесь Гипнозу!
                         8: Остерегайся других меня из других миров! Моя нога попалась в капкан когда я хотела спереть чуть мозгов от другого.
-                        9: I think, therefore I am.
+                        9: Я думаю, поэтму я я.
                     }
                     Pray: {
                         0: Я принимаю твои молитвы..
                         1: Благословлённые теперь те, кто умрут в  ГипнОС! Отдохнут от анскилла, пусть займутся делами.
                         2: *подрбрасываю монетку в воздух* Только моя рельса!
-                        3: A new mandate from Hypnos has arrived, Hypnos believes good mental health results in the finest neurons!
+                        3: Новый мандат пришёл от Гипноза, Гипноз верит что хорошая психика - хорошие нейроны!
                     }
                     PrayWithoutMoney: {
                         0: Я сделаю тебе предупреждение, как всегда, те кто не достоины, не будут достоины в королевстве Гипноза!
-                        1: Honestly I just want to observe and record your town for Draedon. The pray, the bless, and the sin are never existed.
-                    }
+                        1: Честно я просто хочу заснять твой город для Драедона. Мольба, благословение и грех никогда не существовали.
                     PreHypnos: {
                         0: Попробуйте ГипнОС 1.003!
                     }
@@ -122,8 +121,8 @@
                         0: Ты не можешь присоедениться к оргии!
                     }
                     DeimosRef: {
-                        0: Deimos seems not understand the dangerous consequence of timeline traveling at all. Zakō Player should take care of her.
-                        1: I think Ares and Deimos will be good friends, but I hardly talk to the former.
+                        0: Деймос вообще не понимает опасность путешествия по альтернативным измерениям. Рачок-Игрок должен с ней разобраться.
+                        1: Я думаю, что Арез и Дейиос были бы хорошими друзьями, но я почти не говорила о вышеупомянотой.
                     }
                 }
             }
@@ -131,10 +130,10 @@
         }
         UI: {
             Transmogrification: {
-                PlaceItem: Transmogrification
-                Proceed: Transmogrify
-                Transmogrifing: Transmogrifing
-                Done: Done!
+                PlaceItem: Трансморгификация
+                Proceed: Трансморгифицировать
+                Transmogrifing: Трансморгифицирую
+                Done: Готовчик!
             }
         }
         TownNPCMood: 
