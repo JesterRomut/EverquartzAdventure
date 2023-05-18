@@ -71,6 +71,7 @@ namespace EverquartzAdventure
 namespace EverquartzAdventure.NPCs.TownNPCs
 {
     [AutoloadHead]
+    [LegacyName(new string[] { "STILLBORN" })]
     public class StarbornPrincess : ModNPC
     {
         //public override string Texture => "CalamityMod/NPCs/TownNPCs/WITCH";

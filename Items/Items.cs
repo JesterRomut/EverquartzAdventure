@@ -80,9 +80,9 @@ namespace EverquartzAdventure.Items
         /// <summary>
         /// Called before the tile is placed, returns false interrupt the placement, returns true by default
         /// </summary>
-        public virtual bool PrePlaceThing_Tiles(Player player, bool canUse)
+        public virtual bool PrePlaceThing_Tiles(Player player, bool canPlace)
         {
-            return canUse;
+            return canPlace;
         }
     }
     //public abstract class AltUsableItem: ModItem

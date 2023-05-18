@@ -14,10 +14,15 @@ namespace EverquartzAdventure
 {
     internal static partial class CalamityWeakRef
     {
-        internal static void RemoveDR(NPC npc)
-        {
-            npc.Calamity().DR = 0;
-        }
+        //internal static void RemoveDR(NPC npc)
+        //{
+            
+        //    npc.Calamity().DR = 0;
+        //}
+        //internal static void Test(NPC npc)
+        //{
+        //    CombatText.NewText(npc.Hitbox, Color.White, npc.Calamity().DR.ToString());
+        //}
     }
 }
 
@@ -115,16 +120,21 @@ namespace EverquartzAdventure.NPCs
             return myClone;
         }
 
+        public override bool StrikeNPC(NPC npc, ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        {
+            //if (ModCompatibility.calamityEnabled) CalamityWeakRef.Test(npc);
+            return base.StrikeNPC(npc, ref damage, defense, ref knockback, hitDirection, ref crit);
+        }
 
         public override void PostAI(NPC npc)
         {
             if (mindcrashed > 0)
             {
                 npc.defense = 0;
-                if (ModCompatibility.calamityEnabled)
-                {
-                    CalamityWeakRef.RemoveDR(npc);
-                }
+                //if (ModCompatibility.calamityEnabled)
+                //{
+                //    CalamityWeakRef.RemoveDR(npc);
+                //}
                 mindcrashed--;
             }
         }

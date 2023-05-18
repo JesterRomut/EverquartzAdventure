@@ -11,7 +11,8 @@ namespace EverquartzAdventure.ILEditing
 {
     public static class ILChanges
     {
-        // I found this is fucking quite unnecessary ↓ fuck me
+        // I found this patch is fucking quite unnecessary ↓ fuck me  -jester
+        // Hypnos, i want you...♥ Fuck me please
         private static void PrePlaceThingTilesPatch(ILContext il)
         {
             try
@@ -23,19 +24,19 @@ namespace EverquartzAdventure.ILEditing
                 
                 //c.GotoPrev(i => i.MatchPop());
                 //EverquartzAdventureMod.Instance.Logger.Info(c.Index);
-                c.GotoPrev(i => i.OpCode == Ldloc_S && i.Next.OpCode == Brfalse_S);
-                //EverquartzAdventureMod.Instance.Logger.Info(c.Index);
+                c.GotoPrev(i => i.MatchLdloc(4) && i.Next.OpCode == Brfalse_S);
+
+                Instruction inst = c.Instrs[c.Index].Next;
+                EverquartzAdventureMod.Instance.Logger.Info($"{inst.OpCode} {((ILLabel)inst.Operand)} {((ILLabel)inst.Operand).Target.OpCode}");
                 //c.GotoPrev(i => i.OpCode == Ldloc_S);
                 //EverquartzAdventureMod.Instance.Logger.Info(c.Index);
                 c.Index++;
                 //ILLabel label = c.MarkLabel();
 
                 c.Emit(Ldarg_0);
-                c.EmitDelegate < Func < bool, Terraria.Player, bool>>((canUse, player) => player.inventory[player.selectedItem].Everquartz()?.PrePlaceThing_Tiles(player, canUse) ?? true);
+                c.EmitDelegate < Func < bool, Terraria.Player, bool>>((canPlace, player) => player.inventory[player.selectedItem].Everquartz()?.PrePlaceThing_Tiles(player, canPlace) ?? true);
                 //c.Emit(Brtrue, label);
                 //c.Emit(Ret);
-
-                
             }
             catch(Exception ex) { 
             

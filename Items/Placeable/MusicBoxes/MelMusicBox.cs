@@ -58,11 +58,11 @@ namespace EverquartzAdventure.Items.Placeable.MusicBoxes
             return base.UseItem(player);
         }
 
-        public override bool PrePlaceThing_Tiles(Player player, bool canUse)
+        public override bool PrePlaceThing_Tiles(Player player, bool canPlace)
         {
             EverquartzPlayer modPlayer = player.Everquartz();
             if (modPlayer == null) return false;
-            if (canUse && !modPlayer.musicBoxTrolled && Main.myPlayer == player.whoAmI)
+            if (canPlace && !modPlayer.musicBoxTrolled && Main.myPlayer == player.whoAmI)
             {
                 if (modPlayer.musicBoxTrollAttempt == 0)
                 {
@@ -79,7 +79,7 @@ namespace EverquartzAdventure.Items.Placeable.MusicBoxes
                     
                 return false;
             }
-            return canUse;
+            return canPlace;
         }
     }
 }
