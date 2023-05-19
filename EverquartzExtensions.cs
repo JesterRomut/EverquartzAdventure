@@ -314,7 +314,7 @@ namespace EverquartzAdventure
             return DateTime.ParseExact(str, "yyyyMMddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture);
         }
 
-        internal static EverquartzItem Everquartz(this Item item)
+        internal static EverquartzItem ModItem(this Item item)
         {
             try
             {
@@ -328,13 +328,27 @@ namespace EverquartzAdventure
 
         }
 
-        public static EverquartzGlobalNPC Everquartz(this NPC npc)
+        internal static EverquartzGlobalNPC Everquartz(this NPC npc)
         {
             if (npc.TryGetGlobalNPC(out EverquartzGlobalNPC globalNPC))
             {
                 return globalNPC;
             }
             return null;
+        }
+
+        internal static EverquartzNPC ModNPC(this NPC npc)
+        {
+            try
+            {
+                return (EverquartzNPC)npc.ModNPC;
+            }
+            catch (InvalidCastException)
+            {
+                return null;
+            }
+
+
         }
 
         internal static EverquartzPlayer Everquartz(this Player player)

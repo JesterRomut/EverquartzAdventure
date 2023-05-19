@@ -34,7 +34,7 @@ namespace EverquartzAdventure
 
         internal static bool downedDoG => DownedBossSystem.downedDoG;
 
-        internal static int CalamitasNPC => ModContent.NPCType<WITCH>();
+        
 
         
 
@@ -71,14 +71,17 @@ namespace EverquartzAdventure
 namespace EverquartzAdventure.NPCs.TownNPCs
 {
     [AutoloadHead]
-    [LegacyName(new string[] { "STILLBORN" })]
-    public class StarbornPrincess : ModNPC
+    [LegacyName(new string[] { "SBORN", "STILLBORN" })]
+    public class StarbornPrincess : EverquartzNPC
     {
         //public override string Texture => "CalamityMod/NPCs/TownNPCs/WITCH";
 
         #region Fields
         public static SoundStyle HitSound => SoundID.FemaleHit;
         public static SoundStyle DeathSound => SoundID.NPCDeath6;
+
+        public override string TownNPCDeathMessageKey => DeathMessageKey;
+        //public override Color? TownNPCDeathMessageColor => Color.Purple;
         #endregion
 
         #region LanguageKeys
@@ -224,7 +227,7 @@ namespace EverquartzAdventure.NPCs.TownNPCs
                     {
                         EverquartzUtils.GetTextListFromKey(ChatPostDoGKey).ForEach(st => textSelector.Add(st));
                     }
-                    if (NPC.AnyNPCs(CalamityWeakRef.CalamitasNPC))
+                    if (NPC.AnyNPCs(CalamityWeakRef.NPCType.WITCH))
                     {
                         EverquartzUtils.GetTextListFromKey(ChatCalamitasRefKey).ForEach(st => textSelector.Add(st, (0.8)));
                     }
@@ -256,14 +259,14 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             DeathEffectOnKill(Main.player.Where(player => player.active && player != null).Random());
         }
 
-        public override bool CheckDead()
-        {
-            base.NPC.active = false;
-            base.NPC.HitEffect();
-            base.NPC.NPCLoot();
-            base.NPC.netUpdate = true;
-            return false;
-        }
+        //public override bool CheckDead()
+        //{
+        //    base.NPC.active = false;
+        //    base.NPC.HitEffect();
+        //    base.NPC.NPCLoot();
+        //    base.NPC.netUpdate = true;
+        //    return false;
+        //}
         public override void SetChatButtons(ref string button, ref string button2)
         {
             button = Language.GetTextValue(ShopTextKey);
@@ -368,16 +371,16 @@ namespace EverquartzAdventure.NPCs.TownNPCs
 
         public static void DeathEffectOnKill(Player player)
         {
-            NetworkText networkText = NetworkText.FromKey(DeathMessageKey);
+            //NetworkText networkText = NetworkText.FromKey(DeathMessageKey);
 
-            if (Main.netMode == NetmodeID.SinglePlayer)
-            {
-                Main.NewText(networkText.ToString(), byte.MaxValue, 25, 25);
-            }
-            else if (Main.netMode == NetmodeID.Server)
-            {
-                ChatHelper.BroadcastChatMessage(networkText, new Color(255, 25, 25));
-            }
+            //if (Main.netMode == NetmodeID.SinglePlayer)
+            //{
+            //    Main.NewText(networkText.ToString(), byte.MaxValue, 25, 25);
+            //}
+            //else if (Main.netMode == NetmodeID.Server)
+            //{
+            //    ChatHelper.BroadcastChatMessage(networkText, new Color(255, 25, 25));
+            //}
 
             if (ModCompatibility.calamityEnabled)
             {
@@ -387,6 +390,22 @@ namespace EverquartzAdventure.NPCs.TownNPCs
 
         public static void ItemDeathEffectServer(Player player, int helptext)
         {
+            NPC deimos = null;
+            int starbornPrincess = ModContent.NPCType<StarbornPrincess>();
+            if (NPC.AnyNPCs(starbornPrincess)){
+                deimos = Main.npc.Where(npc => npc != null && npc.active && npc.type == starbornPrincess).FirstOrDefault();
+            }
+            else
+            {
+                deimos = NPC.NewNPCDirect(player.GetSource_ReleaseEntity(), player.position, starbornPrincess, player.whoAmI);
+            }
+            if (deimos == null)
+            {
+                return;
+            }
+            deimos.life = 0;
+            deimos.netUpdate = true;
+            deimos.checkDead();
 
             if (Main.netMode == NetmodeID.SinglePlayer)
             {
@@ -402,7 +421,7 @@ namespace EverquartzAdventure.NPCs.TownNPCs
                 packet.Write(helptext);
                 packet.Send();
             }
-            DeathEffectOnKill(player);
+            //DeathEffectOnKill(player);
         }
         #endregion
 

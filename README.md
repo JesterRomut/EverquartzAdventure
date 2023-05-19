@@ -8,6 +8,8 @@ Mod contents:
     - **Hypnos the Soul of the Eternal Intellect of Infinite Verboten Knowledge** (random visits the player's town for one day)<br>*Pray to Hypnos, he demands it.*
     - (planned) **Providence the Profaned Goddess**
     - (planned) **Anthro the Devourer of Gods**
+    - ~~(suggestion) **Weaver the Pumpkin Reaver**~~
+    - ~~(suggestion) **Thanatos the Reaper**~~
     - ~~(suggestion) **Yez the Real Mystery**~~
 
 - Critters:

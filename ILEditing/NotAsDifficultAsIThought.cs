@@ -6,9 +6,11 @@ using System;
 using static Mono.Cecil.Cil.OpCodes;
 using Terraria;
 using EverquartzAdventure.Buffs.Hypnos;
+using Terraria.ModLoader;
 
 namespace EverquartzAdventure.ILEditing
 {
+    [JITWhenModsEnabled("CalamityMod")]
     internal static class CalamityILChanges
     {
         internal static void LogFailure(string name, string reason) => ILEditingUtils.LogFailure("CalamityMod", name, reason);
