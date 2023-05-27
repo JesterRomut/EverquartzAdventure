@@ -1,5 +1,5 @@
 displayName = Everquartz's Adventure: Ultimate Cursed Collection
 author = Everquartz - Spriting + Idea, Jester and Gat - coding, Blitzträger and Jester - Russian and Chinese Translations.
-version = 0.2.3.4
+version = 0.2.3.5
 weakReferences = CalamityMod, Hypnos, CalRemix
-buildIgnore = .gitattributes, .gitignore, README.md
+buildIgnore = .gitattributes, .gitignore, README.md, EverquartzAdventure.sln, EverquartzAdventure.csproj, LICENSE
