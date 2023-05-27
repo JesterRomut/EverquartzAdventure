@@ -23,7 +23,7 @@ namespace EverquartzAdventure.ILEditing
                 ILCursor c = new ILCursor(il);
                 c.Goto(0);
                 ILLabel label = c.MarkLabel();
-                c.Goto(0);
+                c.GotoLabel(label);
                 c.Emit(Ldarg_1);
                 c.EmitDelegate<Func<NPC, bool>>(npc => (npc.Everquartz()?.mindcrashed ?? 0) > 0);
                 //c.EmitDelegate<Action>(() => EverquartzAdventureMod.Instance.Logger.Info("111"));

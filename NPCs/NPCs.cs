@@ -24,6 +24,6 @@ namespace EverquartzAdventure.NPCs
     public abstract class EverquartzNPC: ModNPC
     {
         public virtual string TownNPCDeathMessageKey => null;
-        public virtual Color? TownNPCDeathMessageColor => null;
+        //public virtual Color? TownNPCDeathMessageColor => null;
     }
 }

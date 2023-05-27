@@ -71,7 +71,7 @@ namespace EverquartzAdventure.ILEditing
                 ILLabel label1 = c.MarkLabel();
                 //c.GotoPrev(i => i.MatchLdsfld<Terraria.Lang>(nameof(Terraria.Lang.misc)));
                 //ILLabel label = c.MarkLabel();
-                //c.Index--;
+                c.GotoLabel(label1);
 
                 //Instruction inst = c.Instrs[c.Index];
                 //EverquartzAdventureMod.Instance.Logger.Info($"{c.Index}");
@@ -89,28 +89,52 @@ namespace EverquartzAdventure.ILEditing
                 //c.EmitDelegate<Func<Terraria.NPC, string>>(npc => npc.ModNPC()?.TownNPCDeathMessageKey ?? "");
                 //c.Emit(Br, label1);
 
-                c.Goto(0);
+                //c.Goto(0);
 
-                while (c.TryGotoNext(i => i.MatchLdcI4(25) && i.Previous.MatchLdcI4(25) && i.Previous.Previous.MatchLdcI4(255)))
-                {
-                    //EverquartzAdventureMod.Instance.Logger.Info($"{c.Index}");
-                    c.Index++;
-                    ILLabel label2 = c.MarkLabel();
-                    //Instruction inst = c.Instrs[c.Index];
-                    //EverquartzAdventureMod.Instance.Logger.Info($"{inst.OpCode} {inst.Next.OpCode}");
-                    c.Emit(Ldarg_0);
-                    c.EmitDelegate<Func<Terraria.NPC, bool>>(npc => npc.ModNPC()?.TownNPCDeathMessageColor.HasValue ?? false);
-                    c.Emit(Brfalse, label2);
-                    c.Emit(Pop);
-                    c.Emit(Pop);
-                    c.Emit(Pop);
-                    c.Emit(Ldarg_0);
-                    c.EmitDelegate<Func<Terraria.NPC, int>>(npc => npc.ModNPC().TownNPCDeathMessageColor.Value.R);
-                    c.Emit(Ldarg_0);
-                    c.EmitDelegate<Func<Terraria.NPC, int>>(npc => npc.ModNPC().TownNPCDeathMessageColor.Value.G);
-                    c.Emit(Ldarg_0);
-                    c.EmitDelegate<Func<Terraria.NPC, int>>(npc => npc.ModNPC().TownNPCDeathMessageColor.Value.B);
-                }
+                //while (c.TryGotoNext(i => i.MatchLdcI4(25) && i.Previous.MatchLdcI4(25) && i.Previous.Previous.MatchLdcI4(255)))
+                ////while (c.TryGotoNext(i => i.MatchLdcI4(255) && i.Next.MatchLdcI4(25) && i.Next.Next.MatchLdcI4(25)))
+                //{
+                //    //EverquartzAdventureMod.Instance.Logger.Info($"{c.Index}");
+                //    //c.Index++;
+                //    c.GotoNext();
+                //    ILLabel label2 = c.MarkLabel();
+                //    //c.GotoNext();
+                //    //c.GotoNext();
+                //    //c.GotoNext();
+                //    ////Instruction inst = c.Instrs[c.Index];
+                //    ////EverquartzAdventureMod.Instance.Logger.Info($"{inst.OpCode} {inst.Next.OpCode}");
+                //    //ILLabel label3 = c.MarkLabel();
+
+                //    c.GotoLabel(label2);
+                //    //c.Emit(Ldarg_0);
+                //    //c.EmitDelegate<Func<Terraria.NPC, bool>>(npc => npc.ModNPC() != null && npc.ModNPC().TownNPCDeathMessageColor.HasValue);
+                //    //c.Emit(Brfalse, label2);
+                //    //c.Emit(Ldarg_0);
+                //    //c.EmitDelegate<Func<Terraria.NPC, int>>(npc => npc.ModNPC().TownNPCDeathMessageColor.Value.R);
+                //    //c.Emit(Ldarg_0);
+                //    //c.EmitDelegate<Func<Terraria.NPC, int>>(npc => npc.ModNPC().TownNPCDeathMessageColor.Value.G);
+                //    //c.Emit(Ldarg_0);
+                //    //c.EmitDelegate<Func<Terraria.NPC, int>>(npc => npc.ModNPC().TownNPCDeathMessageColor.Value.B);
+                //    //c.Emit(Br, label3);
+                //    //c.GotoLabel(label3);
+
+                //    //c.GotoLabel(label2); // try replace all index-- to gotolabel
+
+                //    //inst = c.Instrs[c.Index];
+                //    //EverquartzAdventureMod.Instance.Logger.Info($"{inst.OpCode} {inst.Next.OpCode}");
+                //    c.Emit(Ldarg_0);
+                //    c.EmitDelegate<Func<Terraria.NPC, bool>>(npc => npc.ModNPC() != null && npc.ModNPC().TownNPCDeathMessageColor.HasValue);
+                //    c.Emit(Brfalse, label2);
+                //    c.Emit(Pop);
+                //    c.Emit(Pop);
+                //    c.Emit(Pop);
+                //    c.Emit(Ldarg_0);
+                //    c.EmitDelegate<Func<Terraria.NPC, int>>(npc => npc.ModNPC().TownNPCDeathMessageColor.Value.R);
+                //    c.Emit(Ldarg_0);
+                //    c.EmitDelegate<Func<Terraria.NPC, int>>(npc => npc.ModNPC().TownNPCDeathMessageColor.Value.G);
+                //    c.Emit(Ldarg_0);
+                //    c.EmitDelegate<Func<Terraria.NPC, int>>(npc => npc.ModNPC().TownNPCDeathMessageColor.Value.B);
+                //}
 
             }
             catch (Exception ex)
