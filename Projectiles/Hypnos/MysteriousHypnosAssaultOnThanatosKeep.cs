@@ -37,21 +37,21 @@ namespace EverquartzAdventure.Projectiles.Hypnos
         #endregion
 
         #region BuffInfo
-        //public static List<int> VanillaDebuffs => new List<int>()
-        //{
-        //    BuffID.Ichor,
-        //    BuffID.BetsysCurse,
-        //    ModContent.BuffType<Mindcrashed>(),
-        //};
+        public static List<int> VanillaDebuffs => new List<int>()
+        {
+            BuffID.Ichor,
+            BuffID.BetsysCurse
+            //ModContent.BuffType<Mindcrashed>(),
+        };
 
-        //public static List<int> CalamityDebuffs => new List<int>()
-        //{
-        //    CalamityWeakRef.BuffType.MarkedForDeath,
-        //CalamityWeakRef.BuffType.ArmorCrunch,
-        //       CalamityWeakRef.BuffType.KamiFlu
-        //};
+        public static List<int> CalamityDebuffs => new List<int>()
+        {
+            CalamityWeakRef.BuffType.MarkedForDeath,
+        CalamityWeakRef.BuffType.ArmorCrunch,
+               CalamityWeakRef.BuffType.KamiFlu
+        };
 
-        //public static List<int> Debuffs => (ModCompatibility.calamityEnabled ? VanillaDebuffs.Union(CalamityDebuffs) : VanillaDebuffs).ToList();
+        public static List<int> Debuffs => (ModCompatibility.calamityEnabled ? VanillaDebuffs.Union(CalamityDebuffs) : VanillaDebuffs).ToList();
 
         //public static int Debuff => ModContent.BuffType<Mindcrashed>();
 
@@ -323,6 +323,7 @@ namespace EverquartzAdventure.Projectiles.Hypnos
             damage = AergiaNeuron.CalcDamage(target);
             //crit = true;
             target.Everquartz().mindcrashed = AergiaNeuron.buffDuration;
+            AergiaNeuron.Debuffs.ForEach(buff => { target.AddBuff(buff, AergiaNeuron.buffDuration); });
 
             NPC target2 = Projectile.Center.NearestEnemyPreferNoMindcrashed(800f);
             if (target2 != null && target2.whoAmI != TargetInt)

@@ -110,10 +110,10 @@ namespace EverquartzAdventure
             ModCompatibility.hypnosEnabled = ModLoader.HasMod("Hypnos");
             ModCompatibility.calRemixEnabled = ModLoader.HasMod("CalRemix");
 
-            if (ModCompatibility.calamityEnabled)
-            {
-                CalamityILChanges.Load();
-            }
+            //if (ModCompatibility.calamityEnabled)
+            //{
+            //    CalamityILChanges.Load();
+            //}
 
             
         }
@@ -124,10 +124,10 @@ namespace EverquartzAdventure
         {
             base.Unload();
 
-            if (ModCompatibility.calamityEnabled)
-            {
-                CalamityILChanges.Unload();
-            }
+            //if (ModCompatibility.calamityEnabled)
+            //{
+            //    CalamityILChanges.Unload();
+            //}
 
             ModCompatibility.calamityEnabled = false;
             ModCompatibility.hypnosEnabled = false;
