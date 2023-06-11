@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -17,7 +17,12 @@ namespace EverquartzAdventure.Items.Weapons
 {
     public class DeimosStaff : ModItem
     {
-        public override string Texture => "EverquartzAdventure/NPCs/TownNPCs/StarbornPrincess_Head";
+        //public override string Texture => "EverquartzAdventure/NPCs/TownNPCs/StarbornPrincess_Head";
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Cosmic Starfury");
+            DisplayName.AddTranslation(7, "宇宙星怒");
+        }
         public override void SetDefaults()
         {
             Item.width = 24;

@@ -1,8 +1,22 @@
-Everquartz's Adventure: Ultimate Cursed Edition
-Now on Russian And Chinese laungages™!
-https://github.com/JesterRomut/EverquartzAdventure
+This is a small addon mod for Calamity Mod created by everquartz with the help of a few people.
+It aims to include the Starborn Princess (Deimos) as an NPC and items relating to her and stuff like that. It's not too big of a mod, but it does include what people have been wanting for a little while now. 
+Big thanks to JesterRomut and gat for coding this. All sprites and concepts are practically done by everquartz alone.
 
-[b] Can run without Calamity Mod [/b]
+This mod includes:
+One new NPC.
+2 new critters.
+1 new pet.
+4 new weapons.
+3 new items
+3 new placeables
+2 new buffs
+A transmogrification system.
+(will change lmao)
 
-Adds The Starborn Princess, along with a few other goodies.
-[i] And one mysterious npc randomly visit your town for one day post-ml [/i]
+A lot of stuff is from the Starborn Princess's fandom page already, however there are a couple of items, unique features and other things that aren't on the wiki page. 
+
+This mod also supports the languages:
+English
+Russian
+Chinese
+wil prolly cbange'

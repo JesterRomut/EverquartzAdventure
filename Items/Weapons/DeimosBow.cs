@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -20,7 +20,12 @@ namespace EverquartzAdventure.Items.Weapons
 {
 	public class DeimosBow : ModItem
 	{
-        public override string Texture => "EverquartzAdventure/NPCs/TownNPCs/StarbornPrincess_Head";
+        //public override string Texture => "EverquartzAdventure/NPCs/TownNPCs/StarbornPrincess_Head";
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Celestial Heavenfire");
+            DisplayName.AddTranslation(7, "天火");
+        }
         public override void SetDefaults() {
 			Item.width = 62; 
 			Item.height = 32; 

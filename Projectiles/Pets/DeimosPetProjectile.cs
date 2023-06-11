@@ -46,7 +46,7 @@ namespace EverquartzAdventure.Projectiles.Pets
             switch (state)
             {
                 case States.Walking:
-                    if (Projectile.velocity.X < 1)
+                    if (Projectile.velocity.X < 1 && Projectile.velocity.X > -1)
                     {
                         Projectile.frame = 0;
                         realFrame = 0;
