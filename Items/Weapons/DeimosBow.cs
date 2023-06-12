@@ -27,9 +27,9 @@ namespace EverquartzAdventure.Items.Weapons
             DisplayName.AddTranslation(7, "天火");
         }
         public override void SetDefaults() {
-			Item.width = 62; 
-			Item.height = 32; 
-			Item.scale = 0.75f;
+			Item.width = 20; 
+			Item.height = 39; 
+			//Item.scale = 0.75f;
 			Item.rare = ItemRarityID.Green; 
 			Item.useTime = 4; 
 			Item.useAnimation = 16; 

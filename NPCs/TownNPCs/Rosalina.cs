@@ -23,8 +23,10 @@ using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Localization;
 using Terraria.Chat;
+using static Terraria.GameContent.Profiles;
 using Humanizer;
 using EverquartzAdventure.UI;
+using ReLogic.Content;
 
 namespace EverquartzAdventure
 {
@@ -70,6 +72,47 @@ namespace EverquartzAdventure
 
 namespace EverquartzAdventure.NPCs.TownNPCs
 {
+    public class DeimosTownNPCProfile : ITownNPCProfile
+    {
+        //基础材质路径
+        string _rootPath;
+        //派对材质路径
+        string _altPath;
+        //替换用小地图头像
+        int _altHeadIndex;
+        //在新声明一个此类时对其进行参数设置
+        public DeimosTownNPCProfile(string rootPath, string altPath, int altHeadIndex = -1)
+        {
+            _rootPath = rootPath;
+            _altPath = altPath;
+            _altHeadIndex = altHeadIndex;
+        }
+        //随机选择NPC可用的外观，一般用不到
+        public int RollVariation() => 0;
+        //在不同的外观下会采用哪些名字池，一般用不到，直接如下填写
+        public string GetNameForVariant(NPC npc) => npc.getNewNPCName();
+        //设置绘制时使用的贴图，可以用来切换派对贴图与日常贴图
+        public Asset<Texture2D> GetTextureNPCShouldUse(NPC npc)
+        {
+            //当 切换到派对材质 且 并非图鉴展示 时使用派对皮肤
+            if (npc.altTexture == 2 && !npc.IsABestiaryIconDummy)
+            {
+                return ModContent.Request<Texture2D>(_altPath);
+            }
+            return ModContent.Request<Texture2D>(_rootPath);
+        }
+        //设置头像贴图
+        public int GetHeadTextureIndex(NPC npc)
+        {
+            //当 切换到派对材质 且 新头像ID不为-1 时 使用替换用头像
+            if (npc.altTexture == 2 && _altHeadIndex != -1)
+            {
+                return _altHeadIndex;
+            }
+            return ModContent.GetModHeadSlot(_rootPath + "_Head");
+        }
+    }
+
     [AutoloadHead]
     [LegacyName(new string[] { "SBORN", "STILLBORN" })]
     public class StarbornPrincess : EverquartzNPC
@@ -82,6 +125,10 @@ namespace EverquartzAdventure.NPCs.TownNPCs
 
         public override string TownNPCDeathMessageKey => DeathMessageKey;
         //public override Color? TownNPCDeathMessageColor => Color.Purple;
+
+        
+
+        public override string Texture => "EverquartzAdventure/NPCs/TownNPCs/StarbornPrincess";
         #endregion
 
         #region LanguageKeys
@@ -153,6 +200,11 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             //base.AnimationType = 124;
         }
 
+        public override bool UsesPartyHat()
+        {
+            return true;
+        }
+
         public override void FindFrame(int frameHeight)
         {
             base.NPC.frameCounter += 0.15;
@@ -190,8 +242,25 @@ namespace EverquartzAdventure.NPCs.TownNPCs
 
         public override void AI()
         {
-            
+                //int oldAltTexture = NPC.altTexture;
+                //NPC.altTexture = 0;
+                if (Main.bloodMoon)
+                {
+                    NPC.altTexture = 2;
+                }
+        }
 
+        static int altHeadSlot;
+
+        public override void Load()
+        {
+            base.Load();
+            altHeadSlot = Mod.AddNPCHeadTexture(Type, Texture + "_Head_Transformed");
+        }
+
+        public override ITownNPCProfile TownNPCProfile()
+        {
+            return new DeimosTownNPCProfile(Texture, Texture + "_Transformed", altHeadSlot);//TransformableNPCProfile("EverquartzAdventure/NPCs/TownNPCs/StarbornPrincess", 0);
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)

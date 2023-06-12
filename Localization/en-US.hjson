@@ -23,7 +23,7 @@
             StarbornPrincess: {
                 DisplayName: Starborn Princess
                 DeathMessage: Deimos the Starborn Princess ceased to exist...
-                ShopText: Deimo's shop
+                ShopText: Deimos' shop
                 TransText: Transmogrification
                 BestiaryText: WE MUST CONSUME HYPNOS FLESH
                 CensusCondition: Defeat Providence, the Profaned Goddess
@@ -141,15 +141,15 @@
         {
             StarbornPrincess: 
             {
-                Content: i enjoy the hypnos flesh.
-                NoHome: i want a home full with hypnos flesh.
-                LoveSpace: there are no people will disturb my hunt on hypnos flesh.
-                FarFromHome: i'm far from my hypnos flesh feast.
-                DislikeCrowded: there are people will compete with me for hypnos flesh.
-                HateCrowded: there are too many people will compete with me for hypnos flesh.
-                LikeNPC_Princess: i like princess, princess is cute. 
-                LoveBiome: hallow has unicorns and hypnos flesh.
-                HateBiome: desert is too dry.
+                Content: Eh, it's fine here I guess. Pretty place, just not preferred.
+                NoHome: I'm homeless. Give me a house :gun:
+                LoveSpace: I love it here! It's just right. I feel at home. Nothing more to say really other than I like it here.
+                FarFromHome: Where am I right now? Narnia?
+                DislikeCrowded: Look bro, I know I said I liked hanging around people but I think the living crisis you put me in is a bit too much.
+                HateCrowded: Boooo! Too many people here. They make a toooon of noise, not only that but they try disturb whatever I'm doing. It's insane. I hate it. Please move me out of here, I can't bare it.
+                LikeNPC_Princess: Another princess? Cool! I like her. She's also a princess so I can relate to her. Thooough speaking of that, I ain't really treating myself as royalty here despite being the 'child' of a goddess and a god eating serpent. Doesn't matter that much really.
+                LoveBiome: Hehe! You located me just in the right place. Thanks to you, it's easier to gather crystals and other special substances so I can practice making all sorts of things like potions... weapons or just stuff I don't really need.
+                HateBiome: Let me get to the point... you expect me to live here...? In the desert? Uh... no? I don't really want to live here, it's a bit dry and bland don't you think? I also hate sand. Don't ask me why, I just do.
                 
                 
             }

@@ -25,8 +25,8 @@ namespace EverquartzAdventure.Items.Weapons
         }
         public override void SetDefaults()
         {
-            Item.width = 24;
-            Item.height = 24;
+            Item.width = 40;
+            Item.height = 39;
 
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.useTime = 20;
