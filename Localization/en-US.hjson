@@ -142,14 +142,14 @@
             StarbornPrincess: 
             {
                 Content: Eh, it's fine here I guess. Pretty place, just not preferred.
-                NoHome: I'm homeless. Give me a house :gun:
+                NoHome: bruv wheres my house'
                 LoveSpace: I love it here! It's just right. I feel at home. Nothing more to say really other than I like it here.
                 FarFromHome: Where am I right now? Narnia?
                 DislikeCrowded: Look bro, I know I said I liked hanging around people but I think the living crisis you put me in is a bit too much.
                 HateCrowded: Boooo! Too many people here. They make a toooon of noise, not only that but they try disturb whatever I'm doing. It's insane. I hate it. Please move me out of here, I can't bare it.
-                LikeNPC_Princess: Another princess? Cool! I like her. She's also a princess so I can relate to her. Thooough speaking of that, I ain't really treating myself as royalty here despite being the 'child' of a goddess and a god eating serpent. Doesn't matter that much really.
-                LoveBiome: Hehe! You located me just in the right place. Thanks to you, it's easier to gather crystals and other special substances so I can practice making all sorts of things like potions... weapons or just stuff I don't really need.
-                HateBiome: Let me get to the point... you expect me to live here...? In the desert? Uh... no? I don't really want to live here, it's a bit dry and bland don't you think? I also hate sand. Don't ask me why, I just do.
+                LikeNPC_Princess: I also like the princess... solely for the reason that she's also another princess.
+                LoveBiome: I like the hallow, it's very pretty. I like it when unicorns charge at you as soon as you step out your front door.
+                HateBiome: So dry... so dry... so dry. So boring and sandy. Tumbleweeds are kinda funny though.
                 
                 
             }
@@ -164,3 +164,4 @@
     }
 
 }
+TownNPCMood_Princess.LoveNPC_EverquartzAdventure/StarbornPrincess: Deimos is a really nice and funny person to hang around with. She has such lively energy and loves to teach me about her creations... she's also another princess!

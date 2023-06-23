@@ -1,4 +1,4 @@
-displayName = Everquartz's Adventure: Ultimate Cursed Collection
+displayName = Deimos, the Starborn Princess
 author = Everquartz - Spriting + Idea, Jester and Gat - coding, Blitzträger and Jester - Russian and Chinese Translations.
-version = 0.2.3.8
+version = 0.2.3.9
 weakReferences = CalamityMod, Hypnos, CalRemix
