@@ -303,7 +303,7 @@ namespace EverquartzAdventure
 
         public static string ToISO8601(this DateTime dateTime)
         {
-            return dateTime.ToString("yyyyMMddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture);
+            return dateTime.ToString("yyyyMMddHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
         }
         public static DateTime ToISO8601(this string str)
         {
@@ -311,7 +311,7 @@ namespace EverquartzAdventure
             {
                 return default(DateTime);
             }
-            return DateTime.ParseExact(str, "yyyyMMddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture);
+            return DateTime.ParseExact(str, "yyyyMMddHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
         }
 
         internal static EverquartzItem ModItem(this Item item)

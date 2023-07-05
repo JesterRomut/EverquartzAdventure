@@ -34,6 +34,8 @@ namespace EverquartzAdventure
             //    censusMod.Call("TownNPCCondition", ModContent.NPCType<StarbornPrincess>(), "Brutally murder her mom");
             //}
             TryDoCensusSupport();
+            TransmogrificationManager.LoadAllTrans();
+            Logger.Info(TransmogrificationManager.Transmogrifications.Count());
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI)
@@ -97,9 +99,6 @@ namespace EverquartzAdventure
             base.Load();
             Instance = this;
 
-            ILChanges.Load();
-
-            TransmogrificationManager.LoadAllTrans();
 
             ModCompatibility.censusMod = null;
             ModLoader.TryGetMod("Census", out ModCompatibility.censusMod);
@@ -110,12 +109,15 @@ namespace EverquartzAdventure
             ModCompatibility.hypnosEnabled = ModLoader.HasMod("Hypnos");
             ModCompatibility.calRemixEnabled = ModLoader.HasMod("CalRemix");
 
+            ILChanges.Load();
+
+            
             //if (ModCompatibility.calamityEnabled)
             //{
             //    CalamityILChanges.Load();
             //}
 
-            
+
         }
 
 
@@ -128,6 +130,9 @@ namespace EverquartzAdventure
             //{
             //    CalamityILChanges.Unload();
             //}
+            TransmogrificationManager.UnloadAllTrans();
+
+            ILChanges.Unload();
 
             ModCompatibility.calamityEnabled = false;
             ModCompatibility.hypnosEnabled = false;
@@ -136,9 +141,7 @@ namespace EverquartzAdventure
             ModCompatibility.censusMod = null;
             ModCompatibility.hypnosMod = null;
 
-            TransmogrificationManager.UnloadAllTrans();
-
-            ILChanges.Unload();
+            
 
             Instance = null;
             
