@@ -1,9 +1,14 @@
-This is a small addon mod for Calamity Mod created by everquartz with the help of a few people.
+﻿This is a small addon mod for Calamity Mod created by everquartz with the help of a few people.
 It aims to include the Starborn Princess (Deimos) as an NPC and items relating to her and stuff like that. It's not too big of a mod, but it does include what people have been wanting for a little while now. 
 Big thanks to JesterRomut and gat for coding this. All sprites and concepts are practically done by everquartz alone.
 
+FORGOT TO MENTION: this mod is VERY buggy. It's not the absolute best quality but it can work fine. There may be future updates that fix these bugs, but if you think a bug is an issue and you'd like to report it, join the discord server and specifically click that you came here for the mod. There is a category for the mod and bug reports.
+https://discord.gg/6Bh7Stt6d3
+
+also check the sh1t mountain source code: https://github.com/JesterRomut/EverquartzAdventure (pull reques are welcomed ^_^) -jester
+
 This mod includes:
-One new NPC.
+One new NPC. (there is one and will be only one)
 2 new critters.
 1 new pet.
 4 new weapons.
@@ -11,7 +16,6 @@ One new NPC.
 3 new placeables
 2 new buffs
 A transmogrification system.
-(will change lmao)
 
 A lot of stuff is from the Starborn Princess's fandom page already, however there are a couple of items, unique features and other things that aren't on the wiki page. 
 
@@ -19,4 +23,4 @@ This mod also supports the languages:
 English
 Russian
 Chinese
-wil prolly cbange'
+[quote=tModLoader]Developed By Everquartz - Spriting + Idea, Jester and Gat - coding, Blitztr�ger and Jester - Russian and Chinese Translations.[/quote]

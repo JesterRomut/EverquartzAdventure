@@ -94,10 +94,13 @@ namespace EverquartzAdventure.Items
             this.color = color;
         }
 
-        public virtual void Update()
+        public void Update()
         {
+            CustomUpdate();
             time++;
         }
+
+        public abstract void CustomUpdate();
 
         public virtual void Kill()
         {
@@ -120,9 +123,8 @@ namespace EverquartzAdventure.Items
             {
             }
 
-            public override void Update()
+            public override void CustomUpdate()
             {
-                base.Update();
                 position.Y -= 2 ^ (time / 10);
                 float changingTime = Main.GlobalTimeWrappedHourly * 1.5f;
                 if (Math.Floor(changingTime) % 2 != 0)
@@ -145,9 +147,8 @@ namespace EverquartzAdventure.Items
 
             public CelestialRarityAdditiveText2(Vector2 position, float rotation, Color color) : base(position, rotation, color) { }
 
-            public override void Update()
+            public override void CustomUpdate()
             {
-                base.Update();
                 position.Y += 2;
                 AdditiveTextUniversalUpdate(this);
             }
@@ -162,7 +163,7 @@ namespace EverquartzAdventure.Items
 
         public static void AdditiveTextUniversalUpdate(RarityAdditiveText text)
         {
-            if (text.color == new Color(0, 0, 0))
+            if (text.time >= 100)
             {
                 text.Kill();
             }
@@ -179,7 +180,7 @@ namespace EverquartzAdventure.Items
             Vector2 basePosition = new Vector2((float)line.X, (float)line.Y);
 
             float changingTime = Main.GlobalTimeWrappedHourly * 1.5f;
-            if (Math.Floor(changingTime) % 2 == 0)
+            if (Math.Floor(changingTime) % 3 == 0)
             {
                 EverquartzGlobalItem.rarityAdditiveTexts.Add(new CelestialRarityAdditiveText(basePosition, line.Rotation, EverquartzUtils.ColorSwap(new Color(246, 128, 159), Color.Orange, 1) * (Main.rand.Next(3, 7) / 10f)));
                 EverquartzGlobalItem.rarityAdditiveTexts.Add(new CelestialRarityAdditiveText2(basePosition, line.Rotation, EverquartzUtils.ColorSwap(new Color(246, 128, 159), Color.Orange, 1) * (Main.rand.Next(2, 4) / 10f)));

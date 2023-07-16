@@ -31,10 +31,7 @@ namespace EverquartzAdventure.NPCs
     
     public class EverquartzGlobalNPC : GlobalNPC
     {
-        public static List<int> UniqueNPCs => new List<int>() {
-            ModContent.NPCType<StarbornPrincess>(),
-            ModContent.NPCType<NPCs.Hypnos.Hypnos>(),
-        };
+        
 
         //public override bool StrikeNPC(NPC npc, ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)
         //{
@@ -125,12 +122,6 @@ namespace EverquartzAdventure.NPCs
             return myClone;
         }
 
-        public override bool StrikeNPC(NPC npc, ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)
-        {
-            //if (ModCompatibility.calamityEnabled) CalamityWeakRef.Test(npc);
-            return base.StrikeNPC(npc, ref damage, defense, ref knockback, hitDirection, ref crit);
-        }
-
         public override void PostAI(NPC npc)
         {
             if (mindcrashed > 0)
@@ -146,7 +137,7 @@ namespace EverquartzAdventure.NPCs
 
         public override void OnKill(NPC npc)
         {
-            if (npc.boss && ModCompatibility.hypnosEnabled && npc.type == ModCompatibility.HypnosBossType)
+            if (npc.boss && ModCompatibility.hypnosEnabled && ModCompatibility.HypnosBossType.HasValue && npc.type == ModCompatibility.HypnosBossType.Value)
             {
                 int hypNpcType = ModContent.NPCType<NPCs.Hypnos.Hypnos>();
                 Main.npc.Where(npc2 => npc2.active && npc2.type == hypNpcType).ToList().ForEach(hypno => ((NPCs.Hypnos.Hypnos)hypno.ModNPC).KillWithCoins());

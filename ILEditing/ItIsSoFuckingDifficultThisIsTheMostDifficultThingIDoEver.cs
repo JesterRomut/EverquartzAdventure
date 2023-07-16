@@ -11,6 +11,7 @@ using System.Reflection;
 using Mono.CompilerServices.SymbolWriter;
 using Terraria.Localization;
 using On.Terraria;
+using System.Reflection.Emit;
 
 namespace EverquartzAdventure.ILEditing
 {
@@ -68,20 +69,27 @@ namespace EverquartzAdventure.ILEditing
                 ILCursor c = new ILCursor(il);
                 c.GotoNext(i => i.OpCode == Stloc_S && ((VariableDefinition)i.Operand).Index == 6);
                 c.GotoPrev(i => i.OpCode == Ldc_I4_1);
-                ILLabel label1 = c.MarkLabel();
+                //ILLabel label1 = c.MarkLabel();
                 //c.GotoPrev(i => i.MatchLdsfld<Terraria.Lang>(nameof(Terraria.Lang.misc)));
                 //ILLabel label = c.MarkLabel();
-                c.GotoLabel(label1);
+                //c.GotoLabel(label1);
 
-                //Instruction inst = c.Instrs[c.Index];
-                //EverquartzAdventureMod.Instance.Logger.Info($"{c.Index}");
                 c.Emit(Ldarg_0);
                 c.EmitDelegate<Func<Terraria.NPC, bool>>(npc => string.IsNullOrEmpty(npc.ModNPC()?.TownNPCDeathMessageKey));
-                c.Emit(Brtrue, label1);
+                c.Emit(Brtrue, c.DefineLabel());
+                int brtruePos = c.Index - 1;
                 c.Emit(Pop);
                 c.Emit(Ldarg_0);
-                c.EmitDelegate<Func<Terraria.NPC, string>>(npc => npc.ModNPC()?.TownNPCDeathMessageKey ?? "");
+                c.EmitDelegate<Func<Terraria.NPC, string>>(npc => npc.ModNPC()?.TownNPCDeathMessageKey ?? "err");
 
+                ILLabel label = c.MarkLabel();
+
+                c.Index = brtruePos;
+                c.Next.Operand = label;
+
+                c.GotoLabel(label);
+
+                
                 //c.Emit(Ldarg_0);
                 //c.EmitDelegate<Func<Terraria.NPC, bool>>(npc => string.IsNullOrEmpty(npc.ModNPC()?.TownNPCDeathMessageKey));
                 //c.Emit(Brtrue, label);

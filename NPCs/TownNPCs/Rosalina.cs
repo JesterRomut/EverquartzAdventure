@@ -419,7 +419,7 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             SoundEngine.PlaySound(DeathSound, position);
             for (int num585 = 0; num585 < 25; num585++)
             {
-                int num586 = Dust.NewDust(position, width, height, 31, 0f, 0f, 100, default(Color), 2f);
+                int num586 = Dust.NewDust(position, width, height, DustID.Smoke, 0f, 0f, 100, default(Color), 2f);
                 Dust dust30 = Main.dust[num586];
                 Dust dust187 = dust30;
                 dust187.velocity *= 1.4f;

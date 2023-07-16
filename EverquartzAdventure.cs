@@ -35,7 +35,7 @@ namespace EverquartzAdventure
             //}
             TryDoCensusSupport();
             TransmogrificationManager.LoadAllTrans();
-            Logger.Info(TransmogrificationManager.Transmogrifications.Count());
+            //Logger.Info(TransmogrificationManager.Transmogrifications.Count());
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI)
@@ -207,9 +207,14 @@ namespace EverquartzAdventure
             NPCs.Hypnos.Hypnos.UpdateTravelingMerchant();
         }
 
+        public static List<int> UniqueNPCs => new List<int>() {
+            ModContent.NPCType<StarbornPrincess>(),
+            ModContent.NPCType<NPCs.Hypnos.Hypnos>(),
+        };
+
         public override void PreUpdateNPCs()
         {
-            EverquartzGlobalNPC.UniqueNPCs.ForEach(AntiDupe);
+            UniqueNPCs.ForEach(AntiDupe);
         }
 
 
@@ -219,8 +224,7 @@ namespace EverquartzAdventure
             IEnumerable<NPC> possiblyMultipleDeimi = Main.npc.Where(npc => npc != null && npc.active && npc.type == type);
             if (possiblyMultipleDeimi.Count() > 1)
             {
-                possiblyMultipleDeimi.ToList().ForEach(npc => npc.netUpdate = true);
-                possiblyMultipleDeimi.SkipLast(1).ToList().ForEach(npc => npc.active = false);
+                possiblyMultipleDeimi.SkipLast(1).ToList().ForEach(npc => { npc.netUpdate = true; npc.active = false; }) ;
             }
         }
     }
