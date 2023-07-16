@@ -339,18 +339,10 @@ namespace EverquartzAdventure
 
         internal static EverquartzNPC ModNPC(this NPC npc)
         {
-            EverquartzNPC res;
-            if (!(npc.ModNPC is EverquartzNPC)) return null;
-            try
-            {
-                res = (EverquartzNPC)npc.ModNPC;
+            if (npc.ModNPC is EverquartzNPC enpc) {
+                return enpc;
             }
-            catch (InvalidCastException)
-            {
-                return null;
-            }
-            return res;
-
+            return null;
         }
 
         internal static EverquartzPlayer Everquartz(this Player player)
