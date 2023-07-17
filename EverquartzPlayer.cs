@@ -24,7 +24,7 @@ namespace EverquartzAdventure
 
         public bool mindcrashed = false;
         public bool musicBoxTrolled = false;
-        public int musicBoxTrollAttempt = 0;
+        //public int musicBoxTrollAttempt = 0;
 
         //public Point? lastSleepingSpot = null;
 

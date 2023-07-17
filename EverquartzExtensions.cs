@@ -314,19 +314,19 @@ namespace EverquartzAdventure
             return DateTime.ParseExact(str, "yyyyMMddHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
         }
 
-        internal static EverquartzItem ModItem(this Item item)
-        {
-            try
-            {
-                return (EverquartzItem)item.ModItem;
-            }
-            catch (InvalidCastException)
-            {
-                return null;
-            }
+        //internal static EverquartzItem ModItem(this Item item)
+        //{
+        //    try
+        //    {
+        //        return (EverquartzItem)item.ModItem;
+        //    }
+        //    catch (InvalidCastException)
+        //    {
+        //        return null;
+        //    }
 
 
-        }
+        //}
 
         internal static EverquartzGlobalNPC Everquartz(this NPC npc)
         {

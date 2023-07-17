@@ -3,9 +3,9 @@ It aims to include the Starborn Princess (Deimos) as an NPC and items relating t
 Big thanks to JesterRomut and gat for coding this. All sprites and concepts are practically done by everquartz alone.
 
 FORGOT TO MENTION: this mod is VERY buggy. It's not the absolute best quality but it can work fine. There may be future updates that fix these bugs, but if you think a bug is an issue and you'd like to report it, join the discord server and specifically click that you came here for the mod. There is a category for the mod and bug reports.
-https://discord.gg/6Bh7Stt6d3
+https://discord.gg/6Bh7Stt6d3 
 
-also check the sh1t mountain source code: https://github.com/JesterRomut/EverquartzAdventure (pull reques are welcomed ^_^) -jester
+also check the sh1t mountain source code (it used to be multiple code devs that are not synced well): https://github.com/JesterRomut/EverquartzAdventure (bug reports & pull reques are welcomed ^_^) -jester
 
 This mod includes:
 One new NPC. (there is one and will be only one)
@@ -23,4 +23,3 @@ This mod also supports the languages:
 English
 Russian
 Chinese
-[quote=tModLoader]Developed By Everquartz - Spriting + Idea, Jester and Gat - coding, Blitztr�ger and Jester - Russian and Chinese Translations.[/quote]

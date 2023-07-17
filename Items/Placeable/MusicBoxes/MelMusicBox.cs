@@ -12,7 +12,7 @@ using EverquartzAdventure.Tiles.MusicBoxes;
 
 namespace EverquartzAdventure.Items.Placeable.MusicBoxes
 {
-    public class MelanieMartinezMusicBox: EverquartzItem
+    public class MelanieMartinezMusicBox : ModItem
     {
         //public override string Texture => "Item_1599";
         public static string TrolledKey => "Mods.EverquartzAdventure.Items.MelanieMartinezMusicBox.Trolled";
@@ -52,34 +52,24 @@ namespace EverquartzAdventure.Items.Placeable.MusicBoxes
             //}
             return true;
         }
-        public override bool? UseItem(Player player)
-        {
-            
-            return base.UseItem(player);
-        }
-
-        public override bool PrePlaceThing_Tiles(Player player, bool canPlace)
+        public override void HoldItem(Player player)
         {
             EverquartzPlayer modPlayer = player.Everquartz();
-            if (modPlayer == null) return false;
-            if (canPlace && !modPlayer.musicBoxTrolled && Main.myPlayer == player.whoAmI)
+            if (modPlayer == null) return;
+            if (!modPlayer.musicBoxTrolled && Main.myPlayer == player.whoAmI)
             {
-                if (modPlayer.musicBoxTrollAttempt == 0)
-                {
-                    CombatText.NewText(player.Hitbox, Color.White, Language.GetTextValue(TrolledKey), true);
-                }
-                if (modPlayer.musicBoxTrollAttempt > 150)
-                {
-                    CombatText.NewText(player.Hitbox, Color.White, Language.GetTextValue(Trolled2Key), true);
-                    modPlayer.musicBoxTrolled = true;
-                    return true;
-                }
-                modPlayer.musicBoxTrollAttempt++;
-                
-                    
-                return false;
+
+
+                CombatText.NewText(player.Hitbox, Color.White, Language.GetTextValue(TrolledKey), true);
+                modPlayer.musicBoxTrolled = true;
             }
-            return canPlace;
+        }
+        public override bool ConsumeItem(Player player)
+        {
+            CombatText.NewText(player.Hitbox, Color.White, Language.GetTextValue(Trolled2Key), true);
+
+
+            return true;
         }
     }
 }

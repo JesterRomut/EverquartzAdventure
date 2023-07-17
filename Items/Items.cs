@@ -75,16 +75,16 @@ namespace EverquartzAdventure
 
 namespace EverquartzAdventure.Items
 {
-    public abstract class EverquartzItem: ModItem
-    {
-        /// <summary>
-        /// Called before the tile is placed, returns false interrupt the placement, returns true by default
-        /// </summary>
-        public virtual bool PrePlaceThing_Tiles(Player player, bool canPlace)
-        {
-            return canPlace;
-        }
-    }
+    //public abstract class EverquartzItem: ModItem
+    //{
+    //    /// <summary>
+    //    /// Called before the tile is placed, returns false interrupt the placement, returns true by default
+    //    /// </summary>
+    //    public virtual bool PrePlaceThing_Tiles(Player player, bool canPlace)
+    //    {
+    //        return canPlace;
+    //    }
+    //}
     //public abstract class AltUsableItem: ModItem
     //{
     //    public abstract void LeftClickBehavior();

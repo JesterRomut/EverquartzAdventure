@@ -28,39 +28,39 @@ namespace EverquartzAdventure.ILEditing
 
         // I found this patch is fucking quite unnecessary ↓ fuck me  -jester
         // Hypnos, i want you...♥ Fuck me please
-        private static void PrePlaceThingTilesPatch(ILContext il)
-        {
-            try
-            {
-                ILCursor c = new ILCursor(il);
-                c.GotoFinalRet();
-                //ILLabel finalRetLabel = c.MarkLabel();
-                //EverquartzAdventureMod.Instance.Logger.Info(c.Index);
+        //private static void PrePlaceThingTilesPatch(ILContext il)
+        //{
+        //    try
+        //    {
+        //        ILCursor c = new ILCursor(il);
+        //        c.GotoFinalRet();
+        //        //ILLabel finalRetLabel = c.MarkLabel();
+        //        //EverquartzAdventureMod.Instance.Logger.Info(c.Index);
 
-                //c.GotoPrev(i => i.MatchPop());
-                //EverquartzAdventureMod.Instance.Logger.Info(c.Index);
-                c.GotoPrev(i => i.OpCode == Brfalse_S && ((ILLabel)i.Operand).Target.OpCode == Ret);
-                c.GotoPrev(i => i.MatchLdloc(4));
+        //        //c.GotoPrev(i => i.MatchPop());
+        //        //EverquartzAdventureMod.Instance.Logger.Info(c.Index);
+        //        c.GotoPrev(i => i.OpCode == Brfalse_S && ((ILLabel)i.Operand).Target.OpCode == Ret);
+        //        c.GotoPrev(i => i.MatchLdloc(4));
 
-                //Instruction inst = c.Instrs[c.Index].Next;
-                //EverquartzAdventureMod.Instance.Logger.Info($"{inst.OpCode} {((ILLabel)inst.Operand)} {((ILLabel)inst.Operand).Target.OpCode}");
-                //c.GotoPrev(i => i.OpCode == Ldloc_S);
-                //EverquartzAdventureMod.Instance.Logger.Info(c.Index);
-                c.Index++;
-                //ILLabel label = c.MarkLabel();
+        //        //Instruction inst = c.Instrs[c.Index].Next;
+        //        //EverquartzAdventureMod.Instance.Logger.Info($"{inst.OpCode} {((ILLabel)inst.Operand)} {((ILLabel)inst.Operand).Target.OpCode}");
+        //        //c.GotoPrev(i => i.OpCode == Ldloc_S);
+        //        //EverquartzAdventureMod.Instance.Logger.Info(c.Index);
+        //        c.Index++;
+        //        //ILLabel label = c.MarkLabel();
 
-                c.Emit(Ldarg_0);
-                c.EmitDelegate<Func<bool, Terraria.Player, bool>>((canPlace, player) => player.inventory[player.selectedItem].ModItem()?.PrePlaceThing_Tiles(player, canPlace) ?? true);
-                //c.Emit(Brtrue, label);
-                //c.Emit(Ret);
-            }
-            catch (Exception ex)
-            {
+        //        c.Emit(Ldarg_0);
+        //        c.EmitDelegate<Func<bool, Terraria.Player, bool>>((canPlace, player) => player.inventory[player.selectedItem].ModItem()?.PrePlaceThing_Tiles(player, canPlace) ?? true);
+        //        //c.Emit(Brtrue, label);
+        //        //c.Emit(Ret);
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-                LogFailure("PrePlaceThing_Tiles", ex.ToString());
-                return;
-            }
-        }
+        //        LogFailure("PrePlaceThing_Tiles", ex.ToString());
+        //        return;
+        //    }
+        //}
 
         private static void TownNPCCustomDeathMessage(ILContext il)
         {
@@ -177,14 +177,14 @@ namespace EverquartzAdventure.ILEditing
 
         internal static void Load()
         {
-            IL.Terraria.Player.PlaceThing_Tiles += PrePlaceThingTilesPatch;
+            //IL.Terraria.Player.PlaceThing_Tiles += PrePlaceThingTilesPatch;
             IL.Terraria.NPC.checkDead += TownNPCCustomDeathMessage;
             //HookEndpointManager.Modify<ILContext.Manipulator>(typeof(NPCLoader).GetMethod("StrikeNPC", BindingFlags.Static | BindingFlags.Public), IAmGoingToHell);
         }
 
         internal static void Unload()
         {
-            IL.Terraria.Player.PlaceThing_Tiles -= PrePlaceThingTilesPatch;
+            //IL.Terraria.Player.PlaceThing_Tiles -= PrePlaceThingTilesPatch;
             IL.Terraria.NPC.checkDead -= TownNPCCustomDeathMessage;
             //HookEndpointManager.Unmodify<ILContext.Manipulator>(typeof(NPCLoader).GetMethod("StrikeNPC", BindingFlags.Static | BindingFlags.Public), IAmGoingToHell);
         }
