@@ -14,7 +14,6 @@ using Terraria.Utilities;
 using Terraria.ID;
 using Terraria.Audio;
 using EverquartzAdventure.NPCs.Hypnos;
-using EverquartzAdventure.Buffs.Hypnos;
 
 namespace EverquartzAdventure.Projectiles.Hypnos
 {
@@ -98,7 +97,7 @@ namespace EverquartzAdventure.Projectiles.Hypnos
         #region Utils
         public static List<Projectile> AllNeurons => Main.projectile.Where(proj => proj != null && proj.active && proj.owner == 0 && proj.type == ModContent.ProjectileType<AergiaNeuron>()).ToList();
 
-        public static int CalcDamage(NPC target) => (int)Math.Floor((float)target.lifeMax / (target.boss ? 128000 : 6));
+        public static int CalcDamage(NPC target) => (int)Math.Floor((float)target.lifeMax / (target.boss ? 96000 : 6));
         public static void AddElectricDusts(Entity proj, int count = 3) // hey hypons or whatever your name u coded quite a lot maybe it is time to stop that is not healthy for you, i can tell by myself
         {
             for (int i = 0; i < count; i++)
@@ -117,9 +116,9 @@ namespace EverquartzAdventure.Projectiles.Hypnos
         #region Overrides
         public override void SetStaticDefaults()
         {
-            base.DisplayName.SetDefault("Aergia Neuron");
-            DisplayName.AddTranslation(7, "埃吉亚神经元");
-            DisplayName.AddTranslation(7, "Нейрон Агерии");
+            // base.DisplayName.SetDefault("Aergia Neuron");
+            //DisplayName.AddTranslation(7, "埃吉亚神经元");
+            //DisplayName.AddTranslation(7, "Нейрон Агерии");
             Main.projFrames[Projectile.type] = 1;
         }
 
@@ -141,11 +140,11 @@ namespace EverquartzAdventure.Projectiles.Hypnos
             Projectile.timeLeft = refreshTimeLeft;
         }
 
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            damage = CalcDamage(target);
+            //damage = CalcDamage(target);
             //crit = true;
-
+            modifiers.FinalDamage.Flat = CalcDamage(target);
         }
 
         public override void PostDraw(Color lightColor)
@@ -205,7 +204,7 @@ namespace EverquartzAdventure.Projectiles.Hypnos
                 idealx8 = MathHelper.Lerp(Projectile.position.X, hyposx4, 0.8f);
                 idealy8 = MathHelper.Lerp(Projectile.position.Y, hyposy4, 0.8f);
 
-                NPC target = Projectile.Center.NearestEnemyPreferNoMindcrashed(800f);
+                NPC target = Projectile.Center.NearestEnemy(800f);
                 if (target != null)
                 {
                     //CombatText.NewText(Projectile.Hitbox, Color.White, $"{target.FullName} {target.CanBeChasedBy()} {target.chaseable}");
@@ -286,9 +285,9 @@ namespace EverquartzAdventure.Projectiles.Hypnos
         #region Overrides
         public override void SetStaticDefaults()
         {
-            base.DisplayName.SetDefault("Blue Exo Pulse Laser");
-            DisplayName.AddTranslation(7, "蓝色星流脉冲激光");
-            DisplayName.AddTranslation(6, "Синий Экзо-Пульсовой Лазер");
+            // base.DisplayName.SetDefault("Blue Exo Pulse Laser");
+            //DisplayName.AddTranslation(7, "蓝色星流脉冲激光");
+            //DisplayName.AddTranslation(6, "Синий Экзо-Пульсовой Лазер");
             Main.projFrames[base.Projectile.type] = 4;
             ProjectileID.Sets.TrailCacheLength[base.Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[base.Projectile.type] = 0;
@@ -318,14 +317,15 @@ namespace EverquartzAdventure.Projectiles.Hypnos
             AergiaNeuron.AddElectricDusts(Projectile, 1);
         }
 
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            damage = AergiaNeuron.CalcDamage(target);
+            //damage = AergiaNeuron.CalcDamage(target);
+            modifiers.FinalDamage.Flat += AergiaNeuron.CalcDamage(target);
             //crit = true;
-            target.Everquartz().mindcrashed = AergiaNeuron.buffDuration;
+            //target.Everquartz().mindcrashed = AergiaNeuron.buffDuration;
             AergiaNeuron.Debuffs.ForEach(buff => { target.AddBuff(buff, AergiaNeuron.buffDuration); });
 
-            NPC target2 = Projectile.Center.NearestEnemyPreferNoMindcrashed(800f);
+            NPC target2 = Projectile.Center.NearestEnemy(800f);
             if (target2 != null && target2.whoAmI != TargetInt)
             {
                 Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center, Projectile.SafeDirectionTo(target2.Center) * AergiaNeuron.laserSpeed, ModContent.ProjectileType<BlueExoPulseLaser>(), 1, 0, 0, target.whoAmI);

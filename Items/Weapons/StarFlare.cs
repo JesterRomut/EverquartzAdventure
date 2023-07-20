@@ -20,12 +20,12 @@ namespace EverquartzAdventure.Items.Weapons
             ItemID.Sets.GamepadExtraRange[Item.type] = 15;
             ItemID.Sets.GamepadSmartQuickReach[Item.type] = true;
 
-            DisplayName.SetDefault("Star Flare");
-            DisplayName.AddTranslation(7, "星耀");
-            DisplayName.AddTranslation(6, "Звёздная Вспышка");
-            Tooltip.SetDefault("'Dead Deimos attack me in the Hallow!'");
-            Tooltip.AddTranslation(7, "'死去的戴莫斯突然开始攻击我！'");
-            Tooltip.AddTranslation(6, "'Мёртвая Деймос атакует меня в Освещении！'"); // it sounds funky at russian
+            // DisplayName.SetDefault("Star Flare");
+            //DisplayName.AddTranslation(7, "星耀");
+            //DisplayName.AddTranslation(6, "Звёздная Вспышка");
+            //// Tooltip.SetDefault("'Dead Deimos attack me in the Hallow!'");
+            //Tooltip.AddTranslation(7, "'死去的戴莫斯突然开始攻击我！'");
+            //Tooltip.AddTranslation(6, "'Мёртвая Деймос атакует меня в Освещении！'"); // it sounds funky at russian
         }
 
         public override void SetDefaults()
@@ -119,8 +119,8 @@ namespace EverquartzAdventure.Items.Weapons
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Decap Attack");
-            DisplayName.AddTranslation(7, "飞头攻击");
+            // DisplayName.SetDefault("Decap Attack");
+            //DisplayName.AddTranslation(7, "飞头攻击");
         }
 
         public override void SetDefaults()
@@ -177,10 +177,10 @@ namespace EverquartzAdventure.Items.Weapons
             }
         }
 
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            damage *= 5000;
-            crit = true;
+            modifiers.SourceDamage *= 2000;
+            modifiers.SetCrit();
             if (ModCompatibility.calamityEnabled)
             {
                 target.AddBuff(CalamityWeakRef.BuffType.GodSlayerInferno, 120);

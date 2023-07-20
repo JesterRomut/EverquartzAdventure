@@ -62,7 +62,7 @@ namespace EverquartzAdventure
             }
             else
             {
-                NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<Providence>());
+                NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, player.whoAmI, ModContent.NPCType<Providence>());
             }
         }
     }
@@ -154,9 +154,9 @@ namespace EverquartzAdventure.NPCs.TownNPCs
         #region Overrides
         public override void SetStaticDefaults()
         {
-            base.DisplayName.SetDefault("Starborn Princess");
-            DisplayName.AddTranslation(7, "星光公主");
-            DisplayName.AddTranslation(6, "Принцесса, рождённая в небесах");
+            // base.DisplayName.SetDefault("Starborn Princess");
+            //DisplayName.AddTranslation(7, "星光公主");
+            //DisplayName.AddTranslation(6, "Принцесса, рождённая в небесах");
             Main.npcFrameCount[base.NPC.type] = 6;
             //NPCID.Sets.ExtraFramesCount[base.NPC.type] = 9;
             //NPCID.Sets.AttackFrameCount[base.NPC.type] = 4;
@@ -224,7 +224,7 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             });
         }
 
-        public override bool CanTownNPCSpawn(int numTownNPCs, int money)
+        public override bool CanTownNPCSpawn(int numTownNPCs)/* tModPorter Suggestion: Copy the implementation of NPC.SpawnAllowed_Merchant in vanilla if you to count money, and be sure to set a flag when unlocked, so you don't count every tick. */
         {
 
             if (ModCompatibility.calamityEnabled && CalamityWeakRef.downedProv)
@@ -315,7 +315,7 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             return thingToSay;
         }
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             if (NPC.life <= 0)
             {
@@ -342,9 +342,9 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             button2 = Language.GetTextValue(TransTextKey);
         }
 
-        public override void OnChatButtonClicked(bool firstButton, ref bool shop)
+        public override void OnChatButtonClicked(bool firstButton, ref string shopName)
         {
-            shop = firstButton;
+
             if (!firstButton)
             {
                 Main.playerInventory = true;
@@ -353,10 +353,13 @@ namespace EverquartzAdventure.NPCs.TownNPCs
                 // and start an instance of our UIState.
                 EverquartzUI.instance.userInterface.SetState(EverquartzUI.instance.transmogrificationUI);
             }
+            else {
+                shopName = "Shop";
+            }
             
         }
 
-        public override void SetupShop(Chest shop, ref int nextSlot)
+        public override void AddShops()
         {
             //shop.item[nextSlot].SetDefaults(ModContent.ItemType<EverquartzItem>());
             //shop.item[nextSlot].shopCustomPrice = Item.buyPrice(gold: 3);
@@ -370,31 +373,57 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             //shop.item[nextSlot].SetDefaults(ModContent.ItemType<DivineCore>());
             //shop.item[nextSlot].shopCustomPrice = Item.buyPrice(platinum: 5);
             //nextSlot++;
+            NPCShop shop = new NPCShop(Type);
 
+            Item ShopItem(int type, int price) => new Item(type) { shopCustomPrice = price };
 
-            if (ModCompatibility.calamityEnabled)
-            {
-                shop.AddShopItem(ref nextSlot, CalamityWeakRef.ItemType.ProfanedCrucible, Item.buyPrice(gold: 60));
-                shop.AddShopItem(ref nextSlot, CalamityWeakRef.ItemType.DivineGeode, Item.buyPrice(gold: 6));
-                if (CalamityWeakRef.downedDoG)
+            //Condition calCondition = new Condition("Mods.EverquartzAdventure.Conditions.CalamityEnabled", () => ModCompatibility.calamityEnabled);
+            if (ModCompatibility.calamityEnabled) {
+                Condition downedDoG = new Condition("Mods.EverquartzAdventure.Conditions.DownedDoG", () => CalamityWeakRef.downedDoG);
+                Condition hasElysianAegis = new Condition("Mods.EverquartzAdventure.Conditions.HasElysianAegis", () =>
                 {
-                    shop.AddShopItem(ref nextSlot, CalamityWeakRef.ItemType.NightmareFuel, Item.buyPrice(gold: 12));
-                    shop.AddShopItem(ref nextSlot, CalamityWeakRef.ItemType.EndothermicEnergy, Item.buyPrice(gold: 12));
-                    shop.AddShopItem(ref nextSlot, CalamityWeakRef.ItemType.DarksunFragment, Item.buyPrice(gold: 12));
-                }
+                    Player player = Main.player[Main.myPlayer];
+                    return player.HasItem(CalamityWeakRef.ItemType.ElysianAegis) || player.HasItem(CalamityWeakRef.ItemType.AsgardianAegis) || CalamityWeakRef.HasElysianAegisBuff(player);
+                });
 
-                Player player = Main.player[Main.myPlayer];
-                if (player.HasItem(CalamityWeakRef.ItemType.ElysianAegis) || player.HasItem(CalamityWeakRef.ItemType.AsgardianAegis) || CalamityWeakRef.HasElysianAegisBuff(player))
-                {
-                    shop.AddShopItem(ref nextSlot, CalamityWeakRef.ItemType.RuneOfKos, Item.buyPrice(platinum: 2));
-                }
+                shop.Add(ShopItem(CalamityWeakRef.ItemType.ProfanedCrucible, Item.buyPrice(gold: 60)));
+                shop.Add(ShopItem(CalamityWeakRef.ItemType.DivineGeode, Item.buyPrice(gold: 6)));
+
+                shop.Add(ShopItem(CalamityWeakRef.ItemType.NightmareFuel, Item.buyPrice(gold: 12)), downedDoG);
+                shop.Add(ShopItem(CalamityWeakRef.ItemType.EndothermicEnergy, Item.buyPrice(gold: 12)), downedDoG);
+                shop.Add(ShopItem(CalamityWeakRef.ItemType.DarksunFragment, Item.buyPrice(gold: 12)), downedDoG);
+
+                shop.Add(ShopItem(CalamityWeakRef.ItemType.RuneOfKos, Item.buyPrice(platinum: 2)), hasElysianAegis);
             }
 
-            shop.AddShopItem(ref nextSlot, ModContent.ItemType<DivineCore>(), Item.buyPrice(platinum: 5));
-            shop.AddShopItem(ref nextSlot, ModContent.ItemType<DeimosFumo>(), Item.buyPrice(gold: 1));
-            shop.AddShopItem(ref nextSlot, ModContent.ItemType<SundialNimbus>(), Item.buyPrice(gold: 3));
-            shop.AddShopItem(ref nextSlot, ModContent.ItemType<MarsBar>(), Item.buyPrice(gold: 1));
+            shop.Add(ShopItem(ModContent.ItemType<DivineCore>(), Item.buyPrice(platinum: 5)));
+            shop.Add(ShopItem(ModContent.ItemType<DeimosFumo>(), Item.buyPrice(gold: 1)));
+            shop.Add(ShopItem(ModContent.ItemType<SundialNimbus>(), Item.buyPrice(gold: 3)));
+            shop.Add(ShopItem(ModContent.ItemType<MarsBar>(), Item.buyPrice(gold: 1)));
+            //if (ModCompatibility.calamityEnabled)
+            //{
 
+            //    shop.Add(ref nextSlot, CalamityWeakRef.ItemType.ProfanedCrucible, Item.buyPrice(gold: 60));
+            //    shop.AddShopItem(ref nextSlot, CalamityWeakRef.ItemType.DivineGeode, Item.buyPrice(gold: 6));
+            //    if (CalamityWeakRef.downedDoG)
+            //    {
+            //        shop.AddShopItem(ref nextSlot, CalamityWeakRef.ItemType.NightmareFuel, Item.buyPrice(gold: 12));
+            //        shop.AddShopItem(ref nextSlot, CalamityWeakRef.ItemType.EndothermicEnergy, Item.buyPrice(gold: 12));
+            //        shop.AddShopItem(ref nextSlot, CalamityWeakRef.ItemType.DarksunFragment, Item.buyPrice(gold: 12));
+            //    }
+
+            //    Player player = Main.player[Main.myPlayer];
+            //    if (player.HasItem(CalamityWeakRef.ItemType.ElysianAegis) || player.HasItem(CalamityWeakRef.ItemType.AsgardianAegis) || CalamityWeakRef.HasElysianAegisBuff(player))
+            //    {
+            //        shop.AddShopItem(ref nextSlot, CalamityWeakRef.ItemType.RuneOfKos, Item.buyPrice(platinum: 2));
+            //    }
+            //}
+
+            //shop.AddShopItem(ref nextSlot, ModContent.ItemType<DivineCore>(), Item.buyPrice(platinum: 5));
+            //shop.AddShopItem(ref nextSlot, ModContent.ItemType<DeimosFumo>(), Item.buyPrice(gold: 1));
+            //shop.AddShopItem(ref nextSlot, ModContent.ItemType<SundialNimbus>(), Item.buyPrice(gold: 3));
+            //shop.AddShopItem(ref nextSlot, ModContent.ItemType<MarsBar>(), Item.buyPrice(gold: 1));
+            shop.Register();
         }
         #endregion
 

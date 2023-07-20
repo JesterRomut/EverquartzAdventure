@@ -20,7 +20,6 @@ using System.Linq;
 using EverquartzAdventure.UI.Transmogrification;
 using ReLogic.Graphics;
 using static System.Net.Mime.MediaTypeNames;
-using EverquartzAdventure.Buffs.Hypnos;
 using static Terraria.ModLoader.PlayerDrawLayer;
 using EverquartzAdventure.Items;
 
@@ -117,7 +116,7 @@ namespace EverquartzAdventure
             if (!_vanillaItemSlot.item.IsAir)
             {
                 // QuickSpawnClonedItem will preserve mod data of the item. QuickSpawnItem will just spawn a fresh version of the item, losing the prefix.
-                Main.LocalPlayer.QuickSpawnClonedItem(Main.LocalPlayer.GetSource_GiftOrReward(), _vanillaItemSlot.item, _vanillaItemSlot.item.stack);
+                Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_GiftOrReward(), _vanillaItemSlot.item, _vanillaItemSlot.item.stack);
                 // Now that we've spawned the item back onto the player, we reset the item by turning it into air.
                 _vanillaItemSlot.item.TurnToAir();
             }
@@ -130,7 +129,7 @@ namespace EverquartzAdventure
             });
             if (!_resultItemSlot.item.IsAir)
             {
-                Main.LocalPlayer.QuickSpawnClonedItem(Main.LocalPlayer.GetSource_GiftOrReward(), _resultItemSlot.item, _resultItemSlot.item.stack);
+                Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_GiftOrReward(), _resultItemSlot.item, _resultItemSlot.item.stack);
                 _resultItemSlot.item.TurnToAir();
                 ResetTransmogrification();
             }
@@ -184,7 +183,7 @@ namespace EverquartzAdventure
             float outwardnessFactor = MathHelper.Lerp(0.9f, 1.3f, pulse);
             Color color = EverquartzUtils.ColorSwap(new Color(255, 215, 159), new Color(246, 128, 159), new Color(160, 99, 185), 1f) * (1f - pulse);//* 0.27f;
             Texture2D asset = TextureAssets.Item[item.type].Value;
-            Vector2 baseDrawPosition = position + frame.Size() * scale / 2;
+            Vector2 baseDrawPosition = position + new Vector2(scale / 2);
             drawColor.A = ((byte)0);
             Main.spriteBatch.End();
             Main.spriteBatch.Begin((SpriteSortMode)1, BlendState.Additive, (SamplerState)null, (DepthStencilState)null, (RasterizerState)null, (Effect)null, Main.UIScaleMatrix);

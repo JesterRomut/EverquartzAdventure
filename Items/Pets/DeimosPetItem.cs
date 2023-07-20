@@ -1,4 +1,4 @@
-using EverquartzAdventure.Items;
+﻿using EverquartzAdventure.Items;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -11,12 +11,12 @@ namespace EverquartzAdventure.Items.Pets
 	public class DeimosPetItem : ModItem
 	{
 		public override void SetStaticDefaults() {			
-            DisplayName.SetDefault("Celestial Jar");
-			DisplayName.AddTranslation(7, "缸中天国");
-			DisplayName.AddTranslation(6, "Космическая Банка");
-			Tooltip.SetDefault("Trust me guys, it's snow. Snow. Snow? \nSNOW.");
-			Tooltip.AddTranslation(7, "相信我，它下的真正是雪...雪？\n雪（悲）");
-			Tooltip.AddTranslation(6, "Ребят, доверьтесь мне, это снег. Снег. Снег？\nСНЕГ.");
+            // DisplayName.SetDefault("Celestial Jar");
+			//DisplayName.AddTranslation(7, "缸中天国");
+			//DisplayName.AddTranslation(6, "Космическая Банка");
+			//// Tooltip.SetDefault("Trust me guys, it's snow. Snow. Snow? \nSNOW.");
+			//Tooltip.AddTranslation(7, "相信我，它下的真正是雪...雪？\n雪（悲）");
+			//Tooltip.AddTranslation(6, "Ребят, доверьтесь мне, это снег. Снег. Снег？\nСНЕГ.");
 		}
 		public override void SetDefaults() {
 			Item.CloneDefaults(ItemID.ZephyrFish); 

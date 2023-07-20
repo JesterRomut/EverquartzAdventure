@@ -19,11 +19,11 @@ namespace EverquartzAdventure.Items.Placeable.MusicBoxes
         public static string Trolled2Key => "Mods.EverquartzAdventure.Items.MelanieMartinezMusicBox.Trolled2";
         public override void SetStaticDefaults()
         {
-            base.SacrificeTotal = 1;
-            base.DisplayName.SetDefault("Music Box (Melanie Martinez)");
-            DisplayName.AddTranslation(7, "音乐盒 (Melanie Martinez)");
-            base.Tooltip.SetDefault("Plays Deimo's favorite song, EVIL, by Melanie Martinez");
-            Tooltip.AddTranslation(7, "播放戴莫斯最爱的歌，EVIL，作者是Melanie Martinez");
+            base.Item.ResearchUnlockCount = 1;
+            // base.DisplayName.SetDefault("Music Box (Melanie Martinez)");
+            //DisplayName.AddTranslation(7, "音乐盒 (Melanie Martinez)");
+            //// base.Tooltip.SetDefault("Plays Deimo's favorite song, EVIL, by Melanie Martinez");
+            //Tooltip.AddTranslation(7, "播放戴莫斯最爱的歌，EVIL，作者是Melanie Martinez");
             MusicLoader.AddMusicBox(base.Mod, MusicLoader.GetMusicSlot(base.Mod, "Sounds/Music/Rickroll"), ModContent.ItemType<MelanieMartinezMusicBox>(), ModContent.TileType<MelanieMartinezMusicBoxPlaced>());
         }
         public override void SetDefaults()

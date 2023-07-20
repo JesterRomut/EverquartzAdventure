@@ -14,12 +14,12 @@ namespace EverquartzAdventure.Items
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Mars Bar");
-            DisplayName.AddTranslation(7, "火星锭");
-            DisplayName.AddTranslation(6, "Марсовый Слиток");
-            Tooltip.SetDefault("Delicious!");
-            Tooltip.AddTranslation(7, "好吃！");
-            Tooltip.AddTranslation(6, "Вкусненько！");
+            // DisplayName.SetDefault("Mars Bar");
+            //DisplayName.AddTranslation(7, "火星锭");
+            //DisplayName.AddTranslation(6, "Марсовый Слиток");
+            //// Tooltip.SetDefault("Delicious!");
+            //Tooltip.AddTranslation(7, "好吃！");
+            //Tooltip.AddTranslation(6, "Вкусненько！");
         }
         public override void SetDefaults()
         {

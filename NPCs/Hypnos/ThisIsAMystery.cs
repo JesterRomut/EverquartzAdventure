@@ -27,7 +27,6 @@ using System.IO;
 using Terraria.ModLoader.IO;
 using EverquartzAdventure.NPCs.TownNPCs;
 using EverquartzAdventure.Projectiles.Hypnos;
-using EverquartzAdventure.Buffs.Hypnos;
 
 namespace EverquartzAdventure
 {
@@ -168,7 +167,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
                     break;
                 case HypnosReward.Hypnotize:
                     player.AddBuff(BuffID.Webbed, 240);
-                    player.AddBuff(ModContent.BuffType<Mindcrashed>(), 1200);
+                    //player.AddBuff(ModContent.BuffType<Mindcrashed>(), 1200);
                     break;
                 case HypnosReward.Euthanasia:
                     player.Hurt(PlayerDeathReason.ByOther(10), 200, 0);
@@ -211,9 +210,9 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Soul of the Eternal Intellect of Infinite Verboten Knowledge");
-            DisplayName.AddTranslation(7, "无限禁忌知识的永恒智慧之魂");
-            DisplayName.AddTranslation(6, "Душа Вечного Интелекта Бесконечных Запрещённых Знаний"); // is that a meme item? or from community remix? - blitz
+            // DisplayName.SetDefault("Soul of the Eternal Intellect of Infinite Verboten Knowledge");
+            //DisplayName.AddTranslation(7, "无限禁忌知识的永恒智慧之魂");
+            //DisplayName.AddTranslation(6, "Душа Вечного Интелекта Бесконечных Запрещённых Знаний"); // is that a meme item? or from community remix? - blitz
             ////                                                                                          ↑it's from hypnocord
             //NPCID.Sets.ActsLikeTownNPC[Type] = true;
             //NPCID.Sets.SpawnsWithCustomName[Type] = true;
@@ -232,7 +231,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
             NPCID.Sets.AttackTime[Type] = 100;
             NPCID.Sets.DangerDetectRange[Type] = 500;
             NPCID.Sets.ActsLikeTownNPC[Type] = true;
-
+            NPCID.Sets.NoTownNPCHappiness[Type] = true;
         }
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
@@ -271,7 +270,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
             NPC.lifeMax = 1320000;
         }
 
-        public override bool CanTownNPCSpawn(int numTownNPCs, int money)
+        public override bool CanTownNPCSpawn(int numTownNPCs)/* tModPorter Suggestion: Copy the implementation of NPC.SpawnAllowed_Merchant in vanilla if you to count money, and be sure to set a flag when unlocked, so you don't count every tick. */
         {
             return false;
         }
@@ -321,7 +320,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
         {
             button = Language.GetTextValue(ButtonTextKey, Lang.inter[16].Value);
         }
-        public override void OnChatButtonClicked(bool firstButton, ref bool shop)
+        public override void OnChatButtonClicked(bool firstButton, ref string shopName)
         {
             Player player = Main.player[Main.myPlayer];
 
@@ -329,7 +328,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
             Pray(player);
         }
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             if (NPC.life <= 0)
             {
@@ -337,7 +336,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
                 SoundEngine.PlaySound(NPC.DeathSound, NPC.position);
                 for (int num585 = 0; num585 < 25; num585++)
                 {
-                    int num586 = Dust.NewDust(NPC.position, NPC.width, NPC.height, 31, 0f, 0f, 100, default(Color), 2f);
+                    int num586 = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Smoke, 0f, 0f, 100, default(Color), 2f);
                     Dust dust30 = Main.dust[num586];
                     Dust dust187 = dust30;
                     dust187.velocity *= 1.4f;
@@ -585,7 +584,7 @@ namespace EverquartzAdventure.NPCs.Hypnos
             // can't spawn if any events are running
 
             // can't spawn if the sundial is active
-            if (Main.fastForwardTime)
+            if (Main.IsFastForwardingTime()/* tModPorter Note: Removed. Suggestion: IsFastForwardingTime(), fastForwardTimeToDawn or fastForwardTimeToDusk */)
                 return false;
 
             // can spawn if daytime, and between the spawn and despawn times
@@ -1019,13 +1018,13 @@ namespace EverquartzAdventure.NPCs.Hypnos
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Indulgence");
-            DisplayName.AddTranslation(7, "赎罪券");
-            DisplayName.AddTranslation(6, "Снисхождение");
+            // DisplayName.SetDefault("Indulgence");
+            //DisplayName.AddTranslation(7, "赎罪券");
+            //DisplayName.AddTranslation(6, "Снисхождение");
 
-            Tooltip.SetDefault("You are atoned from your sins");
-            Tooltip.AddTranslation(7, "你已经免除了你的罪");
-            Tooltip.AddTranslation(6, "Вы искуплены от своих грехов");
+            //// Tooltip.SetDefault("You are atoned from your sins");
+            //Tooltip.AddTranslation(7, "你已经免除了你的罪");
+            //Tooltip.AddTranslation(6, "Вы искуплены от своих грехов");
         }
         public override void SetDefaults()
         {

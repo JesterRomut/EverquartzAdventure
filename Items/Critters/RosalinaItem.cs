@@ -23,15 +23,16 @@ namespace EverquartzAdventure.Items.Critters
         public override string Texture => "EverquartzAdventure/NPCs/TownNPCs/StarbornPrincess";
         public override void SetStaticDefaults()
         {
-            base.SacrificeTotal = 5;
-            base.DisplayName.SetDefault("Deimos the Starborn Princess");
-            DisplayName.AddTranslation(7, "星光公主Deimos");
-            DisplayName.AddTranslation(6, "Деймос, Рождённая в звёздах");
-            base.Tooltip.SetDefault("Right click to murder");
-            Tooltip.AddTranslation(7, "右键谋杀");
-            Tooltip.AddTranslation(6, "Нажмите ПКМ что бы убить");
+            base.Item.ResearchUnlockCount = 5;
+            // base.DisplayName.SetDefault("Deimos the Starborn Princess");
+            //DisplayName.AddTranslation(7, "星光公主Deimos");
+            //DisplayName.AddTranslation(6, "Деймос, Рождённая в звёздах");
+            //// base.Tooltip.SetDefault("Right click to murder");
+            //Tooltip.AddTranslation(7, "右键谋杀");
+            //Tooltip.AddTranslation(6, "Нажмите ПКМ что бы убить");
             Main.RegisterItemAnimation(base.Item.type, new DrawAnimationVertical(5, 6));
             ItemID.Sets.AnimatesAsSoul[base.Type] = true;
+            ItemID.Sets.IsLavaImmuneRegardlessOfRarity[Type] = true;
         }
 
         public override void SetDefaults()
@@ -86,10 +87,10 @@ namespace EverquartzAdventure.Items.Critters
             StarbornPrincess.ModifyLoot(itemLoot);
         }
 
-        public override bool? CanBurnInLava()
-        {
-            return false;
-        }
+        //public override bool? CanBurnInLava()/* tModPorter Note: Removed. Use ItemID.Sets.IsLavaImmuneRegardlessOfRarity or add a method hook to On_Item.CheckLavaDeath */
+        //{
+        //    return false;
+        //}
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             //tooltips.ForEach(line => line.Text += tooltips.IndexOf(line));

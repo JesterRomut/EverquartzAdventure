@@ -85,22 +85,24 @@ namespace EverquartzAdventure
         //    }
         //}
 
-        public override void ModifyHitNPC(Item item, NPC target, ref int damage, ref float knockback, ref bool crit)
-        {
-            if (target.Everquartz().mindcrashed > 0)
-            {
-                crit = true;
-            }
-        }
+        //public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Item, consider using ModifyHitNPC instead */
+        //{
+        //    if (target.Everquartz().mindcrashed > 0)
+        //    {
+        //        modifiers.FinalDamage.Base += Player.GetWeaponDamage(item) / 2;
+        //        //var debug = Player.GetWeaponDamage(item);
+        //        //modifiers.SetCrit();
+        //    }
+        //}
 
-        public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
-        {
-            if (target.Everquartz().mindcrashed > 0)
-            {
-                crit = true;
-            }
-        }
-    
+        //public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Projectile, consider using ModifyHitNPC instead */
+        //{
+        //    if (target.Everquartz().mindcrashed > 0)
+        //    {
+        //        modifiers.FinalDamage.Base += proj.damage / 2;
+        //    }
+        //}
+
 
         public void ResetBuffs()
         {

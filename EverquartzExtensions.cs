@@ -204,8 +204,7 @@ namespace EverquartzAdventure
             return target;
         }
 
-        public static bool CheckNPCInSight(this Vector2 position, NPC npc, float distance) => npc != null && npc.active && npc.CanBeChasedBy() && npc.chaseable && Vector2.Distance(position, npc.Center) < distance + ((float)(npc.width / 2) + (float)(npc.height / 2));
-        public static NPC NearestEnemyPreferNoMindcrashed(this Vector2 position, float maxDistance)
+        public static NPC NearestEnemy(this Vector2 position, float maxDistance)
         {
 
             NPC target = null;
@@ -213,27 +212,50 @@ namespace EverquartzAdventure
 
             bool checkNPCInSight(NPC npc) => position.CheckNPCInSight(npc, distance);
 
-            bool shouldAttackDebuffed = !Main.npc.Where(npc => checkNPCInSight(npc) && !(npc.Everquartz().mindcrashed > 0)).Any();
             foreach (NPC npc in Main.npc)
             {
 
                 if (checkNPCInSight(npc))
                 {
-                    bool debuffed = npc.Everquartz().mindcrashed > 0;
-                    if (debuffed == shouldAttackDebuffed)
-                    {
                         distance = Vector2.Distance(position, npc.Center);
                         target = npc;
-                    }
+                    
 
                 }
             }
-            //if (target != null && target.active)
-            //{
-            //    CombatText.NewText(new Rectangle((int)position.X, (int)position.Y, 1, 1), Color.White, $"{target.FullName} {target.chaseable} {target.CanBeChasedBy()} {target.active}");
-            //}
             return target;
         }
+
+        public static bool CheckNPCInSight(this Vector2 position, NPC npc, float distance) => npc != null && npc.active && npc.CanBeChasedBy() && npc.chaseable && Vector2.Distance(position, npc.Center) < distance + ((float)(npc.width / 2) + (float)(npc.height / 2));
+        //public static NPC NearestEnemyPreferNoMindcrashed(this Vector2 position, float maxDistance)
+        //{
+
+        //    NPC target = null;
+        //    float distance = maxDistance;
+
+        //    bool checkNPCInSight(NPC npc) => position.CheckNPCInSight(npc, distance);
+
+        //    bool shouldAttackDebuffed = !Main.npc.Where(npc => checkNPCInSight(npc) && !(npc.Everquartz().mindcrashed > 0)).Any();
+        //    foreach (NPC npc in Main.npc)
+        //    {
+
+        //        if (checkNPCInSight(npc))
+        //        {
+        //            bool debuffed = npc.Everquartz().mindcrashed > 0;
+        //            if (debuffed == shouldAttackDebuffed)
+        //            {
+        //                distance = Vector2.Distance(position, npc.Center);
+        //                target = npc;
+        //            }
+
+        //        }
+        //    }
+        //    //if (target != null && target.active)
+        //    //{
+        //    //    CombatText.NewText(new Rectangle((int)position.X, (int)position.Y, 1, 1), Color.White, $"{target.FullName} {target.chaseable} {target.CanBeChasedBy()} {target.active}");
+        //    //}
+        //    return target;
+        //}
 
 
         public static byte[] ToByteArray(this BitArray bits)

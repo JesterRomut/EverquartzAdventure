@@ -19,12 +19,12 @@ namespace EverquartzAdventure.Items.Weapons
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sundial's Nimbus");
-            DisplayName.AddTranslation(7, "日晷之灵光");                                            
-            DisplayName.AddTranslation(6, "Нимб Сандиала");
-            Tooltip.SetDefault("THEY PUT HER ON A FUCKING STAFF"); // is that everquartz who is "they"?
-            Tooltip.AddTranslation(7, "他们把她放在一个她妈的法杖上！");
-            Tooltip.AddTranslation(6, "ТЫ ПОМЕСТИЛ ЕЁ НА ЕБУЧИЙ ПОСОХ");
+            // DisplayName.SetDefault("Sundial's Nimbus");
+            //DisplayName.AddTranslation(7, "日晷之灵光");                                            
+            //DisplayName.AddTranslation(6, "Нимб Сандиала");
+            //// Tooltip.SetDefault("THEY PUT HER ON A FUCKING STAFF"); // is that everquartz who is "they"?
+            //Tooltip.AddTranslation(7, "他们把她放在一个她妈的法杖上！");
+            //Tooltip.AddTranslation(6, "ТЫ ПОМЕСТИЛ ЕЁ НА ЕБУЧИЙ ПОСОХ");
         }
         public override void SetDefaults()
         {
@@ -127,7 +127,7 @@ namespace EverquartzAdventure.Items.Weapons
             }
         }
 
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             //damage *= 1000;
             //damage *= 100; this stuff makes it WAY too unbalanced, i changed the stats to a point where it's balanced enough -gat
@@ -163,7 +163,7 @@ namespace EverquartzAdventure.Items.Weapons
                 target2 = vector12;
                 for (float num57 = 0f; num57 < (float)num35; num57++)
                 {
-                    int num68 = Dust.NewDust(vector12, Projectile.width, Projectile.height, 267, 0f, 0f, 0, fairyQueenWeaponsColor2);
+                    int num68 = Dust.NewDust(vector12, Projectile.width, Projectile.height, DustID.RainbowMk2, 0f, 0f, 0, fairyQueenWeaponsColor2);
                     Dust dust19 = Main.dust[num68];
                     Dust dust315 = dust19;
                     dust315.velocity *= Main.rand.NextFloat() * 0.8f;

@@ -1,17 +1,7 @@
 ﻿using MonoMod.Cil;
-//using On.Terraria;
-using IL.Terraria;
-using Terraria;
 using System;
-using Terraria.ModLoader;
 using static Mono.Cecil.Cil.OpCodes;
 using Mono.Cecil.Cil;
-using MonoMod.RuntimeDetour.HookGen;
-using System.Reflection;
-using Mono.CompilerServices.SymbolWriter;
-using Terraria.Localization;
-using On.Terraria;
-using System.Reflection.Emit;
 
 namespace EverquartzAdventure.ILEditing
 {
@@ -178,14 +168,14 @@ namespace EverquartzAdventure.ILEditing
         internal static void Load()
         {
             //IL.Terraria.Player.PlaceThing_Tiles += PrePlaceThingTilesPatch;
-            IL.Terraria.NPC.checkDead += TownNPCCustomDeathMessage;
+            Terraria.IL_NPC.checkDead += TownNPCCustomDeathMessage;
             //HookEndpointManager.Modify<ILContext.Manipulator>(typeof(NPCLoader).GetMethod("StrikeNPC", BindingFlags.Static | BindingFlags.Public), IAmGoingToHell);
         }
 
         internal static void Unload()
         {
             //IL.Terraria.Player.PlaceThing_Tiles -= PrePlaceThingTilesPatch;
-            IL.Terraria.NPC.checkDead -= TownNPCCustomDeathMessage;
+            Terraria.IL_NPC.checkDead -= TownNPCCustomDeathMessage;
             //HookEndpointManager.Unmodify<ILContext.Manipulator>(typeof(NPCLoader).GetMethod("StrikeNPC", BindingFlags.Static | BindingFlags.Public), IAmGoingToHell);
         }
     }

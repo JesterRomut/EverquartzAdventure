@@ -45,14 +45,15 @@ namespace EverquartzAdventure.Items.Critters
             CalamityWeakRef.GravityNormalizerBuff
         };
 
-        public override void SetStaticDefaults() {			
-            DisplayName.SetDefault("Divine Core");
-			DisplayName.AddTranslation(7, "神圣核心");
-			DisplayName.AddTranslation(6, "Божественное Ядро");
-			Tooltip.SetDefault("You feel such a divine warmth seethe through your body...\nSomething tells you that you should not have this item in your hands.");
-			Tooltip.AddTranslation(7, "你感到如此神圣的温度在你的体中沸腾...\n你最好不要把这个拿在手里。");
-			Tooltip.AddTranslation(6, "Вы чувствуете, как божественная теплота бурлит в вашем теле...\nЧто то говорит тебе, что этот предмет не должен быть в твоих руках.");
-		}
+        public override void SetStaticDefaults() {
+            ItemID.Sets.IsLavaImmuneRegardlessOfRarity[Type] = true;
+            // DisplayName.SetDefault("Divine Core");
+            //DisplayName.AddTranslation(7, "神圣核心");
+            //DisplayName.AddTranslation(6, "Божественное Ядро");
+            // Tooltip.SetDefault("You feel such a divine warmth seethe through your body...\nSomething tells you that you should not have this item in your hands.");
+            //Tooltip.AddTranslation(7, "你感到如此神圣的温度在你的体中沸腾...\n你最好不要把这个拿在手里。");
+            //Tooltip.AddTranslation(6, "Вы чувствуете, как божественная теплота бурлит в вашем теле...\nЧто то говорит тебе, что этот предмет не должен быть в твоих руках.");
+        }
 		public override void SetDefaults() {
 			Item.width = 42; 
 			Item.height = 102; 
@@ -128,10 +129,10 @@ namespace EverquartzAdventure.Items.Critters
             return true;
         }
 
-        public override bool? CanBurnInLava()
-        {
-            return false;
-        }
+        //public override bool? CanBurnInLava()/* tModPorter Note: Removed. Use ItemID.Sets.IsLavaImmuneRegardlessOfRarity or add a method hook to On_Item.CheckLavaDeath */
+        //{
+        //    return false;
+        //}
 
         public override bool ConsumeItem(Player player)
         {

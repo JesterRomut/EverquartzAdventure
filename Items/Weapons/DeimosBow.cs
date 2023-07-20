@@ -23,8 +23,8 @@ namespace EverquartzAdventure.Items.Weapons
         //public override string Texture => "EverquartzAdventure/NPCs/TownNPCs/StarbornPrincess_Head";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Celestial Heavenfire");
-            DisplayName.AddTranslation(7, "天火");
+            // DisplayName.SetDefault("Celestial Heavenfire");
+            //DisplayName.AddTranslation(7, "天火");
         }
         public override void SetDefaults() {
 			Item.width = 20; 

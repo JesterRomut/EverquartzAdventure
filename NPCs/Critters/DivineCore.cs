@@ -15,9 +15,9 @@ namespace EverquartzAdventure.NPCs.Critters
     public class DivineCore: ModNPC
     {
         public override void SetStaticDefaults() {
-            DisplayName.SetDefault("Divine Core");
-            DisplayName.AddTranslation(7, "神圣核心");
-            DisplayName.AddTranslation(6, "Божественное Ядро");
+            // DisplayName.SetDefault("Divine Core");
+            //DisplayName.AddTranslation(7, "神圣核心");
+            //DisplayName.AddTranslation(6, "Божественное Ядро");
             //NPCID.Sets.CountsAsCritter[base.NPC.type] = true;
             Main.npcCatchable[base.NPC.type] = true;
         }

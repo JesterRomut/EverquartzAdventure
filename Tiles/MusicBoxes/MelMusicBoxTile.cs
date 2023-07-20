@@ -1,3 +1,4 @@
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria;
 using Terraria.ObjectData;
@@ -20,7 +21,7 @@ namespace EverquartzAdventure.Tiles.MusicBoxes
             TileObjectData.newTile.LavaDeath = false;
             TileObjectData.newTile.DrawYOffset = 2;
             TileObjectData.addTile(base.Type);
-            ModTranslation name = CreateMapEntryName();
+            LocalizedText name = CreateMapEntryName();
             AddMapEntry(new Color(200, 200, 200), name);
         }
 

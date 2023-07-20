@@ -14,12 +14,12 @@ namespace EverquartzAdventure.Items
 	public class DeimosFumo : ModItem
 	{
 		public override void SetStaticDefaults() {			
-            DisplayName.SetDefault("Deimos Plushie");
-			DisplayName.AddTranslation(7, "戴莫斯玩偶");
-			DisplayName.AddTranslation(6, "Плюшевая Игрушка Деймоса");
-			Tooltip.SetDefault("I hope you don't make it into anything suspiscious...");
-			Tooltip.AddTranslation(7, "我希望你不要对它干奇怪的事情...");
-			Tooltip.AddTranslation(6, "Понадеемся, что ты не будешь делать ничего подозрительного из этой вещи...");
+            // DisplayName.SetDefault("Deimos Plushie");
+			//DisplayName.AddTranslation(7, "戴莫斯玩偶");
+			//DisplayName.AddTranslation(6, "Плюшевая Игрушка Деймоса");
+			//// Tooltip.SetDefault("I hope you don't make it into anything suspiscious...");
+			//Tooltip.AddTranslation(7, "我希望你不要对它干奇怪的事情...");
+			//Tooltip.AddTranslation(6, "Понадеемся, что ты не будешь делать ничего подозрительного из этой вещи...");
 		}
 		public override void SetDefaults() {
             Item.SetFoodDefault();
