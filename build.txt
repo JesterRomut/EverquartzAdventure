@@ -1,4 +1,4 @@
 displayName = Deimos, the Starborn Princess
 author = Everquartz - Spriting + Idea, Jester and Gat - coding, Blitzträger and Jester - Russian and Chinese Translations.
-version = 0.2.4.0
-weakReferences = CalamityMod, Hypnos, CalRemix
+version = 0.2.4.3
+weakReferences = CalamityMod, HypnosMod, CalRemix

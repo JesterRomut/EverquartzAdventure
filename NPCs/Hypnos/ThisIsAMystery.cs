@@ -14,7 +14,7 @@ using Terraria.GameContent.Bestiary;
 using Humanizer;
 using Terraria.Utilities;
 using Terraria.GameContent.Events;
-using Hypnos;
+using HypnosMod;
 using Terraria.Chat;
 using Terraria.Localization;
 using Terraria.Audio;

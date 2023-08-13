@@ -22,8 +22,8 @@
     <Reference Include="CalRemix">
       <HintPath>..\ModAssemblies\CalRemix.dll</HintPath>
     </Reference>
-    <Reference Include="Hypnos">
-      <HintPath>..\ModAssemblies\Hypnos.dll</HintPath>
+    <Reference Include="HypnosMod">
+      <HintPath>..\ModAssemblies\HypnosMod.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>

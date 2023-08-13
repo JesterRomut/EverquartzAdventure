@@ -253,7 +253,15 @@ Mods: {
 			DeimosPetProjectile.DisplayName: 戴莫斯
 		}
 
-		Tiles.MelanieMartinezMusicBoxPlaced.MapEntry: 音乐盒
+		Tiles: {
+			MelanieMartinezMusicBoxPlaced.MapEntry: 音乐盒
+			// DeimosFumoPlaced.MapEntry: Deimos Fumo
+		}
+
+		Conditions: {
+			// DownedDoG: Mods.EverquartzAdventure.Conditions.DownedDoG
+			// HasElysianAegis: Mods.EverquartzAdventure.Conditions.HasElysianAegis
+		}
 	}
 }
 

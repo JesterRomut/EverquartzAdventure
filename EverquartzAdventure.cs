@@ -103,10 +103,10 @@ namespace EverquartzAdventure
             ModCompatibility.censusMod = null;
             ModLoader.TryGetMod("Census", out ModCompatibility.censusMod);
             ModCompatibility.hypnosMod = null;
-            ModLoader.TryGetMod("Hypnos", out ModCompatibility.hypnosMod);
+            ModLoader.TryGetMod("HypnosMod", out ModCompatibility.hypnosMod);
 
             ModCompatibility.calamityEnabled = ModLoader.HasMod("CalamityMod");
-            ModCompatibility.hypnosEnabled = ModLoader.HasMod("Hypnos");
+            ModCompatibility.hypnosEnabled = ModLoader.HasMod("HypnosMod");
             ModCompatibility.calRemixEnabled = ModLoader.HasMod("CalRemix");
 
             ILChanges.Load();
