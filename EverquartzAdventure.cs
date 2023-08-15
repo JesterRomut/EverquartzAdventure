@@ -11,7 +11,6 @@ using System;
 using Terraria.Localization;
 using EverquartzAdventure.Items.Critters;
 using Terraria.ModLoader.IO;
-using EverquartzAdventure.NPCs.Hypnos;
 using System.Collections;
 using EverquartzAdventure.ILEditing;
 using EverquartzAdventure.UI.Transmogrification;
@@ -62,35 +61,6 @@ namespace EverquartzAdventure
                     Player player = Main.player[reader.ReadInt32()];
                     DivineCore.ReleaseProvCoreServer(player);
                     break;
-                case EverquartzMessageType.HypnosReward:
-                    Player priest = Main.player[reader.ReadInt32()];
-                    byte[] byteArray = reader.ReadBytes((EverquartzUtils.EnumCount<HypnosReward>() - 1) / 8 + 1);
-                    BitArray bitArray = new BitArray(byteArray);
-                    List<HypnosReward> rewards = new List<HypnosReward>();
-                    for (int i = 0; i < bitArray.Length; i++)
-                    {
-                        if (bitArray.Get(i))
-                        {
-                            rewards.Add((HypnosReward)i);
-                        }
-                    }
-                    NPCs.Hypnos.Hypnos.HandleRewardsServer(priest, rewards);
-                    break;
-                case EverquartzMessageType.HypnoCoinAdd:
-                    NPCs.Hypnos.Hypnos.HandleHypnoCoinAddServer();
-                    break;
-                case EverquartzMessageType.HypnosDeparted:
-                    NPC hypnos = NPCs.Hypnos.Hypnos.Instance;
-                    if (hypnos != null)
-                    {
-                        NPCs.Hypnos.Hypnos.HandleDepartHypnosUniversal(hypnos);
-                    }
-                    break;
-                    //case EverquartzMessageType.EverquartzSyncPlayer:
-                    //    byte playernumber = reader.ReadByte();
-                    //    EverquartzPlayer ePlayer = Main.player[playernumber].GetModPlayer<EverquartzPlayer>();
-                    //    ePlayer.lastSleepingSpot = reader.ReadVector2().ToPoint();
-                    //    break;
             }
         }
 
@@ -187,29 +157,9 @@ namespace EverquartzAdventure
     {
 
 
-        public override void OnWorldLoad()
-        {
-            NPCs.Hypnos.Hypnos.hypnoCoins = 0;
-            NPCs.Hypnos.Hypnos.timePassed = 0;
-            NPCs.Hypnos.Hypnos.spawnTime = Double.MaxValue;
-        }
-        public override void LoadWorldData(TagCompound tag)
-        {
-            NPCs.Hypnos.Hypnos.Load(tag.GetCompound("hypnos"));
-        }
-        public override void SaveWorldData(TagCompound tag)
-        {
-            tag.Add("hypnos", NPCs.Hypnos.Hypnos.Save());
-        }
-
-        public override void PreUpdateWorld()
-        {
-            NPCs.Hypnos.Hypnos.UpdateTravelingMerchant();
-        }
 
         public static List<int> UniqueNPCs => new List<int>() {
             ModContent.NPCType<StarbornPrincess>(),
-            ModContent.NPCType<NPCs.Hypnos.Hypnos>(),
         };
 
         public override void PreUpdateNPCs()

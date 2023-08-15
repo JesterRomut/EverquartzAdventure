@@ -8,6 +8,20 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <AdditionalFiles Remove="Buffs\Hypnos\**" />
+    <AdditionalFiles Remove="NPCs\Hypnos\**" />
+    <AdditionalFiles Remove="Projectiles\Hypnos\**" />
+    <Compile Remove="Buffs\Hypnos\**" />
+    <Compile Remove="NPCs\Hypnos\**" />
+    <Compile Remove="Projectiles\Hypnos\**" />
+    <EmbeddedResource Remove="Buffs\Hypnos\**" />
+    <EmbeddedResource Remove="NPCs\Hypnos\**" />
+    <EmbeddedResource Remove="Projectiles\Hypnos\**" />
+    <None Remove="Buffs\Hypnos\**" />
+    <None Remove="NPCs\Hypnos\**" />
+    <None Remove="Projectiles\Hypnos\**" />
+  </ItemGroup>
+  <ItemGroup>
     <AdditionalFiles Remove="Localization\en-US.hjson" />
     <AdditionalFiles Remove="Localization\ru-RU.hjson" />
     <AdditionalFiles Remove="Localization\zh-Hans.hjson" />

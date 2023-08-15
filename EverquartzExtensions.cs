@@ -12,7 +12,6 @@ using Terraria.Audio;
 using Terraria.Localization;
 using EverquartzAdventure.Items.Critters;
 using Terraria.ModLoader.IO;
-using EverquartzAdventure.NPCs.Hypnos;
 using System.Collections;
 using EverquartzAdventure.ILEditing;
 using EverquartzAdventure.UI.Transmogrification;

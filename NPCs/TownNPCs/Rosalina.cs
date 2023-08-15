@@ -129,6 +129,7 @@ namespace EverquartzAdventure.NPCs.TownNPCs
         
 
         public override string Texture => "EverquartzAdventure/NPCs/TownNPCs/StarbornPrincess";
+        //public override string HeadTexture => "EverquartzAdventure/NPCs/TownNPCs/StarbornPrincess";
         #endregion
 
         #region LanguageKeys
@@ -157,12 +158,12 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             // base.DisplayName.SetDefault("Starborn Princess");
             //DisplayName.AddTranslation(7, "星光公主");
             //DisplayName.AddTranslation(6, "Принцесса, рождённая в небесах");
-            Main.npcFrameCount[base.NPC.type] = 6;
+            //Main.npcFrameCount[base.NPC.type] = 6;
             //NPCID.Sets.ExtraFramesCount[base.NPC.type] = 9;
             //NPCID.Sets.AttackFrameCount[base.NPC.type] = 4;
             NPCID.Sets.DangerDetectRange[base.NPC.type] = 400;
-            NPCID.Sets.AttackType[base.NPC.type] = 0;
-            NPCID.Sets.AttackTime[base.NPC.type] = 60;
+            NPCID.Sets.AttackType[base.NPC.type] = NPCID.Sets.AttackTime[NPCID.Dryad];
+            NPCID.Sets.AttackTime[base.NPC.type] = NPCID.Sets.AttackTime[NPCID.Dryad];
             NPCID.Sets.AttackAverageChance[base.NPC.type] = 15;
             base.NPC.Happiness.SetBiomeAffection<HallowBiome>(AffectionLevel.Love).SetBiomeAffection<DesertBiome>(AffectionLevel.Hate);
             NPCID.Sets.NPCBestiaryDrawModifiers nPCBestiaryDrawModifiers = new NPCID.Sets.NPCBestiaryDrawModifiers(0);
@@ -170,6 +171,11 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             NPCID.Sets.NPCBestiaryDrawModifiers drawModifiers = nPCBestiaryDrawModifiers;
             NPCID.Sets.NPCBestiaryDrawOffset.Add(base.NPC.type, drawModifiers);
             Main.npcCatchable[base.NPC.type] = true;
+
+            Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.Dryad];
+            NPCID.Sets.ExtraFramesCount[Type] = NPCID.Sets.ExtraFramesCount[NPCID.Dryad];
+            NPCID.Sets.AttackFrameCount[Type] = NPCID.Sets.AttackFrameCount[NPCID.Dryad];
+            NPCID.Sets.NPCFramingGroup[Type] = NPCID.Sets.NPCFramingGroup[NPCID.Dryad];
         }
 
         public override bool CanGoToStatue(bool toKingStatue)
@@ -182,8 +188,8 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             base.NPC.townNPC = true;
             base.NPC.friendly = true;
             base.NPC.lavaImmune = true;
-            base.NPC.width = 18;
-            base.NPC.height = 40;
+            base.NPC.width = 30;
+            base.NPC.height = 29;
             base.NPC.aiStyle = 7;
             base.NPC.damage = 1;
             base.NPC.defense = 0;
@@ -198,6 +204,8 @@ namespace EverquartzAdventure.NPCs.TownNPCs
                 NPC.buffImmune[CalamityWeakRef.BuffType.GodSlayerInferno] = true;
             }
             //base.AnimationType = 124;
+            AnimationType = NPCID.Dryad;
+            //base.AnimationType = 108;
         }
 
         public override bool UsesPartyHat()
@@ -205,14 +213,14 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             return true;
         }
 
-        public override void FindFrame(int frameHeight)
-        {
-            base.NPC.frameCounter += 0.15;
-            base.NPC.frameCounter %= Main.npcFrameCount[base.NPC.type];
-            int frame = (int)base.NPC.frameCounter;
-            base.NPC.frame.Y = frame * frameHeight;
-            NPC.spriteDirection = NPC.direction;
-        }
+        //public override void FindFrame(int frameHeight)
+        //{
+        //    base.NPC.frameCounter += 0.15;
+        //    base.NPC.frameCounter %= Main.npcFrameCount[base.NPC.type];
+        //    int frame = (int)base.NPC.frameCounter;
+        //    base.NPC.frame.Y = frame * frameHeight;
+        //    NPC.spriteDirection = NPC.direction;
+        //}
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
         {
             bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[3]

@@ -153,14 +153,14 @@ namespace EverquartzAdventure.NPCs
         //    }
         //}
 
-        public override void OnKill(NPC npc)
-        {
-            if (npc.boss && ModCompatibility.hypnosEnabled && ModCompatibility.HypnosBossType.HasValue && npc.type == ModCompatibility.HypnosBossType.Value)
-            {
-                int hypNpcType = ModContent.NPCType<NPCs.Hypnos.Hypnos>();
-                Main.npc.Where(npc2 => npc2.active && npc2.type == hypNpcType).ToList().ForEach(hypno => ((NPCs.Hypnos.Hypnos)hypno.ModNPC).KillWithCoins());
-            }
-        }
+        //public override void OnKill(NPC npc)
+        //{
+        //    if (npc.boss && ModCompatibility.hypnosEnabled && ModCompatibility.HypnosBossType.HasValue && npc.type == ModCompatibility.HypnosBossType.Value)
+        //    {
+        //        int hypNpcType = ModContent.NPCType<NPCs.Hypnos.Hypnos>();
+        //        Main.npc.Where(npc2 => npc2.active && npc2.type == hypNpcType).ToList().ForEach(hypno => ((NPCs.Hypnos.Hypnos)hypno.ModNPC).KillWithCoins());
+        //    }
+        //}
     }
 
 }

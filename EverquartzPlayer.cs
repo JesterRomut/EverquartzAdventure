@@ -6,8 +6,6 @@ using Terraria.DataStructures;
 using EverquartzAdventure.NPCs.TownNPCs;
 using System;
 using static Terraria.Player;
-using EverquartzAdventure.NPCs.Hypnos;
-using EverquartzAdventure.Projectiles.Hypnos;
 using System.Collections;
 using EverquartzAdventure.UI.Transmogrification;
 using Terraria.ModLoader.IO;
@@ -38,14 +36,6 @@ namespace EverquartzAdventure
             LoadTransmogrificationInfo(tag.GetCompound("transmogrification"));
         }
 
-        public override void PostUpdate()
-        {
-            //if (Player.sleeping.isSleeping)
-            //{
-            //    lastSleepingSpot = (Player.Bottom + new Vector2(0f, -2f)).ToTileCoordinates();
-            //}
-            UpdatePraisingHypnos();
-        }
 
         //public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
         //{
@@ -56,16 +46,6 @@ namespace EverquartzAdventure
         //    packet.Send(toWho, fromWho);
         //}
 
-        public override bool PreItemCheck()
-        {
-            if (IsPraisingHypnos)
-            {
-                PraisingHypnosAnimation();
-                return false;
-            }
-            
-            return true;
-        }
 
         public override void ResetEffects()
         {
@@ -146,90 +126,6 @@ namespace EverquartzAdventure
             transEndTime = tag.GetString("transEndTime").ToISO8601();
             transResult = tag.Get<Item>("transResult");
             transIndex = tag.GetInt("transIndex");
-        }
-
-        #endregion
-
-        #region Hypnos
-
-        public int praisingTimer = 0;
-        public bool IsPraisingHypnos => praisingTimer > 0;
-        public void InterruptPraisingHypnos()
-        {
-            praisingTimer = 0;
-        }
-
-        private void PraisingHypnosAnimation()
-        {
-            int num9 = Player.miscCounter % 14 / 7;
-            CompositeArmStretchAmount stretch = CompositeArmStretchAmount.ThreeQuarters;
-            float num2 = 0.3f;
-            if (num9 == 1)
-            {
-                //stretch = CompositeArmStretchAmount.Full;
-                num2 = 0.35f;
-            }
-
-            Player.SetCompositeArmBack(enabled: true, stretch, (float)Math.PI * -2f * num2 * (float)Player.direction);
-            Player.SetCompositeArmFront(enabled: true, stretch, (float)Math.PI * -2f * num2 * (float)Player.direction);
-
-        }
-
-        public void DonePraisingHypnos()
-        {
-            //client side
-            NPC hypnos = NPCs.Hypnos.Hypnos.Instance;
-            AergiaNeuron.AddElectricDusts(hypnos != null ? hypnos : Player);
-
-            List<HypnosReward> rewards = NPCs.Hypnos.Hypnos.GenerateRewards();
-
-
-            if (Main.netMode == NetmodeID.SinglePlayer)
-            {
-                NPCs.Hypnos.Hypnos.HandleRewardsServer(Player, rewards);
-            }
-            else
-            {
-                int rewardCount = EverquartzUtils.EnumCount<HypnosReward>();
-                //this.Mod.Logger.Info(rewards);
-                ModPacket packet = base.Mod.GetPacket();
-                packet.Write((byte)EverquartzMessageType.HypnosReward);
-                packet.Write(Player.whoAmI);
-                bool[] rewardBools = new bool[rewardCount];
-                rewards.ForEach(reward => rewardBools[(int)reward] = true);
-                BitArray bitArray = new BitArray(rewardBools);
-                packet.Write(bitArray.ToByteArray());
-
-                packet.Send();
-            }
-
-            InterruptPraisingHypnos();
-        }
-
-
-
-        public void UpdatePraisingHypnos()
-        {
-            if (!IsPraisingHypnos)
-            {
-                return;
-            }
-            if (Player.talkNPC == -1)
-            {
-                InterruptPraisingHypnos();
-                return;
-            }
-            int num = Math.Sign(Main.npc[Player.talkNPC].Center.X - Player.Center.X);
-            if (Player.controlLeft || Player.controlRight || Player.controlUp || Player.controlDown || Player.controlJump || Player.pulley || Player.mount.Active || num != Player.direction)
-            {
-                InterruptPraisingHypnos();
-                return;
-            }
-            praisingTimer--;
-            if (praisingTimer <= 0)
-            {
-                DonePraisingHypnos();
-            }
         }
 
         #endregion
