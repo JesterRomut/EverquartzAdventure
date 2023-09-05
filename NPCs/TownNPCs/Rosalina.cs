@@ -46,10 +46,10 @@ namespace EverquartzAdventure
 
 
 
-        internal static bool HasElysianAegisBuff(Player player)
-        {
-            return player.Calamity().elysianAegis;
-        }
+        //internal static bool HasElysianAegisBuff(Player player)
+        //{
+        //    return player.Calamity().elysianAegis;
+        //}
 
         internal static void SummonProv(Player player)
         {
@@ -388,11 +388,12 @@ namespace EverquartzAdventure.NPCs.TownNPCs
             //Condition calCondition = new Condition("Mods.EverquartzAdventure.Conditions.CalamityEnabled", () => ModCompatibility.calamityEnabled);
             if (ModCompatibility.calamityEnabled) {
                 Condition downedDoG = new Condition("Mods.EverquartzAdventure.Conditions.DownedDoG", () => CalamityWeakRef.downedDoG);
-                Condition hasElysianAegis = new Condition("Mods.EverquartzAdventure.Conditions.HasElysianAegis", () =>
-                {
-                    Player player = Main.player[Main.myPlayer];
-                    return player.HasItem(CalamityWeakRef.ItemType.ElysianAegis) || player.HasItem(CalamityWeakRef.ItemType.AsgardianAegis) || CalamityWeakRef.HasElysianAegisBuff(player);
-                });
+                Condition downedProv = new Condition("Mods.EverquartzAdventure.Conditions.DownedDoG", () => CalamityWeakRef.downedProv);
+                //Condition hasElysianAegis = new Condition("Mods.EverquartzAdventure.Conditions.HasElysianAegis", () =>
+                //{
+                //    Player player = Main.player[Main.myPlayer];
+                //    return player.HasItem(CalamityWeakRef.ItemType.ElysianAegis) || player.HasItem(CalamityWeakRef.ItemType.AsgardianAegis) || CalamityWeakRef.HasElysianAegisBuff(player);
+                //});
 
                 shop.Add(ShopItem(CalamityWeakRef.ItemType.ProfanedCrucible, Item.buyPrice(gold: 60)));
                 shop.Add(ShopItem(CalamityWeakRef.ItemType.DivineGeode, Item.buyPrice(gold: 6)));
@@ -401,7 +402,7 @@ namespace EverquartzAdventure.NPCs.TownNPCs
                 shop.Add(ShopItem(CalamityWeakRef.ItemType.EndothermicEnergy, Item.buyPrice(gold: 12)), downedDoG);
                 shop.Add(ShopItem(CalamityWeakRef.ItemType.DarksunFragment, Item.buyPrice(gold: 12)), downedDoG);
 
-                shop.Add(ShopItem(CalamityWeakRef.ItemType.RuneOfKos, Item.buyPrice(platinum: 2)), hasElysianAegis);
+                shop.Add(ShopItem(CalamityWeakRef.ItemType.RuneOfKos, Item.buyPrice(platinum: 2)), downedProv);
             }
 
             shop.Add(ShopItem(ModContent.ItemType<DivineCore>(), Item.buyPrice(platinum: 5)));

@@ -255,12 +255,12 @@ Mods: {
 
 		Tiles: {
 			MelanieMartinezMusicBoxPlaced.MapEntry: 音乐盒
-			// DeimosFumoPlaced.MapEntry: Deimos Fumo
+			DeimosFumoPlaced.MapEntry: 戴莫斯玩偶
 		}
 
 		Conditions: {
-			// DownedDoG: Mods.EverquartzAdventure.Conditions.DownedDoG
-			// HasElysianAegis: Mods.EverquartzAdventure.Conditions.HasElysianAegis
+			DownedDoG: Mods.EverquartzAdventure.Conditions.DownedDoG
+			HasElysianAegis: Mods.EverquartzAdventure.Conditions.HasElysianAegis
 		}
 	}
 }

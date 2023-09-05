@@ -63,13 +63,13 @@ Mods: {
 			}
 
 			DeimosBow: {
-				// DisplayName: Celestial Heavenfire
-				// Tooltip: ""
+				DisplayName: Вселенский Огненныйчтототам
+				Tooltip: "Я забыл что писать, "
 			}
 
 			DeimosStaff: {
-				// DisplayName: Cosmic Starfury
-				// Tooltip: ""
+				DisplayName: Космическая Звёздная Ярость
+				Tooltip: AHHHHHHHH I NEED A MEDIC BAG
 			}
 
 			StarFlare: {
@@ -95,7 +95,7 @@ Mods: {
 				ShopText: Магазин Деймос Прайма
 				TransText: Трансморгификация.
 				BestiaryText: НЯМ НЯМ ВКУСНЫЙ МОЗГ ГИПНОЗ НЯМ НЯМ
-				// CensusCondition: Defeat Providence, the Profaned Goddess
+				CensusCondition: Defeat Providence, the Profaned Goddess
 
 				Help: {
 					0: Ай!
@@ -154,22 +154,22 @@ Mods: {
 				}
 
 				TownNPCMood: {
-					// Content: Eh, it's fine here I guess. Pretty place, just not preferred.
-					// NoHome: bruv wheres my house'
-					// LoveSpace: I love it here! It's just right. I feel at home. Nothing more to say really other than I like it here.
-					// FarFromHome: Where am I right now? Narnia?
-					// DislikeCrowded: Look bro, I know I said I liked hanging around people but I think the living crisis you put me in is a bit too much.
-					// HateCrowded: Boooo! Too many people here. They make a toooon of noise, not only that but they try disturb whatever I'm doing. It's insane. I hate it. Please move me out of here, I can't bare it.
-					// LikeNPC_Princess: I also like the princess... solely for the reason that she's also another princess.
-					// LoveBiome: I like the hallow, it's very pretty. I like it when unicorns charge at you as soon as you step out your front door.
-					// HateBiome: So dry... so dry... so dry. So boring and sandy. Tumbleweeds are kinda funny though.
-					// Princess_LovesNPC: Deimos is a really nice and funny person to hang around with. She has such lively energy and loves to teach me about her creations... she's also another princess!
+					Content: Та норм! Не очень то и нравится, но что делать.
+					NoHome: Блять где мой дом
+					LoveSpace: Обожаю! Просто чудесно! Я чувствую себя как дома. Места много.
+					FarFromHome: И где я сейчас? Мухосранск?
+					DislikeCrowded: Смотри: да, я говорила что мне нравиться тусоваться с людьми, но не надо поселять меня в миграционный кризис.
+					HateCrowded: ААААААААААААААААААААААААААААААААААААААААААААААААА много людей. Ни нада.
+					LikeNPC_Princess: Мне нравиться принцесса... Только потому что она, как и я, принцесса.
+					LoveBiome: I like the hallow, it's very pretty. I like it when unicorns charge at you as soon as you step out your front door.
+					HateBiome: Пить... Пить... Пить...
+					Princess_LovesNPC: С Деймос прикольно тусоваться. У неё такая энергия и такие крутые идеи... а ещё она принцесса!
 				}
 			}
 
 			Hypnos: {
 				DisplayName: Душа Вечного Интелекта Бесконечных Запрещённых Знаний
-				BestiaryText: Мастер иллюзий. ВСЕВОЗМОЖНО ПРИРОДНАЯ НЕЙРОННАЯ Душа Вечного Интелекта Вечных Знаний требует твоё приношение.
+				BestiaryText: Мастер иллюзий. ВСЕВОЗМОЖНО ПРИРОДНАЯ НЕЙРОННАЯ Душа Вечного Интелекта Вечных Знаний требует твоё приношение. - Что за хуйня? прим. переводчика
 				ButtonText: Pray (1 {0})
 
 				Chat: {
@@ -245,17 +245,17 @@ Mods: {
 		} */
 		
 		Projectiles: {
-			// DeimosYoyoHeadProjectile.DisplayName: Decap Attack
-			// DeimosYoYoProjectile.DisplayName: Deimos Yo Yo Projectile
-			// EverquartzProjectile.DisplayName: Everquartz Projectile
+			DeimosYoyoHeadProjectile.DisplayName: Decap Attack
+			DeimosYoYoProjectile.DisplayName: Deimos Yo Yo Projectile
+			EverquartzProjectile.DisplayName: Everquartz Projectile
 			// AergiaNeuron.DisplayName: Aergia Neuron
 			BlueExoPulseLaser.DisplayName: Синий Экзо-Пульсовой Лазер
-			// DeimosPetProjectile.DisplayName: Deimos Pet Projectile
+			DeimosPetProjectile.DisplayName: Deimos Pet Projectile
 		}
 
 		Tiles: {
-			// MelanieMartinezMusicBoxPlaced.MapEntry: Music Box
-			// DeimosFumoPlaced.MapEntry: Deimos Fumo
+			MelanieMartinezMusicBoxPlaced.MapEntry: Music Box
+			DeimosFumoPlaced.MapEntry: Deimos Fumo
 		}
 
 		Conditions: {

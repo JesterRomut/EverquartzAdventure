@@ -5,7 +5,6 @@ using EverquartzAdventure.Items;
 using EverquartzAdventure.Items.Critters;
 using EverquartzAdventure.Items.Pets;
 using EverquartzAdventure.Items.Placeable.MusicBoxes;
-using EverquartzAdventure.NPCs.Hypnos;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;

@@ -7,7 +7,6 @@ using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent;
-using EverquartzAdventure.NPCs.Hypnos;
 using EverquartzAdventure.Tiles;
 
 namespace EverquartzAdventure.Items
